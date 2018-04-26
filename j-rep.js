@@ -1,57 +1,108 @@
 const os = require('os')
 const path = require('path')
-const symOptions = Symbol('Jrep Options')
 const symAssignLogLevels = Symbol('Assign Log Levels')
+const symWrite = Symbol('Log Writing Function')
 
-const levels = ['fatal', 'error', 'warn', 'info', 'debug', 'trace']
+const levels = {
+  fatal: 60,
+  error: 50,
+  warn: 40,
+  info: 30,
+  debug: 20,
+  trace: 10
+}
+const optionKeys = ['logLevel', 'write']
+const defaultOptions = {
+  logLevel: 'info'
+}
 
 module.exports = Object.freeze({
-  create (options) {
-    return new Jrep(options)
+  create (obj) {
+    return new Jrep(obj)
   }
 })
 
 class Jrep {
-  constructor (options) {
-    this[symOptions] = options
+  constructor (obj) {
+    const split = splitOptions(obj)
+    this.options = split.options
+    this.top = split.top
     this.levels = levels
+    if (this.options.write) { this[symWrite] = this.options.write } else { this[symWrite] = process.stdout.write }
     this[symAssignLogLevels]()
   }
 
   [symAssignLogLevels] () {
-    this.levels.forEach((level) => {
+    Object.keys(this.levels).forEach((level) => {
       this[level] = function (...items) {
-        let logJson = '{"ver":"1","host":"' + os.hostname
-        logJson += '","time":"' + (new Date()).getTime()
-        logJson += '","level":"' + level + '","msg":'
+        if (level === 'trace') {
+          console.log(this.options.logLevel)
+          console.log(level)
+          console.log(this.levels[this.options.logLevel])
+          console.log(this.levels[level])
+        }
+        if (this.levels[this.options.logLevel] >= this.levels[level]) { return }
+        let text = '{"ver":"1","host":"' + os.hostname()
+        text += '","time":' + (new Date()).getTime()
+        text += ',"level":"' + level
+        text += '","lvl":' + this.levels[level] + ',"msg":'
         const objects = []
         const messages = []
-        items.forEach((item) => { isString(item) ? messages.push(item) : objects.push(item) })
-        logJson += stringifyLogMessages(messages) + '"data":'
-        logJson += stringifyLogObjects(objects) + '}'
+        for (const item of items) { isString(item) ? messages.push(item) : objects.push(item) }
+        text += stringifyLogMessages(messages)
+        if (this.top) { text += getTopProperties(this.top) }
+        text += ',"data":' + stringifyLogObjects(objects) + '}'
 
-        // console.log(JSON.stringify(this, null, 2))
-        console.log(logJson)
-        console.json(JSON.parse(logJson))
+        this[symWrite](text)
       }
     })
   }
 
   child (options) {
-    const newOptions = Object.assign(this[symOptions], options)
-    return new Jrep(newOptions)
+    return new Jrep(Object.assign(this.options, this.top, options))
   }
+}
+
+function splitOptions (parent, child) {
+  let result = { options: defaultOptions, top: {} }
+  if (!parent && !child) { return result }
+  if (!parent) { result.options = Object.assign(defaultOptions, child) }
+  if (!child) { result.options = Object.assign(defaultOptions, parent) }
+  if (isModule(parent)) {
+    result.top.name = path.basename(parent.filename)
+    return result
+  }
+  let topKeys = []
+  for (const key in result.options) {
+    if (!optionKeys.includes(key)) {
+      topKeys.push(key)
+    }
+  }
+  if (topKeys.length < 1) { return result }
+  for (const topKey of topKeys) {
+    result.top[topKey] = result.options[topKey]
+    delete result.options[topKey]
+  }
+  return result
+}
+
+function getTopProperties (top) {
+  let tops = ''
+  for (const key in top) {
+    tops += ',"' + key + '":"' + top[key] + '"'
+  }
+  return tops
 }
 
 function stringifyLogMessages (messages) {
   if (messages.length < 1) {
-    return '"",'
+    return '""'
   } else if (messages.length === 1) {
-    return '"' + messages[0] + '",'
+    return '"' + messages[0] + '"'
   } else {
     let result = '['
-    messages.forEach((value) => { result += '"' + value + '",' })
-    return result.slice(0, -1) + '],'
+    for (const message of messages) { result += '"' + message + '",' }
+    return result.slice(0, -1) + ']'
   }
 }
 
@@ -62,7 +113,7 @@ function stringifyLogObjects (objects) {
     return stringify(objects[0])
   } else {
     let result = '['
-    objects.forEach((value) => { result += stringify(value) + ',' })
+    for (const obj of objects) { result += stringify(obj) + ',' }
     return result.slice(0, -1) + ']'
   }
 }
@@ -83,50 +134,20 @@ function getModuleName (value) {
   return path.basename(value.filename)
 }
 
-// Note: the code below this line is subject to the following license.
-// It is a portion of the code from the fast-safe-stringify package.
-// https://github.com/davidmarkclements/fast-safe-stringify
-
-/*
-The MIT License (MIT)
-
-Copyright (c) 2016 David Mark Clements
-Copyright (c) 2017 David Mark Clements & Matteo Collina
-Copyright (c) 2018 David Mark Clements, Matteo Collina & Ruben Bridgewater
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-var arr = []
+const arr = []
 
 // Regular stringify
 function stringify (obj, replacer, spacer) {
   decirc(obj, '', [], undefined)
-  var res = JSON.stringify(obj, replacer, spacer)
+  const res = JSON.stringify(obj, replacer, spacer)
   while (arr.length !== 0) {
-    var part = arr.pop()
+    const part = arr.pop()
     part[0][part[1]] = part[2]
   }
   return res
 }
 function decirc (val, k, stack, parent) {
-  var i
+  let i
   if (typeof val === 'object' && val !== null) {
     for (i = 0; i < stack.length; i++) {
       if (stack[i] === val) {
@@ -142,9 +163,9 @@ function decirc (val, k, stack, parent) {
         decirc(val[i], i, stack, val)
       }
     } else {
-      var keys = Object.keys(val)
+      const keys = Object.keys(val)
       for (i = 0; i < keys.length; i++) {
-        var key = keys[i]
+        const key = keys[i]
         decirc(val[key], key, stack, val)
       }
     }

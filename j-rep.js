@@ -1,24 +1,14 @@
 const symAssignLogLevels = Symbol('Assign Log Levels')
-const symWrite = Symbol('Log Writing Function')
+const symStream = Symbol('Log Writing Function')
 
-const levels = {
-  fatal: 60,
-  error: 50,
-  warn: 40,
-  info: 30,
-  debug: 20,
-  trace: 10
-}
-const optionKeys = ['logLevel', 'write']
-const defaultOptions = {
-  logLevel: 'info'
-}
+const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
+const optionKeys = ['logLevel', 'stream']
+const defaultOptions = { logLevel: 'info' }
 
 module.exports = Object.freeze({
   create (obj) {
     return new Jrep(obj)
-  },
-  stringify
+  }
 })
 
 class Jrep {
@@ -27,10 +17,11 @@ class Jrep {
     this.options = split.options
     this.top = split.top
     this.levels = levels
-    if (this.options.write) {
-      this[symWrite] = this.options.write
+    if (this.options.stream) {
+      this[symStream] = this.options.stream
     } else {
-      this[symWrite] = process.stdout.write.bind(process.stdout)
+      this[symStream] = process.stdout.write.bind(process.stdout)
+      // this[symStream] = process.stdout.write
     }
     this[symAssignLogLevels]()
   }
@@ -44,13 +35,23 @@ class Jrep {
         text += '","lvl":' + this.levels[level] + ',"msg":'
         const objects = []
         const messages = []
-        for (const item of items) { isString(item) ? messages.push(item) : objects.push(item) }
+        for (const item of items) {
+          if (isString(item)) {
+            messages.push(item)
+            continue
+          } else if (isError(item)) {
+            objects.push(serializerr(item))
+            item.message && messages.push(item.message)
+            continue
+          }
+          objects.push(item)
+        }
         text += stringifyLogMessages(messages)
-        if (this.top) { text += getTopProperties(this.top) }
+        if (this.top) { text += stringifyTopProperties(this.top) }
         text += ',"data":' + stringifyLogObjects(objects) + '}'
 
-        text = JSON.stringify(JSON.parse(text), null, 2)
-        this[symWrite](text)
+        // text = JSON.stringify(JSON.parse(text), null, 2)
+        this[symStream](text)
       }
     })
   }
@@ -60,11 +61,11 @@ class Jrep {
   }
 
   stringify (obj, replacer, spacer) {
-    this[symWrite](stringify(obj, replacer, spacer))
+    this[symStream](stringify(obj, replacer, spacer))
   }
 
   json (data) {
-    this[symWrite](stringify(data, null, 2))
+    this[symStream](stringify(data, null, 2))
   }
 }
 
@@ -87,7 +88,7 @@ function splitOptions (parent, child) {
   return result
 }
 
-function getTopProperties (top) {
+function stringifyTopProperties (top) {
   let tops = ''
   for (const key in top) {
     tops += ',"' + key + '":"' + top[key] + '"'
@@ -111,76 +112,29 @@ function stringifyLogObjects (objects) {
   if (objects.length < 1) {
     return '""'
   } else if (objects.length === 1) {
-    let sObj = smartStringify(objects[0])
+    let sObj = stringify(objects[0])
     return sObj || '""'
   } else {
     let result = '['
     for (const obj of objects) {
-      let sObj = smartStringify(obj) || '""'
+      let sObj = stringify(obj) || '""'
       result += sObj + ','
     }
     return result.slice(0, -1) + ']'
   }
 }
 
-function smartStringify (obj) {
-  if (!(obj instanceof Error)) {
-    return stringify(obj, replacer)
-  }
-  return stringify(planify(obj), replacer)
-}
-
-function planify (obj) {
-  let tree = null
-  let current = {}
-  for (;obj != null; obj = Object.getPrototypeOf(obj)) {
-    const names = Object.getOwnPropertyNames(obj)
-    let inner = {}
-    let attach = false
-    for (let i = 0; i < names.length; i++) {
-      let name = names[i]
-      if (obj[name]) {
-        const type = getType(obj[name])
-        if (type !== '[object Function]') {
-          if (type === '[object Error]') {
-            inner[name] = planify(obj[name])
-          } else {
-            inner[name] = obj[name]
-          }
-          attach = true
-        }
-      }
-    }
-    if (attach) {
-      current.innerPrototype = inner
-    }
-    tree = tree || inner
-    current = inner
-  }
-  return tree
-}
-
-function getType (value) {
-  return Object.prototype.toString.call(value)
-}
-
-// function isObject (value) {
-//   return Object.prototype.toString.call(value) === '[object Object]'
-// }
-
 function isString (value) {
   return Object.prototype.toString.call(value) === '[object String]'
 }
 
-function replacer (key, value) {
-  if (value instanceof RegExp) {
-    return (value.toString())
-  } else {
-    return value
-  }
+function isError (value) {
+  return value instanceof Error
 }
 
-// Following code is from fast-safe-stringify
+// =================================================================
+// Following code is from the fast-safe-stringify package.
+// =================================================================
 
 const arr = []
 
@@ -219,4 +173,42 @@ function decirc (val, k, stack, parent) {
     }
     stack.pop()
   }
+}
+
+// =================================================================
+// Following code is from the serializerr package.
+// =================================================================
+
+function serializerr (obj = {}) {
+  const chain = protochain(obj)
+    .filter(obj => obj !== Object.prototype)
+  return [obj]
+    .concat(chain)
+    .map(item => Object.getOwnPropertyNames(item))
+    .reduce((result, names) => {
+      names.forEach(name => {
+        result[name] = obj[name]
+      })
+      return result
+    }, {})
+}
+
+// =================================================================
+// Following code is from the protochain package.
+// =================================================================
+
+function protochain (obj) {
+  const chain = []
+  let target = getPrototypeOf(obj)
+  while (target) {
+    chain.push(target)
+    target = getPrototypeOf(target)
+  }
+
+  return chain
+}
+
+function getPrototypeOf (obj) {
+  if (obj == null) return null
+  return Object.getPrototypeOf(Object(obj))
 }

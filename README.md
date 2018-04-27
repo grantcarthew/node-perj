@@ -1,4 +1,4 @@
-# jrep WORK IN PROGRESS
+# jrep
 
 J-Rep: A simple, fast JSON logger.
 

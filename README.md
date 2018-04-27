@@ -25,11 +25,44 @@ npm install --save j-rep
 
 ## Quick Start
 
+### Node.js Usage
+
+The following example adds a `name`, `host`, and `file` top level property to the log entries.
+
 ```js
 
+const Jrep = require('j-rep')
 
+// Customise the variables below as needed.
+const name = 'QuickStart'
+const host = require('os').hostname()
+const pid = process.pid
+const file = require('path').basename(module.filename)
+
+const log = Jrep.create({name, host, pid, file})
+
+log.info('the quick brown fox jumps over the lazy dog')
 
 ```
+
+### Browser Usage
+
+The following example adds a `host` top level property to the log entries.
+
+```js
+
+const Jrep = require('j-rep')
+
+// Customise the variables below as needed.
+const name = 'QuickStart'
+const host = location.hostname
+
+const log = Jrep.create({name, host})
+
+log.info('the quick brown fox jumps over the lazy dog')
+
+```
+
 
 ## Rational
 

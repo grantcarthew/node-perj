@@ -1,5 +1,3 @@
-const os = require('os')
-const path = require('path')
 const symAssignLogLevels = Symbol('Assign Log Levels')
 const symWrite = Symbol('Log Writing Function')
 
@@ -19,7 +17,8 @@ const defaultOptions = {
 module.exports = Object.freeze({
   create (obj) {
     return new Jrep(obj)
-  }
+  },
+  stringify
 })
 
 class Jrep {
@@ -28,22 +27,19 @@ class Jrep {
     this.options = split.options
     this.top = split.top
     this.levels = levels
-    if (this.options.write) { this[symWrite] = this.options.write } else { this[symWrite] = process.stdout.write }
+    if (this.options.write) {
+      this[symWrite] = this.options.write
+    } else {
+      this[symWrite] = process.stdout.write.bind(process.stdout)
+    }
     this[symAssignLogLevels]()
   }
 
   [symAssignLogLevels] () {
     Object.keys(this.levels).forEach((level) => {
       this[level] = function (...items) {
-        if (level === 'trace') {
-          console.log(this.options.logLevel)
-          console.log(level)
-          console.log(this.levels[this.options.logLevel])
-          console.log(this.levels[level])
-        }
-        if (this.levels[this.options.logLevel] >= this.levels[level]) { return }
-        let text = '{"ver":"1","host":"' + os.hostname()
-        text += '","time":' + (new Date()).getTime()
+        if (this.levels[this.options.logLevel] > this.levels[level]) { return }
+        let text = '{"ver":"1","time":' + (new Date()).getTime()
         text += ',"level":"' + level
         text += '","lvl":' + this.levels[level] + ',"msg":'
         const objects = []
@@ -53,6 +49,7 @@ class Jrep {
         if (this.top) { text += getTopProperties(this.top) }
         text += ',"data":' + stringifyLogObjects(objects) + '}'
 
+        text = JSON.stringify(JSON.parse(text), null, 2)
         this[symWrite](text)
       }
     })
@@ -61,6 +58,14 @@ class Jrep {
   child (options) {
     return new Jrep(Object.assign(this.options, this.top, options))
   }
+
+  stringify (obj, replacer, spacer) {
+    this[symWrite](stringify(obj, replacer, spacer))
+  }
+
+  json (data) {
+    this[symWrite](stringify(data, null, 2))
+  }
 }
 
 function splitOptions (parent, child) {
@@ -68,10 +73,6 @@ function splitOptions (parent, child) {
   if (!parent && !child) { return result }
   if (!parent) { result.options = Object.assign(defaultOptions, child) }
   if (!child) { result.options = Object.assign(defaultOptions, parent) }
-  if (isModule(parent)) {
-    result.top.name = path.basename(parent.filename)
-    return result
-  }
   let topKeys = []
   for (const key in result.options) {
     if (!optionKeys.includes(key)) {
@@ -110,29 +111,76 @@ function stringifyLogObjects (objects) {
   if (objects.length < 1) {
     return '""'
   } else if (objects.length === 1) {
-    return stringify(objects[0])
+    let sObj = smartStringify(objects[0])
+    return sObj || '""'
   } else {
     let result = '['
-    for (const obj of objects) { result += stringify(obj) + ',' }
+    for (const obj of objects) {
+      let sObj = smartStringify(obj) || '""'
+      result += sObj + ','
+    }
     return result.slice(0, -1) + ']'
   }
 }
 
-function isObject (value) {
-  return Object.prototype.toString.call(value) === '[object Object]'
+function smartStringify (obj) {
+  if (!(obj instanceof Error)) {
+    return stringify(obj, replacer)
+  }
+  return stringify(planify(obj), replacer)
 }
+
+function planify (obj) {
+  let tree = null
+  let current = {}
+  for (;obj != null; obj = Object.getPrototypeOf(obj)) {
+    const names = Object.getOwnPropertyNames(obj)
+    let inner = {}
+    let attach = false
+    for (let i = 0; i < names.length; i++) {
+      let name = names[i]
+      if (obj[name]) {
+        const type = getType(obj[name])
+        if (type !== '[object Function]') {
+          if (type === '[object Error]') {
+            inner[name] = planify(obj[name])
+          } else {
+            inner[name] = obj[name]
+          }
+          attach = true
+        }
+      }
+    }
+    if (attach) {
+      current.innerPrototype = inner
+    }
+    tree = tree || inner
+    current = inner
+  }
+  return tree
+}
+
+function getType (value) {
+  return Object.prototype.toString.call(value)
+}
+
+// function isObject (value) {
+//   return Object.prototype.toString.call(value) === '[object Object]'
+// }
 
 function isString (value) {
   return Object.prototype.toString.call(value) === '[object String]'
 }
 
-function isModule (value) {
-  return !!value.filename && !!value.id && !!value.parent && !!value.children
+function replacer (key, value) {
+  if (value instanceof RegExp) {
+    return (value.toString())
+  } else {
+    return value
+  }
 }
 
-function getModuleName (value) {
-  return path.basename(value.filename)
-}
+// Following code is from fast-safe-stringify
 
 const arr = []
 

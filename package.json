@@ -46,6 +46,7 @@
     "console-probe": "^3.2.0",
     "del-cli": "^1.1.0",
     "jest": "^22.4.3",
+    "nodemon": "^1.17.3",
     "npm-check-updates": "^2.14.2",
     "standard": "^11.0.1"
   }

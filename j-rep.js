@@ -2,8 +2,8 @@ const symAssignLogLevels = Symbol('Assign Log Levels')
 const symStream = Symbol('Log Writing Function')
 
 const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
-const optionKeys = ['logLevel', 'stream']
-const defaultOptions = { logLevel: 'info' }
+const optionKeys = ['level', 'stream']
+const defaultOptions = { level: 'info' }
 
 module.exports = Object.freeze({
   create (obj) {
@@ -18,10 +18,11 @@ class Jrep {
     this.top = split.top
     this.levels = levels
     if (this.options.stream) {
+      // console.log('Stream set: ' + this.options.stream)
       this[symStream] = this.options.stream
     } else {
-      this[symStream] = process.stdout.write.bind(process.stdout)
-      // this[symStream] = process.stdout.write
+      // this[symStream] = process.stdout.write.bind(process.stdout)
+      this[symStream] = process.stdout
     }
     this[symAssignLogLevels]()
   }
@@ -29,7 +30,7 @@ class Jrep {
   [symAssignLogLevels] () {
     Object.keys(this.levels).forEach((level) => {
       this[level] = function (...items) {
-        if (this.levels[this.options.logLevel] > this.levels[level]) { return }
+        if (this.levels[this.options.level] > this.levels[level]) { return }
         let text = '{"ver":"1","time":' + (new Date()).getTime()
         text += ',"level":"' + level
         text += '","lvl":' + this.levels[level] + ',"msg":'
@@ -51,6 +52,7 @@ class Jrep {
         text += ',"data":' + stringifyLogObjects(objects) + '}'
 
         // text = JSON.stringify(JSON.parse(text), null, 2)
+        // console.probe(this[symStream])
         this[symStream](text)
       }
     })

@@ -1,9 +1,11 @@
 require('console-probe').apply()
 
 let output = ''
-const stream = function (text) {
-  output = JSON.parse(text)
-  // console.log(text)
+const stream = {
+  write: function (text) {
+    output = JSON.parse(text)
+    // console.log(text)
+  }
 }
 
 function getType (value) {

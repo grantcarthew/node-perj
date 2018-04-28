@@ -1,10 +1,11 @@
-const symAssignLogLevels = Symbol('Assign Log Levels')
-const symStream = Symbol('Log Writing Function')
+const symLogAssignment = Symbol('Log Levels Function Assignment')
+const symStream = Symbol('Log Stream Output Function')
+const symHeaders = Symbol('Log Headers')
 
 const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
 const optionKeys = ['level', 'stream']
 const defaultOptions = { level: 'info' }
-// TODO: Remove this line:
+// TODO: Remove the following line:
 require('console-probe').apply()
 
 module.exports = Object.freeze({
@@ -22,21 +23,18 @@ class Jrep {
     if (this.options.stream) {
       this[symStream] = this.options.stream
     } else {
-      // this[symStream] = process.stdout.write.bind(process.stdout)
       this[symStream] = process.stdout
     }
-    // console.log('Stream set: ' + this[symStream])
-    // console.probe(this[symStream])
-    this[symAssignLogLevels]()
+    this[symHeaders] = {}
+    this[symLogAssignment]()
   }
 
-  [symAssignLogLevels] () {
+  [symLogAssignment] () {
     Object.keys(this.levels).forEach((level) => {
+      this[symHeaders][level] = '{"ver":"1","level":"' + level + '","lvl":' + this.levels[level] + ',"time":'
       this[level] = function (...items) {
         if (this.levels[this.options.level] > this.levels[level]) { return }
-        let text = '{"ver":"1","time":' + (new Date()).getTime()
-        text += ',"level":"' + level
-        text += '","lvl":' + this.levels[level] + ',"msg":'
+        let text = this[symHeaders][level] + (new Date()).getTime()
         const objects = []
         const messages = []
         for (const item of items) {
@@ -50,13 +48,11 @@ class Jrep {
           }
           objects.push(item)
         }
-        text += stringifyLogMessages(messages)
         if (this.top) { text += stringifyTopProperties(this.top) }
+        text += ',"msg":' + stringifyLogMessages(messages)
         text += ',"data":' + stringifyLogObjects(objects) + '}'
 
-        // text = JSON.stringify(JSON.parse(text), null, 2)
-        // console.probe(this[symStream])
-        // const buf = Buffer.from(text + '\n', 'utf8')
+        // const buf = Buffer.from(text + '\n', 'utf8') <= not sure if needed
         this[symStream].write(text + '\n')
       }
     })
@@ -67,11 +63,11 @@ class Jrep {
   }
 
   stringify (obj, replacer, spacer) {
-    this[symStream](stringify(obj, replacer, spacer))
+    this[symStream].write(stringify(obj, replacer, spacer))
   }
 
   json (data) {
-    this[symStream](stringify(data, null, 2))
+    this[symStream].write(stringify(data, null, 2))
   }
 }
 

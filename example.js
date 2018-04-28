@@ -70,6 +70,9 @@ console.log(line)
 console.log('Note: Same complex object is a slightly easier to read format.')
 console.log("Code: log.info('Simple Message', dt)")
 console.log(line)
-log = Jrep.create({ stream: { write: (s) => { console.json(JSON.parse(s), null, 2) } } })
+log = Jrep.create({
+  name: 'example',
+  stream: { write: (s) => { console.json(JSON.parse(s), null, 2) } }
+})
 log.info('Simple Message', dt)
 console.log(line)

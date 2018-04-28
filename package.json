@@ -13,6 +13,7 @@
     "clean": "del index.js",
     "test": "jest",
     "watch": "jest --watch",
+    "eg": "nodemon example.js",
     "lint": "standard",
     "build": "npm run clean && standard && babel j-rep.js --out-file index.js && npm test",
     "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",

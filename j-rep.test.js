@@ -1,10 +1,9 @@
 require('console-probe').apply()
 
-let output = ''
+let output = {}
 const stream = {
   write: function (text) {
     output = JSON.parse(text)
-    // console.log(text)
   }
 }
 
@@ -21,6 +20,10 @@ const levels = ['fatal', 'error', 'warn', 'info', 'debug', 'trace']
 const data1 = {foo: 'bar', levels}
 const data2 = {bar: 'foo', answer: 42, levels}
 
+beforeAll(() => {
+  output = {}
+})
+
 describe('logger object tests', () => {
   test('member tests', () => {
     expect(getType(Jrep.create)).toBe('Function')
@@ -36,26 +39,36 @@ describe('logger object tests', () => {
     expect(getType(log.levels)).toBe('Object')
   })
   test('options tests', () => {
-    expect(getType(Jrep.create)).toBe('Function')
-    const olog = Jrep.create({ this: 'one' })
-    // console.json(olog)
+    let log = Jrep.create({ parent: 'true' })
+    expect(log.options.level).toBe('info')
+    expect(log.options.stream).toBeDefined()
+    expect(log.top.parent).toBeTruthy()
+    log = log.child({ level: 'trace', child: 'first' })
+    expect(log.options.level).toBe('trace')
+    expect(log.options.stream).toBeDefined()
+    expect(log.top.parent).toBeTruthy()
+    expect(log.top.child).toBeTruthy()
+    // console.json(log)
   })
-  // test('convenience methods', () => {
-  // const log = Jrep.create({ level: 'debug', stream })
-  // log.stringify(log)
-  // console.json(output)
-  // console.probe(Jrep)
-  // expect(output.options).toBeDefined()
-  // expect(output.options.level).toBe('debug')
-  // expect(output.options.stream).toBeDefined()
-  // })
+  test('convenience methods', () => {
+    const log = Jrep.create({ level: 'debug', stream })
+    const foo = { one: [1, 2, 3], two: { inner: true }, three: 3.14 }
+    log.stringify(foo)
+    expect(output.one[2]).toBe(3)
+    expect(output.two.inner).toBeTruthy()
+    expect(output.three).toBe(3.14)
+    output = {}
+    log.json(foo)
+    expect(output.one[2]).toBe(3)
+    expect(output.two.inner).toBeTruthy()
+    expect(output.three).toBe(3.14)
+  })
 })
 
 describe('logger option tests', () => {
   let log = Jrep.create({ level: 'warn', stream, project: 'xyz', session: 12345 })
   test('top level properties', () => {
     log.warn(msg1, data1)
-    console.json(output)
     expect(Object.keys(output).length).toBe(8)
     expect(output.ver).toBe('1')
     expect(getType(output.time)).toBe('Number')
@@ -67,12 +80,12 @@ describe('logger option tests', () => {
   })
   test('child logger properties', () => {
     log = log.child({ env: 'dev' })
-    log.debug(msg2, data2)
-    console.json(output)
+    output = {}
+    log.warn(msg2, data2)
     expect(Object.keys(output).length).toBe(9)
     expect(output.ver).toBe('1')
     expect(getType(output.time)).toBe('Number')
-    expect(output.level).toBe('debug')
+    expect(output.level).toBe('warn')
     expect(output.msg).toBe(msg2)
     expect(output.data).toMatchObject(data2)
     expect(data2).toMatchObject(output.data)
@@ -251,7 +264,7 @@ describe('logging level tests', () => {
 })
 
 describe('logging error tests', () => {
-  const log = Jrep.create({level: 'trace', stream})
+  const log = Jrep.create({level: 'trace', stream, name: 'error tests'})
   let err1 = new Error(msg1)
   let err2 = new Error(msg2)
 
@@ -303,6 +316,6 @@ describe('logging error tests', () => {
     expect(output.data[1].name).toBe('Error')
     expect(output.data[0].stack).toBeDefined()
     expect(output.data[1].stack).toBeDefined()
-    console.json(output)
+    // console.json(output)
   })
 })

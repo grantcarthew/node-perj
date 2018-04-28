@@ -4,7 +4,7 @@ const symHeaders = Symbol('Log Headers')
 
 const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
 const optionKeys = ['level', 'stream']
-const defaultOptions = { level: 'info' }
+const defaultOptions = { level: 'info', stream: process.stdout }
 // TODO: Remove the following line:
 require('console-probe').apply()
 
@@ -20,18 +20,15 @@ class Jrep {
     this.options = split.options
     this.top = split.top
     this.levels = levels
-    if (this.options.stream) {
-      this[symStream] = this.options.stream
-    } else {
-      this[symStream] = process.stdout
-    }
+    this[symStream] = this.options.stream
     this[symHeaders] = {}
     this[symLogAssignment]()
   }
 
   [symLogAssignment] () {
     Object.keys(this.levels).forEach((level) => {
-      this[symHeaders][level] = '{"ver":"1","level":"' + level + '","lvl":' + this.levels[level] + ',"time":'
+      const top = stringifyTopProperties(this.top)
+      this[symHeaders][level] = `{"ver":"1","level":"${level}","lvl":${this.levels[level]}${top},"time":`
       this[level] = function (...items) {
         if (this.levels[this.options.level] > this.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
@@ -48,7 +45,7 @@ class Jrep {
           }
           objects.push(item)
         }
-        if (this.top) { text += stringifyTopProperties(this.top) }
+        // if (this.top) { text += stringifyTopProperties(this.top) }
         text += ',"msg":' + stringifyLogMessages(messages)
         text += ',"data":' + stringifyLogObjects(objects) + '}'
 
@@ -71,11 +68,10 @@ class Jrep {
   }
 }
 
-function splitOptions (parent, child) {
+function splitOptions (options) {
   let result = { options: defaultOptions, top: {} }
-  if (!parent && !child) { return result }
-  if (!parent) { result.options = Object.assign({}, defaultOptions, child) }
-  if (!child) { result.options = Object.assign({}, defaultOptions, parent) }
+  if (!options) { return result }
+  result.options = Object.assign({}, defaultOptions, options)
   let topKeys = []
   for (const key in result.options) {
     if (!optionKeys.includes(key)) {

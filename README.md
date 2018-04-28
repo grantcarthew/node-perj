@@ -1,6 +1,6 @@
 # jrep
 
-J-Rep: A simple, fast JSON logger.
+A simple, fast JSON logger. (Not Published Yet)
 
 [![bitHound Overall Score][bithound-overall-image]][bithound-overall-url]
 [![bitHound Dependencies][bithound-dep-image]][bithound-dep-url]
@@ -22,6 +22,25 @@ J-Rep: A simple, fast JSON logger.
 npm install --save j-rep
 
 ```
+## Goals
+
+The Jrep logger project has the following goals:
+
+* Designed to be integrated rather than used out of the box (DIY).
+* KISS: Keep it simple smiley.
+* Cross platform (Node.js and Browser) with no platform dependencies.
+* Flexible log and additional property options.
+* Fast.
+* Feature limited.
+
+## Features
+
+* No dependencies.
+* Flexible log methods:
+  * Log items can be any number in any order of any type.
+* Messages are nested as a string or array of strings.
+* Objects are nested as an object or array of objects.
+* No transports included (see primary goal).
 
 ## Quick Start
 

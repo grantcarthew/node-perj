@@ -4,6 +4,8 @@ const symStream = Symbol('Log Writing Function')
 const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
 const optionKeys = ['level', 'stream']
 const defaultOptions = { level: 'info' }
+// TODO: Remove this line:
+require('console-probe').apply()
 
 module.exports = Object.freeze({
   create (obj) {
@@ -18,12 +20,13 @@ class Jrep {
     this.top = split.top
     this.levels = levels
     if (this.options.stream) {
-      // console.log('Stream set: ' + this.options.stream)
       this[symStream] = this.options.stream
     } else {
       // this[symStream] = process.stdout.write.bind(process.stdout)
       this[symStream] = process.stdout
     }
+    // console.log('Stream set: ' + this[symStream])
+    // console.probe(this[symStream])
     this[symAssignLogLevels]()
   }
 
@@ -53,7 +56,8 @@ class Jrep {
 
         // text = JSON.stringify(JSON.parse(text), null, 2)
         // console.probe(this[symStream])
-        this[symStream](text)
+        // const buf = Buffer.from(text + '\n', 'utf8')
+        this[symStream].write(text + '\n')
       }
     })
   }

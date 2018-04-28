@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "J-Rep: a simple, fast JSON logger.",
   "main": "index.js",
-  "homepage": "####################################",
+  "homepage": "https://github.com/grantcarthew/node-j-rep",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/grantcarthew/node-j-rep.git"
@@ -31,6 +31,7 @@
       "expect",
       "jest",
       "beforeEach",
+      "afterEach",
       "beforeAll",
       "afterAll",
       "describe"

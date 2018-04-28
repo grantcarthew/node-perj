@@ -35,12 +35,27 @@ describe('logger object tests', () => {
     expect(getType(log.trace)).toBe('Function')
     expect(getType(log.levels)).toBe('Object')
   })
+  test('options tests', () => {
+    expect(getType(Jrep.create)).toBe('Function')
+    const olog = Jrep.create({ this: 'one' })
+    // console.json(olog)
+  })
+  // test('convenience methods', () => {
+  // const log = Jrep.create({ level: 'debug', stream })
+  // log.stringify(log)
+  // console.json(output)
+  // console.probe(Jrep)
+  // expect(output.options).toBeDefined()
+  // expect(output.options.level).toBe('debug')
+  // expect(output.options.stream).toBeDefined()
+  // })
 })
 
 describe('logger option tests', () => {
   let log = Jrep.create({ level: 'warn', stream, project: 'xyz', session: 12345 })
   test('top level properties', () => {
     log.warn(msg1, data1)
+    console.json(output)
     expect(Object.keys(output).length).toBe(8)
     expect(output.ver).toBe('1')
     expect(getType(output.time)).toBe('Number')
@@ -53,6 +68,7 @@ describe('logger option tests', () => {
   test('child logger properties', () => {
     log = log.child({ env: 'dev' })
     log.debug(msg2, data2)
+    console.json(output)
     expect(Object.keys(output).length).toBe(9)
     expect(output.ver).toBe('1')
     expect(getType(output.time)).toBe('Number')

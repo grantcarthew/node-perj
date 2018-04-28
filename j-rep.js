@@ -59,7 +59,7 @@ class Jrep {
   }
 
   child (options) {
-    return new Jrep(Object.assign(this.options, this.top, options))
+    return new Jrep(Object.assign({}, this.options, this.top, options))
   }
 
   stringify (obj, replacer, spacer) {
@@ -74,8 +74,8 @@ class Jrep {
 function splitOptions (parent, child) {
   let result = { options: defaultOptions, top: {} }
   if (!parent && !child) { return result }
-  if (!parent) { result.options = Object.assign(defaultOptions, child) }
-  if (!child) { result.options = Object.assign(defaultOptions, parent) }
+  if (!parent) { result.options = Object.assign({}, defaultOptions, child) }
+  if (!child) { result.options = Object.assign({}, defaultOptions, parent) }
   let topKeys = []
   for (const key in result.options) {
     if (!optionKeys.includes(key)) {

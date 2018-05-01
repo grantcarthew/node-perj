@@ -1,6 +1,7 @@
 const symLogAssignment = Symbol('Log Levels Function Assignment')
 const symStream = Symbol('Log Stream Output Function')
 const symHeaders = Symbol('Log Headers')
+const symTopAsString = Symbol('Top Level Property String')
 
 const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
 const optionKeys = ['level', 'stream']
@@ -16,10 +17,11 @@ module.exports = Object.freeze({
 
 class Jrep {
   constructor (obj) {
+    this.levels = levels
     const split = splitOptions(obj)
     this.options = split.options
     this.top = split.top
-    this.levels = levels
+    this[symTopAsString] = split.topAsString
     this[symStream] = this.options.stream
     this[symHeaders] = {}
     this[symLogAssignment]()
@@ -27,29 +29,15 @@ class Jrep {
 
   [symLogAssignment] () {
     Object.keys(this.levels).forEach((level) => {
-      const top = stringifyTopProperties(this.top)
-      this[symHeaders][level] = `{"ver":"1","level":"${level}","lvl":${this.levels[level]}${top},"time":`
+      this[symHeaders][level] = `{"ver":"1","level":"${level}","lvl":${this.levels[level]}${this[symTopAsString]},"time":`
       this[level] = function (...items) {
         if (this.levels[this.options.level] > this.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
-        const objects = []
-        const messages = []
-        for (const item of items) {
-          if (isString(item)) {
-            messages.push(item)
-            continue
-          } else if (isError(item)) {
-            objects.push(serializerr(item))
-            item.message && messages.push(item.message)
-            continue
-          }
-          objects.push(item)
-        }
-        // if (this.top) { text += stringifyTopProperties(this.top) }
-        text += ',"msg":' + stringifyLogMessages(messages)
-        text += ',"data":' + stringifyLogObjects(objects) + '}'
+        const splitItems = stringifyLogItems(items)
+        text += ',"msg":' + splitItems.msg
+        text += ',"data":' + splitItems.data + '}'
 
-        // const buf = Buffer.from(text + '\n', 'utf8') <= not sure if needed
+        // const buf = Buffer.from(text + '\n', 'utf8')
         this[symStream].write(text + '\n')
       }
     })
@@ -69,7 +57,11 @@ class Jrep {
 }
 
 function splitOptions (options) {
-  let result = { options: defaultOptions, top: {} }
+  let result = {
+    options: defaultOptions,
+    top: {},
+    topAsString: ''
+  }
   if (!options) { return result }
   result.options = Object.assign({}, defaultOptions, options)
   let topKeys = []
@@ -81,53 +73,42 @@ function splitOptions (options) {
   if (topKeys.length < 1) { return result }
   for (const topKey of topKeys) {
     result.top[topKey] = result.options[topKey]
+    result.topAsString += ',"' + topKey + '":' + stringify(result.options[topKey])
     delete result.options[topKey]
   }
   return result
 }
 
-function stringifyTopProperties (top) {
-  let tops = ''
-  for (const key in top) {
-    tops += ',"' + key + '":"' + top[key] + '"'
-  }
-  return tops
-}
-
-function stringifyLogMessages (messages) {
-  if (messages.length < 1) {
-    return '""'
-  } else if (messages.length === 1) {
-    return '"' + messages[0] + '"'
-  } else {
-    let result = '['
-    for (const message of messages) { result += '"' + message + '",' }
-    return result.slice(0, -1) + ']'
-  }
-}
-
-function stringifyLogObjects (objects) {
-  if (objects.length < 1) {
-    return '""'
-  } else if (objects.length === 1) {
-    let sObj = stringify(objects[0])
-    return sObj || '""'
-  } else {
-    let result = '['
-    for (const obj of objects) {
-      let sObj = stringify(obj) || '""'
-      result += sObj + ','
+function stringifyLogItems (items) {
+  let result = {msg: [], data: []}
+  for (const item of items) {
+    if (Object.prototype.toString.call(item) === '[object String]') {
+      result.msg.push(item)
+      continue
     }
-    return result.slice(0, -1) + ']'
+    if (item instanceof Error) {
+      result.data.push(serializerr(item))
+      result.msg.push(item.message)
+      continue
+    }
+    result.data.push(item)
   }
-}
 
-function isString (value) {
-  return Object.prototype.toString.call(value) === '[object String]'
-}
+  if (result.msg.length < 1) {
+    result.msg = '""'
+  } else if (result.msg.length === 1) {
+    result.msg = result.msg[0]
+  }
 
-function isError (value) {
-  return value instanceof Error
+  if (result.data.length < 1) {
+    result.data = ''
+  } else if (result.data.length === 1) {
+    result.data = result.data[0]
+  }
+
+  result.msg = stringify(result.msg)
+  result.data = stringify(result.data)
+  return result
 }
 
 // =================================================================

@@ -11,7 +11,7 @@ function getType (value) {
   return Object.prototype.toString.call(value).slice(8).slice(0, -1)
 }
 
-const Jrep = require('./j-rep')
+const Jrep = require('./jrep')
 const msg1 = 'the quick brown fox'
 const msg2 = 'jumped over the lazy dog'
 const msg3 = 'and back again.'
@@ -70,6 +70,7 @@ describe('logger option tests', () => {
   test('top level properties', () => {
     log.warn(msg1, data1)
     expect(Object.keys(output).length).toBe(8)
+
     expect(output.ver).toBe('1')
     expect(getType(output.time)).toBe('Number')
     expect(output.level).toBe('warn')

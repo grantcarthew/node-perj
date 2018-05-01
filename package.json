@@ -1,21 +1,21 @@
 {
-  "name": "j-rep",
+  "name": "jrep",
   "version": "1.0.0",
-  "description": "J-Rep: a simple, fast JSON logger.",
+  "description": "A simple, fast JSON logger.",
   "main": "index.js",
-  "homepage": "https://github.com/grantcarthew/node-j-rep",
+  "homepage": "https://github.com/grantcarthew/node-jrep",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grantcarthew/node-j-rep.git"
+    "url": "git+https://github.com/grantcarthew/node-jrep.git"
   },
-  "bugs": "https://github.com/grantcarthew/node-j-rep/issues",
+  "bugs": "https://github.com/grantcarthew/node-jrep/issues",
   "scripts": {
     "clean": "del index.js",
     "test": "jest",
     "watch": "jest --watch",
     "eg": "nodemon example.js",
     "lint": "standard",
-    "build": "npm run clean && standard && babel j-rep.js --out-file index.js && npm test",
+    "build": "npm run clean && standard && babel jrep.js --out-file index.js && npm test",
     "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",
     "upgrade:rm": "rm node_modules -Rf",
     "upgrade:ncu": "npm-check-updates --upgradeAll",

@@ -1,9 +1,9 @@
 ---------------------------------------------------------------------
 To reduce dependencies some code has been copied from other projects.
-There are four licenses that apply to the j-rep package.
+There are four licenses that apply to the jrep package.
 ---------------------------------------------------------------------
 The license below is my application of the MIT license.
-https://github.com/grantcarthew/node-j-rep
+https://github.com/grantcarthew/node-jrep
 ---------------------------------------------------------------------
 
 MIT License

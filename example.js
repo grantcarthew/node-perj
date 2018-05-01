@@ -1,5 +1,5 @@
 
-const jrep = require('./j-rep')
+const jrep = require('./jrep')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'
@@ -14,7 +14,7 @@ log.info('the quick brown fox jumps over the lazy dog')
 return
 
 // require('console-probe').apply()
-// const Jrep = require('./j-rep')
+// const Jrep = require('./jrep')
 // const line = '='.repeat(process.stdout.columns)
 // const page = '\n'.repeat(process.stdout.rows)
 // const arrLen = 2
@@ -59,10 +59,10 @@ return
 
 // // console.log(page)
 // // console.log(line)
-// // console.log('j-rep example.js')
+// // console.log('jrep example.js')
 // // console.log(line)
 // // console.log('Note: This is the structure of the Jrep module')
-// // console.log('Code: const Jrep = require("j-rep")')
+// // console.log('Code: const Jrep = require("jrep")')
 // // console.log(line)
 // // console.probe(Jrep)
 // // console.log(line)

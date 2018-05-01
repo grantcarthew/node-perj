@@ -17,6 +17,8 @@ A simple, fast JSON logger. (Not Published Yet)
 * Node: v4.7.0 or later.
 * Browser: Not tested
 
+The name `jrep` was taken on NPM. The package is published as `j-rep` which is fitting because it is how to pronounce it.
+
 ```sh
 
 npm install --save j-rep
@@ -50,7 +52,7 @@ The following example adds a `name`, `host`, `pid` and `file` top level property
 
 ```js
 
-const jrep = require('j-rep')
+const jrep = require('jrep')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'
@@ -70,7 +72,7 @@ The following example adds a `host` top level property to the log entries.
 
 ```js
 
-const jrep = require('j-rep')
+const jrep = require('jrep')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'
@@ -87,9 +89,9 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 After having some performance issues with a popular Node.js logging package I decided to switch to another logging package that is advertised as blasing fast called [pino][pino-url].
 
-I must say `pino` seems like a great package. I worked with it for a while however there are a number of things which I dislike about `pino`. I started to try and contribute to fix some of the issues. The authors were helpful. After working on a pull request and submitting it I changed my mind and decided to write `j-rep`.
+I must say `pino` seems like a great package. I worked with it for a while however there are a number of things which I dislike about `pino`. I started to try and contribute to fix some of the issues. The authors were helpful. After working on a pull request and submitting it I changed my mind and decided to write `jrep`.
 
-Why the name `j-rep`? Mostly becasue the name `jrep` was already taking on NPM.
+Why the name `jrep`? Mostly becasue the name `jrep` was already taking on NPM.
 
 ## Function
 
@@ -132,7 +134,7 @@ As with the quick start above, the following example adds a `name`, `host`, `pid
 
 ```js
 
-const jrep = require('j-rep')
+const jrep = require('jrep')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'

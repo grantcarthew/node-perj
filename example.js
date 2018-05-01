@@ -11,8 +11,6 @@ const log = jrep.create({name, host, pid, file})
 
 log.info('the quick brown fox jumps over the lazy dog')
 
-return
-
 // require('console-probe').apply()
 // const Jrep = require('./jrep')
 // const line = '='.repeat(process.stdout.columns)

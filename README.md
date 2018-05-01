@@ -68,6 +68,8 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 ### Browser Usage
 
+__Total size is 2.8kB minified index file.__
+
 The following example adds a `host` top level property to the log entries.
 
 ```js

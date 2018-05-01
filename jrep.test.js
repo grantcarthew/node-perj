@@ -11,7 +11,8 @@ function getType (value) {
   return Object.prototype.toString.call(value).slice(8).slice(0, -1)
 }
 
-const Jrep = require('./jrep')
+const jrep = require('./index')
+// const jrep = require('./jrep')
 const msg1 = 'the quick brown fox'
 const msg2 = 'jumped over the lazy dog'
 const msg3 = 'and back again.'
@@ -26,8 +27,8 @@ beforeAll(() => {
 
 describe('logger object tests', () => {
   test('member tests', () => {
-    expect(getType(Jrep.create)).toBe('Function')
-    const log = Jrep.create()
+    expect(getType(jrep.create)).toBe('Function')
+    const log = jrep.create()
     expect(getType(log.options)).toBe('Object')
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
@@ -39,7 +40,7 @@ describe('logger object tests', () => {
     expect(getType(log.levels)).toBe('Object')
   })
   test('options tests', () => {
-    let log = Jrep.create({ parent: 'true' })
+    let log = jrep.create({ parent: 'true' })
     expect(log.options.level).toBe('info')
     expect(log.options.stream).toBeDefined()
     expect(log.top.parent).toBeTruthy()
@@ -51,7 +52,7 @@ describe('logger object tests', () => {
     // console.json(log)
   })
   test('convenience methods', () => {
-    const log = Jrep.create({ level: 'debug', stream })
+    const log = jrep.create({ level: 'debug', stream })
     const foo = { one: [1, 2, 3], two: { inner: true }, three: 3.14 }
     log.stringify(foo)
     expect(output.one[2]).toBe(3)
@@ -66,7 +67,7 @@ describe('logger object tests', () => {
 })
 
 describe('logger option tests', () => {
-  let log = Jrep.create({ level: 'warn', stream, project: 'xyz', session: 12345 })
+  let log = jrep.create({ level: 'warn', stream, project: 'xyz', session: 12345 })
   test('top level properties', () => {
     log.warn(msg1, data1)
     expect(Object.keys(output).length).toBe(8)
@@ -97,7 +98,7 @@ describe('logger option tests', () => {
 
 describe('logging tests', () => {
   for (const level of levels) {
-    const log = Jrep.create({stream, level: level})
+    const log = jrep.create({stream, level: level})
 
     test(level + ': one message', () => {
       log[level](msg1)
@@ -168,7 +169,7 @@ describe('logging tests', () => {
 
 describe('logging level tests', () => {
   test('level: fatal', () => {
-    const log = Jrep.create({level: 'fatal', stream})
+    const log = jrep.create({level: 'fatal', stream})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     output = {}
@@ -184,7 +185,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: error', () => {
-    const log = Jrep.create({level: 'error', stream})
+    const log = jrep.create({level: 'error', stream})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -200,7 +201,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: warn', () => {
-    const log = Jrep.create({level: 'warn', stream})
+    const log = jrep.create({level: 'warn', stream})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -216,7 +217,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: info', () => {
-    const log = Jrep.create({level: 'info', stream})
+    const log = jrep.create({level: 'info', stream})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -232,7 +233,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: debug', () => {
-    const log = Jrep.create({level: 'debug', stream})
+    const log = jrep.create({level: 'debug', stream})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -248,7 +249,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: trace', () => {
-    const log = Jrep.create({level: 'trace', stream})
+    const log = jrep.create({level: 'trace', stream})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -265,7 +266,7 @@ describe('logging level tests', () => {
 })
 
 describe('logging error tests', () => {
-  const log = Jrep.create({level: 'trace', stream, name: 'error tests'})
+  const log = jrep.create({level: 'trace', stream, name: 'error tests'})
   let err1 = new Error(msg1)
   let err2 = new Error(msg2)
 

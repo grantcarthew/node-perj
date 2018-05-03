@@ -1,3 +1,4 @@
+const arrLen = 2
 module.exports = {
   msg: [
     'I’m sorry, Dave. I’m afraid I can’t do that.',
@@ -172,6 +173,44 @@ module.exports = {
         'Overbridge'
       ]
     }
+  },
+  typeObj: {
+    'name': 'Data Types',
+    'Infinity': Infinity,
+    'NaN': Number.NaN,
+    'Undefined': undefined,
+    'Null': null,
+    'Object': {foo: 'bar'},
+    'Function': (size, toppings) => {},
+    'Boolean': true,
+    'Symbol': Symbol('Name of Symbol'),
+    'Error': new Error('Error message text'),
+    'Number': 42,
+    'Date': new Date(),
+    'String': 'The quick brown fox jumps over the lazy dog.',
+    'RegExp': /a.long.regexp.that.keeps.giving/,
+    'Array': [1, 2, 3],
+    'Int8Array': new Int8Array(arrLen),
+    'Uint8Array': new Uint8Array(arrLen),
+    'Uint8ClampedArray': new Uint8ClampedArray(arrLen),
+    'Int16Array': new Int16Array(arrLen),
+    'Uint16Array': new Uint16Array(arrLen),
+    'Int32Array': new Int32Array(arrLen),
+    'Uint32Array': new Uint32Array(arrLen),
+    'Float32Array': new Float32Array(arrLen),
+    'Float64Array': new Float64Array(arrLen),
+    'Map': new Map([['foo', 'bar']]),
+    'Set': new Set([['foo', 'bar']]),
+    'WeakMap': new WeakMap(),
+    'WeakSet': new WeakSet(),
+    'ArrayBuffer': new ArrayBuffer(arrLen),
+    'SharedArrayBuffer': new SharedArrayBuffer(arrLen),
+    'Atomics': Atomics,
+    'DataView': new DataView(new ArrayBuffer(arrLen)),
+    'Promise': Promise.resolve(),
+    'Generator': (function * () {})(),
+    'GeneratorFunction': function * (foo, bar) {},
+    'AsyncFunction': async function (foo, bar) {}
   },
   data: [
     this.tardis,

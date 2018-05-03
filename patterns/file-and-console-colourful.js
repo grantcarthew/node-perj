@@ -1,4 +1,5 @@
 const jrep = require('../jrep')
+const fs = require('fs')
 const chalk = require('chalk')
 const colorize = require('json-colorizer')
 const host = require('os').hostname()
@@ -6,24 +7,29 @@ const pid = process.pid
 const file = require('path').basename(module.filename)
 const name = 'full'
 const scifi = require('../data-scifi')
+const destFile = '/dev/null'
 
 /*
 Description:
 A full detail console log output including
 colourful properties and formatted data.
+Raw JSON log data sent to file.
+Replace destFile with your file path.
 
 When to use:
 Great for development.
 
 Platform:
-- Node.js only due to 'os', 'path', 'chalk', and 'json-colorizer'.
+- Node.js only due to 'os', 'fs', 'path', 'chalk',
+  and 'json-colorizer'.
 
 Dependencies:
 - chalk
 - json-colorizer
 
 Features:
-- Logs colourful text to the console only.
+- Logs colourful text to the console.
+- Logs raw JSON objects to a file.
 - Logs time, level, name, host, pid, file, and message properties.
 - Stringified objects displayed on next line in colour.
 */
@@ -31,6 +37,7 @@ Features:
 const log = jrep.create({ name, level: 'trace', write, host, pid, file })
 
 function write (logString) {
+  fs.appendFile(destFile, logString, (err) => { if (err) throw err })
   const item = JSON.parse(logString)
   const dt = chalk.magenta((new Date(item.time)).toISOString())
   const nameCol = chalk.magenta(item.name)
@@ -64,7 +71,7 @@ log.warn(scifi.rndMsg(), scifi.rndMsg(), scifi.tardis, scifi.serenity)
 /*
 Example console output (colour not visible here):
 
-[2018-05-03T05:17:14.935Z][info][full](Dev:7367:console-colourful.js)
+[2018-05-03T02:46:54.611Z][info][full](Dev:7094:console-full.js)
 {
   "name": "TARDIS",
   "class": "Time and Relative Dimension in Space",
@@ -89,7 +96,7 @@ Example console output (colour not visible here):
     "car": "Bessie"
   }
 }
-[2018-05-03T05:17:14.938Z][error][full](Dev:7367:console-colourful.js) wibbly wobbly timy wimy.
+[2018-05-03T02:46:54.613Z][info][full](Dev:7094:console-full.js) No! Try not! Do or do not, there is no try.
 {
   "url": "https://en.wikipedia.org/wiki/Serenity_(Firefly_vessel)",
   "class": "Firefly-Class Transport Ship",
@@ -127,7 +134,7 @@ Example console output (colour not visible here):
   "defense": "Crybabies - decoy buoys used to mimic other ships",
   "primaryFeature": "Fast"
 }
-[2018-05-03T05:17:14.938Z][debug][full](Dev:7367:console-colourful.js) wibbly wobbly timy wimy.,I'll be back.
+[2018-05-03T02:46:54.613Z][info][full](Dev:7094:console-full.js) I’m sorry, Dave. I’m afraid I can’t do that.,My name is Inigo Montoya. You killed my father. Prepare to die.
 {
   "url": "http://starwars.wikia.com/wiki/DS-1_Orbital_Battle_Station",
   "production": {
@@ -234,7 +241,7 @@ Example console output (colour not visible here):
     ]
   }
 }
-[2018-05-03T05:17:14.940Z][warn][full](Dev:7367:console-colourful.js) I'll be back.,It's only a flesh wound.
+[2018-05-03T02:46:54.614Z][info][full](Dev:7094:console-full.js) E.T. phone home.,Speak Friend and Enter.
 [
   {
     "name": "TARDIS",

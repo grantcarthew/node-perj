@@ -9,7 +9,14 @@ const file = require('path').basename(module.filename)
 
 const log = jrep.create({name, host, pid, file})
 
-log.info('the quick brown fox jumps over the lazy dog')
+const obj = { foo: 'bar' }
+const msg = 'hello world'
+log.info(msg)
+log.info(obj)
+log.info(msg, obj)
+log.info(obj, msg)
+log.info(msg, msg, obj, obj)
+log.info(obj, msg, obj, msg)
 
 // require('console-probe').apply()
 // const Jrep = require('./jrep')

@@ -1,13 +1,14 @@
 const symLogAssignment = Symbol('Log Levels Function Assignment')
-const symStream = Symbol('Log Stream Output Function')
+const symWrite = Symbol('Log Write Output Function')
 const symHeaders = Symbol('Log Headers')
 const symTopAsString = Symbol('Top Level Property String')
 
 const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
-const optionKeys = ['level', 'stream']
-const defaultOptions = { level: 'info', stream: process.stdout }
-// TODO: Remove the following line:
-require('console-probe').apply()
+const defaultOptions = {
+  ver: 1,
+  level: 'info',
+  write: process.stdout.write.bind(process.stdout)
+}
 
 module.exports = Object.freeze({
   create (obj) {
@@ -22,23 +23,22 @@ class Jrep {
     this.options = split.options
     this.top = split.top
     this[symTopAsString] = split.topAsString
-    this[symStream] = this.options.stream
+    this[symWrite] = this.options.write
     this[symHeaders] = {}
     this[symLogAssignment]()
   }
 
   [symLogAssignment] () {
     Object.keys(this.levels).forEach((level) => {
-      this[symHeaders][level] = `{"ver":"1","level":"${level}","lvl":${this.levels[level]}${this[symTopAsString]},"time":`
+      this[symHeaders][level] = `{"ver":${this.options.ver},"level":"${level}","lvl":${this.levels[level]}${this[symTopAsString]},"time":`
       this[level] = function (...items) {
         if (this.levels[this.options.level] > this.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
         const splitItems = stringifyLogItems(items)
         text += ',"msg":' + splitItems.msg
-        text += ',"data":' + splitItems.data + '}'
+        text += ',"data":' + splitItems.data + '}\n'
 
-        // const buf = Buffer.from(text + '\n', 'utf8')
-        this[symStream].write(text + '\n')
+        this[symWrite](text)
       }
     })
   }
@@ -48,11 +48,11 @@ class Jrep {
   }
 
   stringify (obj, replacer, spacer) {
-    this[symStream].write(stringify(obj, replacer, spacer))
+    this[symWrite](stringify(obj, replacer, spacer))
   }
 
   json (data) {
-    this[symStream].write(stringify(data, null, 2))
+    this[symWrite](stringify(data, null, 2))
   }
 }
 
@@ -66,7 +66,7 @@ function splitOptions (options) {
   result.options = Object.assign({}, defaultOptions, options)
   let topKeys = []
   for (const key in result.options) {
-    if (!optionKeys.includes(key)) {
+    if (!Object.keys(defaultOptions).includes(key)) {
       topKeys.push(key)
     }
   }
@@ -81,6 +81,7 @@ function splitOptions (options) {
 
 function stringifyLogItems (items) {
   let result = {msg: [], data: []}
+
   for (const item of items) {
     if (Object.prototype.toString.call(item) === '[object String]') {
       result.msg.push(item)
@@ -95,7 +96,7 @@ function stringifyLogItems (items) {
   }
 
   if (result.msg.length < 1) {
-    result.msg = '""'
+    result.msg = ''
   } else if (result.msg.length === 1) {
     result.msg = result.msg[0]
   }

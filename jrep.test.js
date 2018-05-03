@@ -1,18 +1,16 @@
 require('console-probe').apply()
 
 let output = {}
-const stream = {
-  write: function (text) {
-    output = JSON.parse(text)
-  }
+const write = function (text) {
+  output = JSON.parse(text)
 }
 
 function getType (value) {
   return Object.prototype.toString.call(value).slice(8).slice(0, -1)
 }
 
-const jrep = require('./index')
-// const jrep = require('./jrep')
+// const jrep = require('./index')
+const jrep = require('./jrep')
 const msg1 = 'the quick brown fox'
 const msg2 = 'jumped over the lazy dog'
 const msg3 = 'and back again.'
@@ -30,6 +28,7 @@ describe('logger object tests', () => {
     expect(getType(jrep.create)).toBe('Function')
     const log = jrep.create()
     expect(getType(log.options)).toBe('Object')
+    expect(Object.keys(log.options).length).toBe(3)
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
     expect(getType(log.error)).toBe('Function')
@@ -41,18 +40,20 @@ describe('logger object tests', () => {
   })
   test('options tests', () => {
     let log = jrep.create({ parent: 'true' })
+    expect(log.options.ver).toBe(1)
     expect(log.options.level).toBe('info')
-    expect(log.options.stream).toBeDefined()
+    expect(log.options.write).toBeDefined()
     expect(log.top.parent).toBeTruthy()
-    log = log.child({ level: 'trace', child: 'first' })
+    log = log.child({ ver: 2, level: 'trace', child: 'first' })
+    expect(log.options.ver).toBe(2)
     expect(log.options.level).toBe('trace')
-    expect(log.options.stream).toBeDefined()
+    expect(log.options.write).toBeDefined()
     expect(log.top.parent).toBeTruthy()
     expect(log.top.child).toBeTruthy()
     // console.json(log)
   })
   test('convenience methods', () => {
-    const log = jrep.create({ level: 'debug', stream })
+    const log = jrep.create({ level: 'debug', write })
     const foo = { one: [1, 2, 3], two: { inner: true }, three: 3.14 }
     log.stringify(foo)
     expect(output.one[2]).toBe(3)
@@ -67,12 +68,14 @@ describe('logger object tests', () => {
 })
 
 describe('logger option tests', () => {
-  let log = jrep.create({ level: 'warn', stream, project: 'xyz', session: 12345 })
+  let log = jrep.create({ level: 'warn', write, project: 'xyz', session: 12345 })
   test('top level properties', () => {
     log.warn(msg1, data1)
+    console.log(output)
+    console.json(log)
     expect(Object.keys(output).length).toBe(8)
 
-    expect(output.ver).toBe('1')
+    expect(output.ver).toBe(1)
     expect(getType(output.time)).toBe('Number')
     expect(output.level).toBe('warn')
     expect(output.msg).toBe(msg1)
@@ -85,7 +88,7 @@ describe('logger option tests', () => {
     output = {}
     log.warn(msg2, data2)
     expect(Object.keys(output).length).toBe(9)
-    expect(output.ver).toBe('1')
+    expect(output.ver).toBe(1)
     expect(getType(output.time)).toBe('Number')
     expect(output.level).toBe('warn')
     expect(output.msg).toBe(msg2)
@@ -98,12 +101,12 @@ describe('logger option tests', () => {
 
 describe('logging tests', () => {
   for (const level of levels) {
-    const log = jrep.create({stream, level: level})
+    const log = jrep.create({write, level: level})
 
     test(level + ': one message', () => {
       log[level](msg1)
       expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe('1')
+      expect(output.ver).toBe(1)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(output.msg).toBe(msg1)
@@ -112,7 +115,7 @@ describe('logging tests', () => {
     test(level + ': two messages', () => {
       log[level](msg1, msg2)
       expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe('1')
+      expect(output.ver).toBe(1)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -123,7 +126,7 @@ describe('logging tests', () => {
     test(level + ': two messages one data', () => {
       log[level](msg1, msg2, data1)
       expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe('1')
+      expect(output.ver).toBe(1)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -135,7 +138,7 @@ describe('logging tests', () => {
     test(level + ': two messages two data', () => {
       log[level](msg1, msg2, data1, data2)
       expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe('1')
+      expect(output.ver).toBe(1)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -151,7 +154,7 @@ describe('logging tests', () => {
     test(level + ': two messages two data mixed order', () => {
       log[level](data1, msg2, data2, msg1)
       expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe('1')
+      expect(output.ver).toBe(1)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -169,7 +172,7 @@ describe('logging tests', () => {
 
 describe('logging level tests', () => {
   test('level: fatal', () => {
-    const log = jrep.create({level: 'fatal', stream})
+    const log = jrep.create({level: 'fatal', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     output = {}
@@ -185,7 +188,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: error', () => {
-    const log = jrep.create({level: 'error', stream})
+    const log = jrep.create({level: 'error', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -201,7 +204,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: warn', () => {
-    const log = jrep.create({level: 'warn', stream})
+    const log = jrep.create({level: 'warn', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -217,7 +220,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: info', () => {
-    const log = jrep.create({level: 'info', stream})
+    const log = jrep.create({level: 'info', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -233,7 +236,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: debug', () => {
-    const log = jrep.create({level: 'debug', stream})
+    const log = jrep.create({level: 'debug', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -249,7 +252,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: trace', () => {
-    const log = jrep.create({level: 'trace', stream})
+    const log = jrep.create({level: 'trace', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -266,7 +269,7 @@ describe('logging level tests', () => {
 })
 
 describe('logging error tests', () => {
-  const log = jrep.create({level: 'trace', stream, name: 'error tests'})
+  const log = jrep.create({level: 'trace', write, name: 'error tests'})
   let err1 = new Error(msg1)
   let err2 = new Error(msg2)
 

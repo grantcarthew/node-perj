@@ -38,7 +38,8 @@
       "afterEach",
       "beforeAll",
       "afterAll",
-      "describe"
+      "describe",
+      "location"
     ],
     "ignore": [
       "index.js"

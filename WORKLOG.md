@@ -1,5 +1,5 @@
 # Worklog
 
-Review options.
-Test builds.
 Documentation.
+Replace bithound.
+Run benchmarks with scifi.

@@ -19,7 +19,7 @@ const levels = ['fatal', 'error', 'warn', 'info', 'debug', 'trace']
 const data1 = {foo: 'bar', levels}
 const data2 = {bar: 'foo', answer: 42, levels}
 
-beforeAll(() => {
+beforeEach(() => {
   output = {}
 })
 
@@ -28,7 +28,8 @@ describe('logger object tests', () => {
     expect(getType(jrep.create)).toBe('Function')
     const log = jrep.create()
     expect(getType(log.options)).toBe('Object')
-    expect(Object.keys(log.options).length).toBe(3)
+    expect(Object.keys(log.options).length).toBe(4)
+    expect(getType(log.options.levels)).toBe('Object')
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
     expect(getType(log.error)).toBe('Function')
@@ -36,20 +37,23 @@ describe('logger object tests', () => {
     expect(getType(log.info)).toBe('Function')
     expect(getType(log.debug)).toBe('Function')
     expect(getType(log.trace)).toBe('Function')
-    expect(getType(log.levels)).toBe('Object')
   })
   test('options tests', () => {
-    let log = jrep.create({ parent: 'true' })
+    let log = jrep.create({ foo: 'bar' })
     expect(log.options.ver).toBe(1)
     expect(log.options.level).toBe('info')
     expect(log.options.write).toBeDefined()
-    expect(log.top.parent).toBeTruthy()
-    log = log.child({ ver: 2, level: 'trace', child: 'first' })
+    expect(log.top.foo).toBe('bar')
+    let custLevels = Object.assign({}, log.options.levels)
+    custLevels.silly = 42
+    log = log.child({ ver: 2, levels: custLevels, level: 'trace', baz: true })
     expect(log.options.ver).toBe(2)
+    expect(log.options.levels.silly).toBe(42)
+    expect(getType(log.silly)).toBe('Function')
     expect(log.options.level).toBe('trace')
     expect(log.options.write).toBeDefined()
-    expect(log.top.parent).toBeTruthy()
-    expect(log.top.child).toBeTruthy()
+    expect(log.top.foo).toBe('bar')
+    expect(log.top.baz).toBe(true)
     // console.json(log)
   })
   test('convenience methods', () => {
@@ -71,8 +75,6 @@ describe('logger option tests', () => {
   let log = jrep.create({ level: 'warn', write, project: 'xyz', session: 12345 })
   test('top level properties', () => {
     log.warn(msg1, data1)
-    console.log(output)
-    console.json(log)
     expect(Object.keys(output).length).toBe(8)
 
     expect(output.ver).toBe(1)

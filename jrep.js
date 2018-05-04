@@ -1,11 +1,19 @@
-const symLogAssignment = Symbol('Log Levels Function Assignment')
-const symWrite = Symbol('Log Write Output Function')
-const symHeaders = Symbol('Log Headers')
-const symTopAsString = Symbol('Top Level Property String')
+const symApplyOptions = Symbol('ApplyOptions')
+const symTopAsString = Symbol('TopAsString')
+const symWrite = Symbol('Write')
+const symHeaders = Symbol('Headers')
+const symLogAssignment = Symbol('LogAssignment')
 
-const levels = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 }
 const defaultOptions = {
   ver: 1,
+  levels: {
+    fatal: 60,
+    error: 50,
+    warn: 40,
+    info: 30,
+    debug: 20,
+    trace: 10
+  },
   level: 'info',
   write: process.stdout.write.bind(process.stdout)
 }
@@ -17,11 +25,14 @@ module.exports = Object.freeze({
 })
 
 class Jrep {
-  constructor (obj) {
-    this.levels = levels
-    const split = splitOptions(obj)
-    this.options = split.options
-    this.top = split.top
+  constructor (options) {
+    this[symApplyOptions](options)
+  }
+
+  [symApplyOptions] (options) {
+    const split = splitOptions(options)
+    this.options = Object.freeze(split.options)
+    this.top = Object.freeze(split.top)
     this[symTopAsString] = split.topAsString
     this[symWrite] = this.options.write
     this[symHeaders] = {}
@@ -29,10 +40,10 @@ class Jrep {
   }
 
   [symLogAssignment] () {
-    Object.keys(this.levels).forEach((level) => {
-      this[symHeaders][level] = `{"ver":${this.options.ver},"level":"${level}","lvl":${this.levels[level]}${this[symTopAsString]},"time":`
+    Object.keys(this.options.levels).forEach((level) => {
+      this[symHeaders][level] = `{"ver":${this.options.ver},"level":"${level}","lvl":${this.options.levels[level]}${this[symTopAsString]},"time":`
       this[level] = function (...items) {
-        if (this.levels[this.options.level] > this.levels[level]) { return }
+        if (this.options.levels[this.options.level] > this.options.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
         const splitItems = stringifyLogItems(items)
         text += ',"msg":' + splitItems.msg
@@ -44,7 +55,11 @@ class Jrep {
   }
 
   child (options) {
-    return new Jrep(Object.assign({}, this.options, this.top, options))
+    const newOpts = Object.assign({}, this.options, this.top, options)
+    const newChild = Object.create(this)
+    newChild[symApplyOptions](newOpts)
+    newChild.parent = this
+    return newChild
   }
 
   stringify (obj, replacer, spacer) {

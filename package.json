@@ -39,7 +39,9 @@
       "beforeAll",
       "afterAll",
       "describe",
-      "location"
+      "location",
+      "SharedArrayBuffer",
+      "Atomics"
     ],
     "ignore": [
       "index.js"

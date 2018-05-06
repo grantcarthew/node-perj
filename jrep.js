@@ -1,11 +1,9 @@
 const symApplyOptions = Symbol('ApplyOptions')
 const symTopAsString = Symbol('TopAsString')
-const symWrite = Symbol('Write')
 const symHeaders = Symbol('Headers')
 const symLogAssignment = Symbol('LogAssignment')
 
 const defaultOptions = {
-  ver: 1,
   levels: {
     fatal: 60,
     error: 50,
@@ -15,7 +13,9 @@ const defaultOptions = {
     trace: 10
   },
   level: 'info',
-  write: process.stdout.write.bind(process.stdout)
+  write: process.stdout.write.bind(process.stdout),
+  messageKey: 'msg',
+  dataKey: 'data'
 }
 
 module.exports = Object.freeze({
@@ -34,22 +34,21 @@ class Jrep {
     this.options = Object.freeze(split.options)
     this.top = Object.freeze(split.top)
     this[symTopAsString] = split.topAsString
-    this[symWrite] = this.options.write
     this[symHeaders] = {}
     this[symLogAssignment]()
   }
 
   [symLogAssignment] () {
     Object.keys(this.options.levels).forEach((level) => {
-      this[symHeaders][level] = `{"ver":${this.options.ver},"level":"${level}","lvl":${this.options.levels[level]}${this[symTopAsString]},"time":`
+      this[symHeaders][level] = `{"level":"${level}","lvl":${this.options.levels[level]}${this[symTopAsString]},"time":`
       this[level] = function (...items) {
         if (this.options.levels[this.options.level] > this.options.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
         const splitItems = stringifyLogItems(items)
-        text += ',"msg":' + splitItems.msg
-        text += ',"data":' + splitItems.data + '}\n'
+        text += ',"' + this.options.messageKey + '":' + splitItems.msg
+        text += ',"' + this.options.dataKey + '":' + splitItems.data + '}\n'
 
-        this[symWrite](text)
+        this.options.write(text)
       }
     })
   }
@@ -63,11 +62,11 @@ class Jrep {
   }
 
   stringify (obj, replacer, spacer) {
-    this[symWrite](stringify(obj, replacer, spacer))
+    this.options.write(stringify(obj, replacer, spacer))
   }
 
   json (data) {
-    this[symWrite](stringify(data, null, 2))
+    this.options.write(stringify(data, null, 2))
   }
 }
 

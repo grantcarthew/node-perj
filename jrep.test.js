@@ -16,7 +16,7 @@ const msg2 = 'jumped over the lazy dog'
 const msg3 = 'and back again.'
 const msg4 = 'that crazy dog!'
 const levels = ['fatal', 'error', 'warn', 'info', 'debug', 'trace']
-const data1 = {foo: 'bar', levels}
+const data1 = {foo: 'bar', baz: [1, 2, 3, 4]}
 const data2 = {bar: 'foo', answer: 42, levels}
 
 beforeEach(() => {
@@ -28,7 +28,7 @@ describe('logger object tests', () => {
     expect(getType(jrep.create)).toBe('Function')
     const log = jrep.create()
     expect(getType(log.options)).toBe('Object')
-    expect(Object.keys(log.options).length).toBe(4)
+    expect(Object.keys(log.options).length).toBe(5)
     expect(getType(log.options.levels)).toBe('Object')
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
@@ -40,17 +40,22 @@ describe('logger object tests', () => {
   })
   test('options tests', () => {
     let log = jrep.create({ foo: 'bar' })
-    expect(log.options.ver).toBe(1)
     expect(log.options.level).toBe('info')
     expect(log.options.write).toBeDefined()
     expect(log.top.foo).toBe('bar')
     let custLevels = Object.assign({}, log.options.levels)
     custLevels.silly = 42
-    log = log.child({ ver: 2, levels: custLevels, level: 'trace', baz: true })
-    expect(log.options.ver).toBe(2)
+    log = log.child({
+      levels: custLevels,
+      level: 'trace',
+      messageKey: 'monkey',
+      dataKey: 'bear',
+      baz: true })
     expect(log.options.levels.silly).toBe(42)
     expect(getType(log.silly)).toBe('Function')
     expect(log.options.level).toBe('trace')
+    expect(log.options.messageKey).toBe('monkey')
+    expect(log.options.dataKey).toBe('bear')
     expect(log.options.write).toBeDefined()
     expect(log.top.foo).toBe('bar')
     expect(log.top.baz).toBe(true)
@@ -72,31 +77,38 @@ describe('logger object tests', () => {
 })
 
 describe('logger option tests', () => {
-  let log = jrep.create({ level: 'warn', write, project: 'xyz', session: 12345 })
+  let log = jrep.create({
+    levels: { foo: 100, bar: 200 },
+    level: 'foo',
+    write,
+    messageKey: 'penguin',
+    dataKey: 'fish',
+    project: 'elephant',
+    session: 12345
+  })
   test('top level properties', () => {
-    log.warn(msg1, data1)
-    expect(Object.keys(output).length).toBe(8)
+    log.foo(msg1, data1)
+    console.json(output)
+    expect(Object.keys(output).length).toBe(7)
 
-    expect(output.ver).toBe(1)
+    expect(output.level).toBe('foo')
     expect(getType(output.time)).toBe('Number')
-    expect(output.level).toBe('warn')
-    expect(output.msg).toBe(msg1)
-    expect(output.data).toMatchObject(data1)
-    expect(data1).toMatchObject(output.data)
-    expect(output.project).toBe('xyz')
+    expect(output.penguin).toBe(msg1)
+    expect(output.fish).toMatchObject(data1)
+    expect(data1).toMatchObject(output.fish)
+    expect(output.project).toBe('elephant')
   })
   test('child logger properties', () => {
     log = log.child({ env: 'dev' })
     output = {}
-    log.warn(msg2, data2)
-    expect(Object.keys(output).length).toBe(9)
-    expect(output.ver).toBe(1)
+    log.bar(msg2, data2)
+    expect(Object.keys(output).length).toBe(8)
     expect(getType(output.time)).toBe('Number')
-    expect(output.level).toBe('warn')
-    expect(output.msg).toBe(msg2)
-    expect(output.data).toMatchObject(data2)
-    expect(data2).toMatchObject(output.data)
-    expect(output.project).toBe('xyz')
+    expect(output.level).toBe('bar')
+    expect(output.penguin).toBe(msg2)
+    expect(output.fish).toMatchObject(data2)
+    expect(data2).toMatchObject(output.fish)
+    expect(output.project).toBe('elephant')
     expect(output.env).toBe('dev')
   })
 })
@@ -107,8 +119,7 @@ describe('logging tests', () => {
 
     test(level + ': one message', () => {
       log[level](msg1)
-      expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe(1)
+      expect(Object.keys(output).length).toBe(5)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(output.msg).toBe(msg1)
@@ -116,8 +127,7 @@ describe('logging tests', () => {
     })
     test(level + ': two messages', () => {
       log[level](msg1, msg2)
-      expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe(1)
+      expect(Object.keys(output).length).toBe(5)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -127,8 +137,7 @@ describe('logging tests', () => {
     })
     test(level + ': two messages one data', () => {
       log[level](msg1, msg2, data1)
-      expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe(1)
+      expect(Object.keys(output).length).toBe(5)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -139,8 +148,7 @@ describe('logging tests', () => {
     })
     test(level + ': two messages two data', () => {
       log[level](msg1, msg2, data1, data2)
-      expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe(1)
+      expect(Object.keys(output).length).toBe(5)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')
@@ -155,8 +163,7 @@ describe('logging tests', () => {
     })
     test(level + ': two messages two data mixed order', () => {
       log[level](data1, msg2, data2, msg1)
-      expect(Object.keys(output).length).toBe(6)
-      expect(output.ver).toBe(1)
+      expect(Object.keys(output).length).toBe(5)
       expect(getType(output.time)).toBe('Number')
       expect(output.level).toBe(level)
       expect(getType(output.msg)).toBe('Array')

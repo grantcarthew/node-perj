@@ -17,22 +17,22 @@ const jlog = jrep.create({hostname, pid, write: dest.write.bind(dest)})
 const plog = pino(dest)
 
 const run = bench([
-  function jrepCommonOperations (done) {
-    job(jlog)
-    setImmediate(done)
-  },
-  function pinoCommonOperations (done) {
-    job(plog)
-    setImmediate(done)
-  },
-  function jrepCommonWithError (done) {
-    jobWithError(jlog)
-    setImmediate(done)
-  },
-  function pinoCommonWithError (done) {
-    jobWithError(plog)
-    setImmediate(done)
-  },
+  // function jrepCommonOperations (done) {
+  //   job(jlog)
+  //   setImmediate(done)
+  // },
+  // function pinoCommonOperations (done) {
+  //   job(plog)
+  //   setImmediate(done)
+  // },
+  // function jrepCommonWithError (done) {
+  //   jobWithError(jlog)
+  //   setImmediate(done)
+  // },
+  // function pinoCommonWithError (done) {
+  //   jobWithError(plog)
+  //   setImmediate(done)
+  // },
   function jrepCommonWithChild (done) {
     jobWithChild(jlog)
     setImmediate(done)

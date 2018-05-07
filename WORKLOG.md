@@ -3,5 +3,7 @@
 Documentation.
 Replace bithound.
 Run benchmarks with scifi.
-Check level against levels object in options.
+Split options has been improved. Need to look at creating child logger without logger options, only top values. Using parent methods.
 
+Return benchmarks to normal.
+pino child: 24sec, jrep child: 50sec

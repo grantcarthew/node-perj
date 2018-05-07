@@ -35,7 +35,7 @@ class Jrep {
     const split = splitOptions(options)
     this.options = Object.freeze(split.options)
     this.top = Object.freeze(split.top)
-    this[symTopAsString] = split.topAsString
+    this[symTopAsString] = genTopString(this.top)
     this[symHeaders] = {}
     this[symLogAssignment]()
   }
@@ -73,29 +73,31 @@ class Jrep {
 }
 
 function splitOptions (options) {
-  let result = {
-    options: defaultOptions,
-    top: {},
-    topAsString: ''
+  const result = {
+    options: Object.assign({}, defaultOptions),
+    top: {}
   }
   if (!options) { return result }
-  result.options = Object.assign({}, defaultOptions, options)
+  const defaultKeys = Object.keys(defaultOptions)
+  for (const key in options) {
+    if (defaultKeys.includes(key)) {
+      result.options[key] = options[key]
+    } else {
+      result.top[key] = options[key]
+    }
+  }
   if (!(Object.keys(result.options.levels).includes(result.options.level))) {
     throw new Error('The level option must be a valid key in the levels object.')
   }
-  let topKeys = []
-  for (const key in result.options) {
-    if (!Object.keys(defaultOptions).includes(key)) {
-      topKeys.push(key)
-    }
-  }
-  if (topKeys.length < 1) { return result }
-  for (const topKey of topKeys) {
-    result.top[topKey] = result.options[topKey]
-    result.topAsString += ',"' + topKey + '":' + stringify(result.options[topKey])
-    delete result.options[topKey]
-  }
   return result
+}
+
+function genTopString (tops) {
+  let topAsString = ''
+  for (const key in tops) {
+    topAsString += ',"' + key + '":' + stringify(tops[key])
+  }
+  return topAsString
 }
 
 function stringifyLogItems (items) {

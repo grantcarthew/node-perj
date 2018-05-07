@@ -13,9 +13,11 @@ const defaultOptions = {
     trace: 10
   },
   level: 'info',
-  write: process.stdout.write.bind(process.stdout),
+  levelNumberKey: 'lvl',
+  dateTimeKey: 'time',
   messageKey: 'msg',
-  dataKey: 'data'
+  dataKey: 'data',
+  write: process.stdout.write.bind(process.stdout)
 }
 
 module.exports = Object.freeze({
@@ -40,7 +42,7 @@ class Jrep {
 
   [symLogAssignment] () {
     Object.keys(this.options.levels).forEach((level) => {
-      this[symHeaders][level] = `{"level":"${level}","lvl":${this.options.levels[level]}${this[symTopAsString]},"time":`
+      this[symHeaders][level] = `{"level":"${level}","${this.options.levelNumberKey}":${this.options.levels[level]}${this[symTopAsString]},"${this.options.dateTimeKey}":`
       this[level] = function (...items) {
         if (this.options.levels[this.options.level] > this.options.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
@@ -56,8 +58,8 @@ class Jrep {
   child (options) {
     const newOpts = Object.assign({}, this.options, this.top, options)
     const newChild = Object.create(this)
-    newChild[symApplyOptions](newOpts)
     newChild.parent = this
+    newChild[symApplyOptions](newOpts)
     return newChild
   }
 
@@ -78,6 +80,9 @@ function splitOptions (options) {
   }
   if (!options) { return result }
   result.options = Object.assign({}, defaultOptions, options)
+  if (!(Object.keys(result.options.levels).includes(result.options.level))) {
+    throw new Error('The level option must be a valid key in the levels object.')
+  }
   let topKeys = []
   for (const key in result.options) {
     if (!Object.keys(defaultOptions).includes(key)) {
@@ -94,25 +99,23 @@ function splitOptions (options) {
 }
 
 function stringifyLogItems (items) {
-  let result = {msg: [], data: []}
+  let result = {msg: '', data: []}
 
   for (const item of items) {
     if (Object.prototype.toString.call(item) === '[object String]') {
-      result.msg.push(item)
+      if (result.msg) {
+        result.data.push(item)
+      } else {
+        result.msg = item
+      }
       continue
     }
     if (item instanceof Error) {
       result.data.push(serializerr(item))
-      result.msg.push(item.message)
+      if (!result.msg) { result.msg = item.message }
       continue
     }
     result.data.push(item)
-  }
-
-  if (result.msg.length < 1) {
-    result.msg = ''
-  } else if (result.msg.length === 1) {
-    result.msg = result.msg[0]
   }
 
   if (result.data.length < 1) {

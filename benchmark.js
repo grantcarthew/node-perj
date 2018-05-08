@@ -9,30 +9,31 @@ const bench = require('fastbench')
 const fs = require('fs')
 const hostname = require('os').hostname
 const pid = process.pid
+const v = 1
 const dest = fs.createWriteStream('/dev/null')
 const scifi = require('./data-scifi')
 
 // Adding hostname and pid to match pino log string
-const jlog = jrep.create({hostname, pid, write: dest.write.bind(dest)})
+const jlog = jrep.create({v, hostname, pid, write: dest.write.bind(dest)})
 const plog = pino(dest)
 
 const run = bench([
-  // function jrepCommonOperations (done) {
-  //   job(jlog)
-  //   setImmediate(done)
-  // },
-  // function pinoCommonOperations (done) {
-  //   job(plog)
-  //   setImmediate(done)
-  // },
-  // function jrepCommonWithError (done) {
-  //   jobWithError(jlog)
-  //   setImmediate(done)
-  // },
-  // function pinoCommonWithError (done) {
-  //   jobWithError(plog)
-  //   setImmediate(done)
-  // },
+  function jrepCommonOperations (done) {
+    job(jlog)
+    setImmediate(done)
+  },
+  function pinoCommonOperations (done) {
+    job(plog)
+    setImmediate(done)
+  },
+  function jrepCommonWithError (done) {
+    jobWithError(jlog)
+    setImmediate(done)
+  },
+  function pinoCommonWithError (done) {
+    jobWithError(plog)
+    setImmediate(done)
+  },
   function jrepCommonWithChild (done) {
     jobWithChild(jlog)
     setImmediate(done)

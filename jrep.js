@@ -17,7 +17,13 @@ const defaultOptions = {
   dateTimeKey: 'time',
   messageKey: 'msg',
   dataKey: 'data',
-  write: process.stdout.write.bind(process.stdout)
+  write: defaultWriter()
+}
+
+function defaultWriter () {
+  const isBrowser = typeof window !== 'undefined' &&
+    Object.prototype.toString.call(window) === '[object Window]'
+  return isBrowser ? console.log : process.stdout.write.bind(process.stdout)
 }
 
 module.exports = Object.freeze({
@@ -43,6 +49,7 @@ class Jrep {
   [symLogAssignment] () {
     Object.keys(this.options.levels).forEach((level) => {
       this[symHeaders][level] = `{"level":"${level}","${this.options.levelNumberKey}":${this.options.levels[level]}${this[symTopAsString]},"${this.options.dateTimeKey}":`
+      if (this.parent) { return }
       this[level] = function (...items) {
         if (this.options.levels[this.options.level] > this.options.levels[level]) { return }
         let text = this[symHeaders][level] + (new Date()).getTime()
@@ -55,11 +62,22 @@ class Jrep {
     })
   }
 
-  child (options) {
-    const newOpts = Object.assign({}, this.options, this.top, options)
+  child (tops) {
+    if (!tops) {
+      throw new Error('Provide top level arguments to create a child logger.')
+    }
+    const defaultKeys = Object.keys(defaultOptions)
+    let newTops = {}
+    for (const key in tops) {
+      if (!defaultKeys.includes(key)) {
+        newTops[key] = tops[key]
+      }
+    }
     const newChild = Object.create(this)
     newChild.parent = this
-    newChild[symApplyOptions](newOpts)
+    newChild.top = Object.freeze(Object.assign({}, this.top, newTops))
+    newChild[symTopAsString] = genTopString(newChild.top)
+    newChild[symLogAssignment]()
     return newChild
   }
 

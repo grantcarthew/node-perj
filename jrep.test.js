@@ -39,19 +39,42 @@ describe('logger object tests', () => {
     expect(getType(log.trace)).toBe('Function')
   })
   test('options tests', () => {
-    let log = jrep.create({ foo: 'bar' })
-    expect(log.options.level).toBe('info')
-    expect(log.options.write).toBeDefined()
-    expect(log.top.foo).toBe('bar')
+    let log = jrep.create()
     let custLevels = Object.assign({}, log.options.levels)
     custLevels.silly = 42
-    log = log.child({
+    log = jrep.create({
       levels: custLevels,
       level: 'trace',
       levelNumberKey: 'levelNo',
       dateTimeKey: 'datetime',
       messageKey: 'message',
       dataKey: 'objectData',
+      write,
+      foo: 'bar' })
+    expect(log.options.levels.silly).toBe(42)
+    expect(getType(log.silly)).toBe('Function')
+    expect(log.options.level).toBe('trace')
+    expect(log.options.levelNumberKey).toBe('levelNo')
+    expect(log.options.dateTimeKey).toBe('datetime')
+    expect(log.options.messageKey).toBe('message')
+    expect(log.options.dataKey).toBe('objectData')
+    expect(log.options.write).toBeDefined()
+    expect(log.top.foo).toBe('bar')
+    log.silly(msg1, data1)
+    expect(output.level).toBe('silly')
+    expect(output.levelNo).toBe(42)
+    expect(getType(output.datetime)).toBe('Number')
+    expect(output.message).toBe(msg1)
+    expect(output.objectData).toMatchObject(data1)
+    expect(data1).toMatchObject(output.objectData)
+    custLevels.crazy = 43
+    log = log.child({
+      levels: custLevels,
+      level: 'debug',
+      levelNumberKey: 'childLevelNo',
+      dateTimeKey: 'childDatetime',
+      messageKey: 'childMessage',
+      dataKey: 'childObjectData',
       write,
       baz: true })
     expect(log.options.levels.silly).toBe(42)
@@ -93,34 +116,42 @@ describe('logger option tests', () => {
     levels: { foo: 100, bar: 200 },
     level: 'foo',
     write,
-    messageKey: 'penguin',
-    dataKey: 'fish',
+    messageKey: 'newMessageKey',
+    dataKey: 'newDataKey',
     project: 'elephant',
-    session: 12345
+    session: 12345,
+    platform: {
+      name: 'node',
+      pid: 1234
+    }
   })
   test('top level properties', () => {
     log.foo(msg1, data1)
-    expect(Object.keys(output).length).toBe(7)
-
+    expect(Object.keys(output).length).toBe(8)
     expect(output.level).toBe('foo')
     expect(getType(output.time)).toBe('Number')
-    expect(output.penguin).toBe(msg1)
-    expect(output.fish).toMatchObject(data1)
-    expect(data1).toMatchObject(output.fish)
+    expect(output.newMessageKey).toBe(msg1)
+    expect(output.newDataKey).toMatchObject(data1)
     expect(output.project).toBe('elephant')
+    expect(output.session).toBe(12345)
+    expect(output.platform.name).toBe('node')
+    expect(output.platform.pid).toBe(1234)
+    expect(data1).toMatchObject(output.newDataKey)
+    expect(output.newDataKey).toMatchObject(data1)
   })
   test('child logger properties', () => {
     log = log.child({ env: 'dev' })
     output = {}
     log.bar(msg2, data2)
-    expect(Object.keys(output).length).toBe(8)
+    expect(Object.keys(output).length).toBe(9)
     expect(getType(output.time)).toBe('Number')
     expect(output.level).toBe('bar')
-    expect(output.penguin).toBe(msg2)
-    expect(output.fish).toMatchObject(data2)
-    expect(data2).toMatchObject(output.fish)
+    expect(output.newMessageKey).toBe(msg2)
+    expect(output.newDataKey).toMatchObject(data2)
+    expect(data2).toMatchObject(output.newDataKey)
     expect(output.project).toBe('elephant')
     expect(output.env).toBe('dev')
+    expect(() => { log.child() }).toThrow('Provide top level arguments to create a child logger.')
   })
 })
 

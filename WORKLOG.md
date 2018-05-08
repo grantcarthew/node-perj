@@ -7,3 +7,5 @@ Split options has been improved. Need to look at creating child logger without l
 
 Return benchmarks to normal.
 pino child: 24sec, jrep child: 50sec
+
+Check for browser and replace the write function with console. Process is not defined.

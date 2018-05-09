@@ -1,5 +1,6 @@
+const symSplitOptions = Symbol('SplitOptions')
 const symApplyOptions = Symbol('ApplyOptions')
-const symTopAsString = Symbol('TopAsString')
+const symTopString = Symbol('TopString')
 const symHeaders = Symbol('Headers')
 const symLogAssignment = Symbol('LogAssignment')
 
@@ -34,28 +35,38 @@ module.exports = Object.freeze({
 
 class Jrep {
   constructor (options) {
-    this[symApplyOptions](options)
-  }
-
-  [symApplyOptions] (options) {
-    const split = splitOptions(options)
-    this.options = Object.freeze(split.options)
-    this.top = Object.freeze(split.top)
-    this[symTopAsString] = genTopString(this.top)
+    this[symTopString] = ''
+    this[symSplitOptions](options)
     this[symHeaders] = {}
     this[symLogAssignment]()
   }
 
+  [symSplitOptions] (options) {
+    this.options = Object.assign({}, defaultOptions)
+    if (!options) { return }
+    for (const key in options) {
+      if (defaultOptions.hasOwnProperty(key)) {
+        this.options[key] = options[key]
+      } else {
+        this[symTopString] += ',"' + key + '":' + stringify(options[key])
+      }
+    }
+    if (!(this.options.levels.hasOwnProperty(this.options.level))) {
+      throw new Error('The level option must be a valid key in the levels object.')
+    }
+  }
+
   [symLogAssignment] () {
     Object.keys(this.options.levels).forEach((level) => {
-      this[symHeaders][level] = `{"level":"${level}","${this.options.levelNumberKey}":${this.options.levels[level]}${this[symTopAsString]},"${this.options.dateTimeKey}":`
+      this[symHeaders][level] = `{"level":"${level}","${this.options.levelNumberKey}":${this.options.levels[level]}${this[symTopString]},"${this.options.dateTimeKey}":`
       if (this.parent) { return }
+
       this[level] = function (...items) {
         if (this.options.levels[this.options.level] > this.options.levels[level]) { return }
-        let text = this[symHeaders][level] + (new Date()).getTime()
         const splitItems = stringifyLogItems(items)
-        text += ',"' + this.options.messageKey + '":' + splitItems.msg
-        text += ',"' + this.options.dataKey + '":' + splitItems.data + '}\n'
+        const text = this[symHeaders][level] + (new Date()).getTime() +
+          ',"' + this.options.messageKey + '":"' + splitItems.msg +
+          '","' + this.options.dataKey + '":' + splitItems.data + '}\n'
 
         this.options.write(text)
       }
@@ -66,17 +77,13 @@ class Jrep {
     if (!tops) {
       throw new Error('Provide top level arguments to create a child logger.')
     }
-    const defaultKeys = Object.keys(defaultOptions)
-    let newTops = {}
+    const newChild = Object.create(this)
     for (const key in tops) {
-      if (!defaultKeys.includes(key)) {
-        newTops[key] = tops[key]
+      if (!defaultOptions.hasOwnProperty(key)) {
+        newChild[symTopString] += ',"' + key + '":' + stringify(tops[key])
       }
     }
-    const newChild = Object.create(this)
     newChild.parent = this
-    newChild.top = Object.freeze(Object.assign({}, this.top, newTops))
-    newChild[symTopAsString] = genTopString(newChild.top)
     newChild[symLogAssignment]()
     return newChild
   }
@@ -88,34 +95,6 @@ class Jrep {
   json (data) {
     this.options.write(stringify(data, null, 2))
   }
-}
-
-function splitOptions (options) {
-  const result = {
-    options: Object.assign({}, defaultOptions),
-    top: {}
-  }
-  if (!options) { return result }
-  const defaultKeys = Object.keys(defaultOptions)
-  for (const key in options) {
-    if (defaultKeys.includes(key)) {
-      result.options[key] = options[key]
-    } else {
-      result.top[key] = options[key]
-    }
-  }
-  if (!(Object.keys(result.options.levels).includes(result.options.level))) {
-    throw new Error('The level option must be a valid key in the levels object.')
-  }
-  return result
-}
-
-function genTopString (tops) {
-  let topAsString = ''
-  for (const key in tops) {
-    topAsString += ',"' + key + '":' + stringify(tops[key])
-  }
-  return topAsString
 }
 
 function stringifyLogItems (items) {
@@ -144,7 +123,6 @@ function stringifyLogItems (items) {
     result.data = result.data[0]
   }
 
-  result.msg = stringify(result.msg)
   result.data = stringify(result.data)
   return result
 }

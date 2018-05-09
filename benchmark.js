@@ -33,28 +33,28 @@ const run = bench([
   //   // jlog.info({ foo: 'bar' })
   //   setImmediate(done)
   // }
-  function pinoCommonOperations (done) {
-    job(plog)
-    setImmediate(done)
-  },
   function jrepCommonOperations (done) {
     job(jlog)
     setImmediate(done)
   },
-  function pinoCommonWithError (done) {
-    jobWithError(plog)
+  function pinoCommonOperations (done) {
+    job(plog)
     setImmediate(done)
   },
   function jrepCommonWithError (done) {
     jobWithError(jlog)
     setImmediate(done)
   },
-  function pinoCommonWithChild (done) {
-    jobWithChild(plog)
+  function pinoCommonWithError (done) {
+    jobWithError(plog)
     setImmediate(done)
   },
   function jrepCommonWithChild (done) {
     jobWithChild(jlog)
+    setImmediate(done)
+  },
+  function pinoCommonWithChild (done) {
+    jobWithChild(plog)
     setImmediate(done)
   }
 ], 1000000)

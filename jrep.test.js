@@ -27,9 +27,8 @@ describe('logger object tests', () => {
   test('member tests', () => {
     expect(getType(jrep.create)).toBe('Function')
     const log = jrep.create()
-    expect(getType(log.options)).toBe('Object')
-    expect(Object.keys(log.options).length).toBe(7)
-    expect(getType(log.options.levels)).toBe('Object')
+    expect(getType(log.level)).toBe('String')
+    expect(log.level).toBe('info')
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
     expect(getType(log.error)).toBe('Function')
@@ -40,7 +39,7 @@ describe('logger object tests', () => {
   })
   test('options tests', () => {
     let log = jrep.create()
-    let custLevels = Object.assign({}, log.options.levels)
+    let custLevels = Object.assign({}, log.levels)
     custLevels.silly = 42
     log = jrep.create({
       levels: custLevels,
@@ -51,16 +50,10 @@ describe('logger object tests', () => {
       dataKey: 'objectData',
       write,
       foo: 'bar' })
-    expect(log.options.levels.silly).toBe(42)
+    expect(log.levels.silly).toBe(42)
     expect(getType(log.silly)).toBe('Function')
-    expect(log.options.level).toBe('trace')
-    expect(log.options.levelNumberKey).toBe('levelNo')
-    expect(log.options.dateTimeKey).toBe('datetime')
-    expect(log.options.messageKey).toBe('message')
-    expect(log.options.dataKey).toBe('objectData')
-    expect(log.options.write).toBeDefined()
-    // expect(log.top.foo).toBe('bar')
-    console.probe(log)
+    expect(log.level).toBe('trace')
+    expect(log.write).toBeDefined()
     log.silly(msg1, data1)
     expect(output.level).toBe('silly')
     expect(output.levelNo).toBe(42)
@@ -78,16 +71,10 @@ describe('logger object tests', () => {
       dataKey: 'childObjectData',
       write,
       baz: true })
-    expect(log.options.levels.silly).toBe(42)
+    expect(log.levels.silly).toBe(42)
     expect(getType(log.silly)).toBe('Function')
-    expect(log.options.level).toBe('trace')
-    expect(log.options.levelNumberKey).toBe('levelNo')
-    expect(log.options.dateTimeKey).toBe('datetime')
-    expect(log.options.messageKey).toBe('message')
-    expect(log.options.dataKey).toBe('objectData')
-    expect(log.options.write).toBeDefined()
-    // expect(log.top.foo).toBe('bar')
-    // expect(log.top.baz).toBe(true)
+    expect(log.level).toBe('trace')
+    expect(log.write).toBeDefined()
     log.silly(msg1, data1)
     expect(output.level).toBe('silly')
     expect(output.levelNo).toBe(42)

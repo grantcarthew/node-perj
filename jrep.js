@@ -1,5 +1,5 @@
 const symSplitOptions = Symbol('SplitOptions')
-const symApplyOptions = Symbol('ApplyOptions')
+const symOptions = Symbol('Options')
 const symTopString = Symbol('TopString')
 const symHeaders = Symbol('Headers')
 const symLogAssignment = Symbol('LogAssignment')
@@ -35,40 +35,60 @@ module.exports = Object.freeze({
 
 class Jrep {
   constructor (options) {
+    this[symOptions] = Object.assign({}, defaultOptions)
     this[symTopString] = ''
     this[symSplitOptions](options)
     this[symHeaders] = {}
     this[symLogAssignment]()
   }
 
+  get level () {
+    return this[symOptions].level
+  }
+
+  set level (level) {
+    if (!(this[symOptions].levels.hasOwnProperty(level))) {
+      throw new Error('The level option must be a valid key in the levels object.')
+    }
+    this[symOptions].level = level
+  }
+
+  get levels () {
+    return this[symOptions].levels
+  }
+
+  get write () {
+    return this[symOptions].write
+  }
+
   [symSplitOptions] (options) {
-    this.options = Object.assign({}, defaultOptions)
     if (!options) { return }
     for (const key in options) {
       if (defaultOptions.hasOwnProperty(key)) {
-        this.options[key] = options[key]
+        if (key === 'level') {
+          this.level = options[key]
+          continue
+        }
+        this[symOptions][key] = options[key]
       } else {
         this[symTopString] += ',"' + key + '":' + stringify(options[key])
       }
     }
-    if (!(this.options.levels.hasOwnProperty(this.options.level))) {
-      throw new Error('The level option must be a valid key in the levels object.')
-    }
   }
 
   [symLogAssignment] () {
-    Object.keys(this.options.levels).forEach((level) => {
-      this[symHeaders][level] = `{"level":"${level}","${this.options.levelNumberKey}":${this.options.levels[level]}${this[symTopString]},"${this.options.dateTimeKey}":`
+    Object.keys(this[symOptions].levels).forEach((level) => {
+      this[symHeaders][level] = `{"level":"${level}","${this[symOptions].levelNumberKey}":${this[symOptions].levels[level]}${this[symTopString]},"${this[symOptions].dateTimeKey}":`
       if (this.parent) { return }
 
       this[level] = function (...items) {
-        if (this.options.levels[this.options.level] > this.options.levels[level]) { return }
+        if (this[symOptions].levels[this[symOptions].level] > this[symOptions].levels[level]) { return }
         const splitItems = stringifyLogItems(items)
         const text = this[symHeaders][level] + (new Date()).getTime() +
-          ',"' + this.options.messageKey + '":"' + splitItems.msg +
-          '","' + this.options.dataKey + '":' + splitItems.data + '}\n'
+          ',"' + this[symOptions].messageKey + '":"' + splitItems.msg +
+          '","' + this[symOptions].dataKey + '":' + splitItems.data + '}\n'
 
-        this.options.write(text)
+        this[symOptions].write(text)
       }
     })
   }
@@ -89,11 +109,11 @@ class Jrep {
   }
 
   stringify (obj, replacer, spacer) {
-    this.options.write(stringify(obj, replacer, spacer))
+    this[symOptions].write(stringify(obj, replacer, spacer))
   }
 
   json (data) {
-    this.options.write(stringify(data, null, 2))
+    this[symOptions].write(stringify(data, null, 2))
   }
 }
 

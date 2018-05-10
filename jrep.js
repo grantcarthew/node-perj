@@ -61,7 +61,7 @@ class Jrep {
     return this[symOptions].levels
   }
 
-  set levels (newLevels) {
+  addLevel (newLevels) {
     for (const level in newLevels) {
       if (this[level]) { continue }
       this[symOptions].levels[level] = newLevels[level]
@@ -95,7 +95,10 @@ class Jrep {
 
   [symAddLogFunction] (level) {
     this[level] = function (...items) {
-      if (this[symOptions].levels[this[symOptions].level] > this[symOptions].levels[level]) { return }
+      if (this[symOptions].levels[this[symOptions].level] >
+        this[symOptions].levels[level]) {
+        return
+      }
       const splitItems = stringifyLogItems(items)
       const text = this[symHeaders][level] + (new Date()).getTime() +
           ',"' + this[symOptions].messageKey + '":"' + splitItems.msg +

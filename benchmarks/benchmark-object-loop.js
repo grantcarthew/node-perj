@@ -2,6 +2,13 @@ const bench = require('fastbench')
 const scifi = require('../data/data-scifi')
 
 const run = bench([
+  function objectEntries (done) {
+    const res = {}
+    for (const prop of Object.entries(scifi.deathStar)) {
+      res[prop[0]] = prop[1]
+    }
+    setImmediate(done)
+  },
   function forIn (done) {
     const res = {}
     for (const prop in scifi.deathStar) {

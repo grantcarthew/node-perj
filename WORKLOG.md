@@ -9,3 +9,8 @@ Return benchmarks to normal.
 pino child: 24sec, jrep child: 50sec
 
 Check for browser and replace the write function with console. Process is not defined.
+
+
+
+https://github.com/pinojs/pino/issues/279#issuecomment-387738761
+https://github.com/timberio/log-event-json-schema

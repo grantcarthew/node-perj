@@ -14,6 +14,8 @@
     "test": "jest",
     "benchmark": "node benchmarks/benchmark.js",
     "benchmark-object-loop": "node benchmarks/benchmark-object-loop.js",
+    "benchmark-array-loop": "node benchmarks/benchmark-array-loop.js",
+    "benchmark-map": "node benchmarks/benchmark-map.js",
     "profile": "node --prof benchmark.js && node --prof-process *.log && rm *.log",
     "sink": "npm run build && npm run benchmark && npm run profile",
     "watch": "jest --watch",

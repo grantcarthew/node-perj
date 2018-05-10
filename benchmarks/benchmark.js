@@ -3,7 +3,7 @@
 // Install pino prior to running.
 // npm install pino
 
-const jrep = require('./jrep')
+const jrep = require('../jrep')
 // const jrepd = require('./jrep.diff')
 const pino = require('pino')
 const bench = require('fastbench')
@@ -12,7 +12,7 @@ const hostname = require('os').hostname
 const pid = process.pid
 const v = 1
 const dest = fs.createWriteStream('/dev/null')
-const scifi = require('./data-scifi')
+const scifi = require('../data/data-scifi')
 const err = new Error(scifi.msg[1])
 
 // Adding hostname and pid to match pino log string

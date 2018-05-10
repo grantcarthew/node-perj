@@ -29,6 +29,9 @@ describe('logger object tests', () => {
     const log = jrep.create()
     expect(getType(log.level)).toBe('String')
     expect(log.level).toBe('info')
+    expect(getType(log.levels)).toBe('Object')
+    expect(log.levels.info).toBe(30)
+    expect(getType(log.write)).toBe('Function')
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
     expect(getType(log.error)).toBe('Function')
@@ -36,6 +39,9 @@ describe('logger object tests', () => {
     expect(getType(log.info)).toBe('Function')
     expect(getType(log.debug)).toBe('Function')
     expect(getType(log.trace)).toBe('Function')
+    expect(() => { log.level = 'abc' }).toThrow('The level option must be a valid key in the levels object.')
+    log.level = 'debug'
+    expect(log.level).toBe('debug')
   })
   test('options tests', () => {
     let log = jrep.create()
@@ -62,6 +68,7 @@ describe('logger object tests', () => {
     expect(output.objectData).toMatchObject(data1)
     expect(data1).toMatchObject(output.objectData)
     custLevels.crazy = 43
+    // Only baz: true should be added to child.
     log = log.child({
       levels: custLevels,
       level: 'debug',
@@ -73,6 +80,7 @@ describe('logger object tests', () => {
       baz: true })
     expect(log.levels.silly).toBe(42)
     expect(getType(log.silly)).toBe('Function')
+    expect(log.crazy).toBeUndefined()
     expect(log.level).toBe('trace')
     expect(log.write).toBeDefined()
     log.silly(msg1, data1)
@@ -305,6 +313,40 @@ describe('logging level tests', () => {
     expect(output.msg).toBe('debug')
     log.trace('trace')
     expect(output.msg).toBe('trace')
+  })
+  test('change level', () => {
+    const log = jrep.create({write})
+    log.fatal('fatal')
+    expect(output.msg).toBe('fatal')
+    log.error('error')
+    expect(output.msg).toBe('error')
+    log.warn('warn')
+    expect(output.msg).toBe('warn')
+    log.info('info')
+    expect(output.msg).toBe('info')
+    output = {}
+    log.debug('debug')
+    expect(output.msg).toBeUndefined()
+    log.trace('trace')
+    expect(output.msg).toBeUndefined()
+    log.level = 'trace'
+    log.fatal('fatal')
+    expect(output.msg).toBe('fatal')
+    log.error('error')
+    expect(output.msg).toBe('error')
+    log.warn('warn')
+    expect(output.msg).toBe('warn')
+    log.info('info')
+    expect(output.msg).toBe('info')
+    log.debug('debug')
+    expect(output.msg).toBe('debug')
+    log.trace('trace')
+    expect(output.msg).toBe('trace')
+    log.levels = { bat: 500 }
+    log.bat('batman')
+    expect(output.level).toBe('bat')
+    expect(output.lvl).toBe(500)
+    expect(output.msg).toBe('batman')
   })
 })
 

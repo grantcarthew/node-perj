@@ -2,7 +2,8 @@ const symSplitOptions = Symbol('SplitOptions')
 const symOptions = Symbol('Options')
 const symTopString = Symbol('TopString')
 const symHeaders = Symbol('Headers')
-const symLogAssignment = Symbol('LogAssignment')
+const symAddLogHeader = Symbol('AddLogHeader')
+const symAddLogFunction = Symbol('AddLogFunction')
 
 const defaultOptions = {
   levels: {
@@ -39,7 +40,10 @@ class Jrep {
     this[symTopString] = ''
     this[symSplitOptions](options)
     this[symHeaders] = {}
-    this[symLogAssignment]()
+    for (const level in this[symOptions].levels) {
+      this[symAddLogHeader](level)
+      this[symAddLogFunction](level)
+    }
   }
 
   get level () {
@@ -55,6 +59,15 @@ class Jrep {
 
   get levels () {
     return this[symOptions].levels
+  }
+
+  set levels (newLevels) {
+    for (const level in newLevels) {
+      if (this[level]) { continue }
+      this[symOptions].levels[level] = newLevels[level]
+      this[symAddLogHeader](level)
+      this[symAddLogFunction](level)
+    }
   }
 
   get write () {
@@ -76,21 +89,20 @@ class Jrep {
     }
   }
 
-  [symLogAssignment] () {
-    Object.keys(this[symOptions].levels).forEach((level) => {
-      this[symHeaders][level] = `{"level":"${level}","${this[symOptions].levelNumberKey}":${this[symOptions].levels[level]}${this[symTopString]},"${this[symOptions].dateTimeKey}":`
-      if (this.parent) { return }
+  [symAddLogHeader] (level) {
+    this[symHeaders][level] = `{"level":"${level}","${this[symOptions].levelNumberKey}":${this[symOptions].levels[level]}${this[symTopString]},"${this[symOptions].dateTimeKey}":`
+  }
 
-      this[level] = function (...items) {
-        if (this[symOptions].levels[this[symOptions].level] > this[symOptions].levels[level]) { return }
-        const splitItems = stringifyLogItems(items)
-        const text = this[symHeaders][level] + (new Date()).getTime() +
+  [symAddLogFunction] (level) {
+    this[level] = function (...items) {
+      if (this[symOptions].levels[this[symOptions].level] > this[symOptions].levels[level]) { return }
+      const splitItems = stringifyLogItems(items)
+      const text = this[symHeaders][level] + (new Date()).getTime() +
           ',"' + this[symOptions].messageKey + '":"' + splitItems.msg +
           '","' + this[symOptions].dataKey + '":' + splitItems.data + '}\n'
 
-        this[symOptions].write(text)
-      }
-    })
+      this[symOptions].write(text)
+    }
   }
 
   child (tops) {
@@ -104,7 +116,9 @@ class Jrep {
       }
     }
     newChild.parent = this
-    newChild[symLogAssignment]()
+    for (const level in this[symOptions].levels) {
+      newChild[symAddLogHeader](level)
+    }
     return newChild
   }
 

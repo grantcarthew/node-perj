@@ -20,6 +20,7 @@ const defaultOptions = {
     trace: 10
   },
   level: 'info',
+  levelKey: 'level',
   levelNumberKey: 'lvl',
   dateTimeKey: 'time',
   dateTimeFunction: dateTimeFunctions.epoch,
@@ -97,7 +98,7 @@ class Perj {
   }
 
   [symAddLogHeader] (level) {
-    this[symHeaders][level] = `{"level":"${level}","${this[symOptions].levelNumberKey}":${this[symOptions].levels[level]}${this[symTopString]},"${this[symOptions].dateTimeKey}":`
+    this[symHeaders][level] = `{"${this[symOptions].levelKey}":"${level}","${this[symOptions].levelNumberKey}":${this[symOptions].levels[level]}${this[symTopString]},"${this[symOptions].dateTimeKey}":`
   }
 
   [symAddLogFunction] (level) {

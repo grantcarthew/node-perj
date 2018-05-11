@@ -2,8 +2,8 @@
 
 A simple, fast JSON logger. (Not Published Yet)
 
-[![bitHound Overall Score][bithound-overall-image]][bithound-overall-url]
-[![bitHound Dependencies][bithound-dep-image]][bithound-dep-url]
+[![Maintainability](https://api.codeclimate.com/v1/badges/14946690a2410b71177e/maintainability)](https://codeclimate.com/github/grantcarthew/node-perj/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/14946690a2410b71177e/test_coverage)](https://codeclimate.com/github/grantcarthew/node-perj/test_coverage)
 [![Build Status][travisci-image]][travisci-url]
 [![js-standard-style][js-standard-image]][js-standard-url]
 [![NSP Status][nsp-image]][nsp-url]
@@ -178,16 +178,10 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 
 - v1.0.0 [20##-##-##]: Initial release. 
 
-[bithound-overall-image]: https://www.bithound.io/github/grantcarthew/#####################/badges/score.svg
-[bithound-overall-url]: https://www.bithound.io/github/grantcarthew/#####################
-[bithound-dep-image]: https://www.bithound.io/github/grantcarthew/#####################/badges/dependencies.svg
-[bithound-dep-url]: https://www.bithound.io/github/grantcarthew/#####################/master/dependencies/npm
 [travisci-image]: https://travis-ci.org/grantcarthew/#####################.svg?branch=master
 [travisci-url]: https://travis-ci.org/grantcarthew/#####################
 [js-standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [js-standard-url]: http://standardjs.com/
-[bithound-code-image]: https://www.bithound.io/github/grantcarthew/#####################/badges/code.svg
-[bithound-code-url]: https://www.bithound.io/github/grantcarthew/#####################
 [nsp-image]: https://nodesecurity.io/orgs/openjs/projects/######################/badge
 [nsp-url]: https://nodesecurity.io/orgs/openjs/projects/#######################
 [patreon-image]: https://img.shields.io/badge/patreon-donate-yellow.svg

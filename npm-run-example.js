@@ -1,6 +1,6 @@
 require('console-probe').apply()
 const perj = require('./perj')
-const scifi = require('./data-scifi')
+const scifi = require('./data/data-scifi')
 const line = '='.repeat(process.stdout.columns)
 const page = '\n'.repeat(process.stdout.rows)
 

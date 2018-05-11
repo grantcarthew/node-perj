@@ -17,11 +17,9 @@ A simple, fast JSON logger. (Not Published Yet)
 * Node: v4.7.0 or later.
 * Browser: Not tested
 
-The name `perj` was taken on NPM. The package is published as `j-rep` which is fitting because it is how to pronounce it.
-
 ```sh
 
-npm install --save j-rep
+npm install --save perj
 
 ```
 ## Goals

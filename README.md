@@ -1,9 +1,8 @@
 # perj
 
-A simple, fast JSON logger. (Not Published Yet)
+A flexible, fast JSON logger. (Not Published Yet)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/14946690a2410b71177e/maintainability)](https://codeclimate.com/github/grantcarthew/node-perj/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/14946690a2410b71177e/test_coverage)](https://codeclimate.com/github/grantcarthew/node-perj/test_coverage)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/fa9e7647f42842d09349746b91e5b8ca)](https://www.codacy.com/app/grantcarthew/node-perj?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=grantcarthew/node-perj&amp;utm_campaign=Badge_Grade)
 [![Build Status][travisci-image]][travisci-url]
 [![js-standard-style][js-standard-image]][js-standard-url]
 [![NSP Status][nsp-image]][nsp-url]

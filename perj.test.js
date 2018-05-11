@@ -59,6 +59,7 @@ describe('logger object tests', () => {
     log = perj.create({
       levels: custLevels,
       level: 'trace',
+      levelKey: 'logLevel',
       levelNumberKey: 'levelNo',
       dateTimeKey: 'datetime',
       messageKey: 'message',
@@ -70,7 +71,7 @@ describe('logger object tests', () => {
     expect(log.level).toBe('trace')
     expect(log.write).toBeDefined()
     log.silly(msg1, data1)
-    expect(output.level).toBe('silly')
+    expect(output.logLevel).toBe('silly')
     expect(output.levelNo).toBe(42)
     expect(getType(output.datetime)).toBe('Number')
     expect(output.message).toBe(msg1)
@@ -81,6 +82,7 @@ describe('logger object tests', () => {
     log = log.child({
       levels: custLevels,
       level: 'debug',
+      levelKey: 'childLogLevel',
       levelNumberKey: 'childLevelNo',
       dateTimeKey: 'childDatetime',
       messageKey: 'childMessage',
@@ -93,7 +95,7 @@ describe('logger object tests', () => {
     expect(log.level).toBe('trace')
     expect(log.write).toBeDefined()
     log.silly(msg1, data1)
-    expect(output.level).toBe('silly')
+    expect(output.logLevel).toBe('silly')
     expect(output.levelNo).toBe(42)
     expect(getType(output.datetime)).toBe('Number')
     expect(output.message).toBe(msg1)

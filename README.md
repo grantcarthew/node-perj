@@ -192,6 +192,6 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 [patreon-url]: https://www.patreon.com/grantcarthew
 [nodei-npm-image]: https://nodei.co/npm/node-perj.png?downloads=true&downloadRank=true&stars=true
 [nodei-npm-url]: https://nodei.co/npm/node-perj/
-[perj-image]: 
+[perj-image]: https://rawgit.com/grantcarthew/node-perj/master/perj.svg
 [perj-url]: https://github.com/grantcarthew/node-perj
 [pino-url]: https://www.npmjs.com/package/pino

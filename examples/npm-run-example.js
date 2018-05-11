@@ -1,6 +1,6 @@
 require('console-probe').apply()
-const perj = require('./perj')
-const scifi = require('./data/data-scifi')
+const perj = require('../perj')
+const scifi = require('../data/data-scifi')
 const line = '='.repeat(process.stdout.columns)
 const page = '\n'.repeat(process.stdout.rows)
 
@@ -14,7 +14,7 @@ let log = perj.create({name, host, pid, file})
 
 console.log(page)
 console.log(line)
-console.log('perj example.js')
+console.log('perj example inspection')
 console.log(line)
 console.log('Note: This is the structure of the perj module')
 console.log('Code: const perj = require("perj")')

@@ -178,14 +178,14 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 
 - v1.0.0 [20##-##-##]: Initial release. 
 
-[travisci-image]: https://travis-ci.org/grantcarthew/#####################.svg?branch=master
-[travisci-url]: https://travis-ci.org/grantcarthew/#####################
+[travisci-image]: https://travis-ci.org/grantcarthew/node-perj.svg?branch=master
+[travisci-url]: https://travis-ci.org/grantcarthew/node-perj
 [js-standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [js-standard-url]: http://standardjs.com/
-[nsp-image]: https://nodesecurity.io/orgs/openjs/projects/######################/badge
-[nsp-url]: https://nodesecurity.io/orgs/openjs/projects/#######################
+[nsp-image]: https://nodesecurity.io/orgs/openjs/projects/node-perj/badge
+[nsp-url]: https://nodesecurity.io/orgs/openjs/projects/node-perj
 [patreon-image]: https://img.shields.io/badge/patreon-donate-yellow.svg
 [patreon-url]: https://www.patreon.com/grantcarthew
-[nodei-npm-image]: https://nodei.co/npm/####################.png?downloads=true&downloadRank=true&stars=true
-[nodei-npm-url]: https://nodei.co/npm/#####################/
+[nodei-npm-image]: https://nodei.co/npm/node-perj.png?downloads=true&downloadRank=true&stars=true
+[nodei-npm-url]: https://nodei.co/npm/node-perj/
 [pino-url]: https://www.npmjs.com/package/pino

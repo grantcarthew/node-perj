@@ -1,6 +1,6 @@
 # perj
 
-A flexible, fast JSON logger. (Not Published Yet)
+A simple, fast JSON logger.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fa9e7647f42842d09349746b91e5b8ca)](https://www.codacy.com/app/grantcarthew/node-perj?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=grantcarthew/node-perj&amp;utm_campaign=Badge_Grade)
 [![Build Status][travisci-image]][travisci-url]
@@ -8,12 +8,14 @@ A flexible, fast JSON logger. (Not Published Yet)
 [![NSP Status][nsp-image]][nsp-url]
 [![Patreon Donation][patreon-image]][patreon-url]
 
+[![perj][perj-image]][perj-url]
+
 [![NPM][nodei-npm-image]][nodei-npm-url]
 
 
 ## Installing
 
-* Node: v4.7.0 or later.
+* Node: Works with v6.0.0 and above. Not tested under v6.0.0.
 * Browser: Not tested
 
 ```sh
@@ -21,9 +23,10 @@ A flexible, fast JSON logger. (Not Published Yet)
 npm install --save perj
 
 ```
+
 ## Goals
 
-The perj logger project has the following goals:
+The perj project has the following goals:
 
 * Designed to be integrated rather than used out of the box (DIY).
 * KISS: Keep it simple smiley.
@@ -86,17 +89,19 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 ## Rational
 
-After having some performance issues with a popular Node.js logging package I decided to switch to another logging package that is advertised as blasing fast called [pino][pino-url].
+After having some performance issues with a popular Node.js logging package I decided to switch to another logger that is advertised as blasing fast called [pino][pino-url]. It's great and you should check it out.
 
-I must say `pino` seems like a great package. I worked with it for a while however there are a number of things which I dislike about `pino`. I started to try and contribute to fix some of the issues. The authors were helpful. After working on a pull request and submitting it I changed my mind and decided to write `perj`.
+There were a couple of things I found a little restrictive within the `pino` API. Specifically I wanted to be able to log content in any order without being tied down to a fixed argument list. I also wanted to ensure all extra log data was nested under a root property.
 
-Why the name `perj`? Mostly becasue the name `perj` was already taking on NPM.
+Using `pino` as a yard stick I created `perj` to meet my goals.
 
 ## Function
 
 
 
 ## API
+
+These documents are not complete. Do not read below.
 
 ### perj.create(options)
 
@@ -187,4 +192,6 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 [patreon-url]: https://www.patreon.com/grantcarthew
 [nodei-npm-image]: https://nodei.co/npm/node-perj.png?downloads=true&downloadRank=true&stars=true
 [nodei-npm-url]: https://nodei.co/npm/node-perj/
+[perj-image]: 
+[perj-url]: https://github.com/grantcarthew/node-perj
 [pino-url]: https://www.npmjs.com/package/pino

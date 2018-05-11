@@ -4,6 +4,11 @@ const symTopString = Symbol('TopString')
 const symHeaders = Symbol('Headers')
 const symAddLogHeader = Symbol('AddLogHeader')
 const symAddLogFunction = Symbol('AddLogFunction')
+const dateTimeFunctions = Object.freeze({
+  epoch () { return Date.now() },
+  unix () { return Math.round(Date.now() / 1000.0) },
+  iso () { return '"' + (new Date()).toISOString() + '"' }
+})
 
 const defaultOptions = {
   levels: {
@@ -17,6 +22,7 @@ const defaultOptions = {
   level: 'info',
   levelNumberKey: 'lvl',
   dateTimeKey: 'time',
+  dateTimeFunction: dateTimeFunctions.epoch,
   messageKey: 'msg',
   dataKey: 'data',
   write: defaultWriter()
@@ -31,7 +37,8 @@ function defaultWriter () {
 module.exports = Object.freeze({
   create (obj) {
     return new Jrep(obj)
-  }
+  },
+  dateTimeFunctions
 })
 
 class Jrep {
@@ -100,7 +107,7 @@ class Jrep {
         return
       }
       const splitItems = stringifyLogItems(items)
-      const text = this[symHeaders][level] + (new Date()).getTime() +
+      const text = this[symHeaders][level] + this[symOptions].dateTimeFunction() +
           ',"' + this[symOptions].messageKey + '":"' + splitItems.msg +
           '","' + this[symOptions].dataKey + '":' + splitItems.data + '}\n'
 

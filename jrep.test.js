@@ -24,8 +24,17 @@ beforeEach(() => {
 })
 
 describe('logger object tests', () => {
-  test('member tests', () => {
+  test('jrep member tests', () => {
     expect(getType(jrep.create)).toBe('Function')
+    expect(getType(jrep.dateTimeFunctions)).toBe('Object')
+    expect(getType(jrep.dateTimeFunctions.epoch)).toBe('Function')
+    expect(getType(jrep.dateTimeFunctions.epoch())).toBe('Number')
+    expect(getType(jrep.dateTimeFunctions.unix)).toBe('Function')
+    expect(getType(jrep.dateTimeFunctions.unix())).toBe('Number')
+    expect(getType(jrep.dateTimeFunctions.iso)).toBe('Function')
+    expect(getType(jrep.dateTimeFunctions.iso())).toBe('String')
+  })
+  test('log member tests', () => {
     const log = jrep.create()
     expect(getType(log.level)).toBe('String')
     expect(log.level).toBe('info')

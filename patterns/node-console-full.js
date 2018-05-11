@@ -1,4 +1,4 @@
-const jrep = require('../jrep')
+const perj = require('../perj')
 const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)
@@ -24,7 +24,7 @@ Features:
 - Stringified objects displayed on next line.
 */
 
-const log = jrep.create({ name, write, host, pid, file })
+const log = perj.create({ name, write, host, pid, file })
 
 function write (logString) {
   const item = JSON.parse(logString)

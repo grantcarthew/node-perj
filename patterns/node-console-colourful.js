@@ -1,4 +1,4 @@
-const jrep = require('../jrep')
+const perj = require('../perj')
 const chalk = require('chalk')
 const colorize = require('json-colorizer')
 const host = require('os').hostname()
@@ -28,7 +28,7 @@ Features:
 - Stringified objects displayed on next line in colour.
 */
 
-const log = jrep.create({ name, level: 'trace', write, host, pid, file })
+const log = perj.create({ name, level: 'trace', write, host, pid, file })
 
 function write (logString) {
   const item = JSON.parse(logString)

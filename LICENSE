@@ -1,9 +1,9 @@
 ---------------------------------------------------------------------
 To reduce dependencies some code has been copied from other projects.
-There are four licenses that apply to the jrep package.
+There are four licenses that apply to the perj package.
 ---------------------------------------------------------------------
 The license below is my application of the MIT license.
-https://github.com/grantcarthew/node-jrep
+https://github.com/grantcarthew/node-perj
 ---------------------------------------------------------------------
 
 MIT License

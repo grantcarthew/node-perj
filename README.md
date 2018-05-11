@@ -1,4 +1,4 @@
-# jrep
+# perj
 
 A simple, fast JSON logger. (Not Published Yet)
 
@@ -17,7 +17,7 @@ A simple, fast JSON logger. (Not Published Yet)
 * Node: v4.7.0 or later.
 * Browser: Not tested
 
-The name `jrep` was taken on NPM. The package is published as `j-rep` which is fitting because it is how to pronounce it.
+The name `perj` was taken on NPM. The package is published as `j-rep` which is fitting because it is how to pronounce it.
 
 ```sh
 
@@ -26,7 +26,7 @@ npm install --save j-rep
 ```
 ## Goals
 
-The jrep logger project has the following goals:
+The perj logger project has the following goals:
 
 * Designed to be integrated rather than used out of the box (DIY).
 * KISS: Keep it simple smiley.
@@ -52,7 +52,7 @@ The following example adds a `name`, `host`, `pid` and `file` top level property
 
 ```js
 
-const jrep = require('jrep')
+const perj = require('perj')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'
@@ -60,7 +60,7 @@ const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)
 
-const log = jrep.create({name, host, pid, file})
+const log = perj.create({name, host, pid, file})
 
 log.info('the quick brown fox jumps over the lazy dog')
 
@@ -74,13 +74,13 @@ The following example adds a `host` top level property to the log entries.
 
 ```js
 
-const jrep = require('jrep')
+const perj = require('perj')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'
 const host = location.hostname
 
-const log = jrep.create({name, host})
+const log = perj.create({name, host})
 
 log.info('the quick brown fox jumps over the lazy dog')
 
@@ -91,9 +91,9 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 After having some performance issues with a popular Node.js logging package I decided to switch to another logging package that is advertised as blasing fast called [pino][pino-url].
 
-I must say `pino` seems like a great package. I worked with it for a while however there are a number of things which I dislike about `pino`. I started to try and contribute to fix some of the issues. The authors were helpful. After working on a pull request and submitting it I changed my mind and decided to write `jrep`.
+I must say `pino` seems like a great package. I worked with it for a while however there are a number of things which I dislike about `pino`. I started to try and contribute to fix some of the issues. The authors were helpful. After working on a pull request and submitting it I changed my mind and decided to write `perj`.
 
-Why the name `jrep`? Mostly becasue the name `jrep` was already taking on NPM.
+Why the name `perj`? Mostly becasue the name `perj` was already taking on NPM.
 
 ## Function
 
@@ -101,7 +101,7 @@ Why the name `jrep`? Mostly becasue the name `jrep` was already taking on NPM.
 
 ## API
 
-### jrep.create(options)
+### perj.create(options)
 
 The create method returns a new logger object with the options applied.
 
@@ -130,13 +130,13 @@ __level:__ Set to one of the below values. Once set only log entries of the same
 | `trace` | 10  | When you need to know everything that happens.      |
 
 
-#### jrep.create Example
+#### perj.create Example
 
-As with the quick start above, the following example adds a `name`, `host`, `pid`, and `file` as top level properties to the log entries. These properties do not exist by default because that would require `jrep` to import the `os` Node.js module. Node.js modules are not imported to ease the use of `jrep` on either Node.js or in the Browser.
+As with the quick start above, the following example adds a `name`, `host`, `pid`, and `file` as top level properties to the log entries. These properties do not exist by default because that would require `perj` to import the `os` Node.js module. Node.js modules are not imported to ease the use of `perj` on either Node.js or in the Browser.
 
 ```js
 
-const jrep = require('jrep')
+const perj = require('perj')
 
 // Customise the variables below as needed.
 const name = 'QuickStart'
@@ -145,7 +145,7 @@ const pid = process.pid
 const file = require('path').basename(module.filename)
 
 // Because the valid options `level` and `stream` are not supplied they are set to the defaults.
-const log = jrep.create({name, host, pid, file})
+const log = perj.create({name, host, pid, file})
 
 log.info('the quick brown fox jumps over the lazy dog')
 

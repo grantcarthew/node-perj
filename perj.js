@@ -36,12 +36,12 @@ function defaultWriter () {
 
 module.exports = Object.freeze({
   create (obj) {
-    return new Jrep(obj)
+    return new Perj(obj)
   },
   dateTimeFunctions
 })
 
-class Jrep {
+class Perj {
   constructor (options) {
     this[symOptions] = Object.assign({}, defaultOptions)
     this[symTopString] = ''

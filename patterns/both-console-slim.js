@@ -1,4 +1,4 @@
-const jrep = require('../jrep')
+const perj = require('../perj')
 const scifi = require('../data-scifi')
 
 /*
@@ -21,7 +21,7 @@ Features:
 - No object or data displayed.
 */
 
-const log = jrep.create({ write })
+const log = perj.create({ write })
 
 function write (logString) {
   const item = JSON.parse(logString)

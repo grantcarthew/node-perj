@@ -3,8 +3,8 @@
 // Install pino prior to running.
 // npm install pino
 
-const jrep = require('../jrep')
-// const jrepd = require('./jrep.diff')
+const perj = require('../perj')
+// const perjd = require('./perj.diff')
 const pino = require('pino')
 const bench = require('fastbench')
 const fs = require('fs')
@@ -16,24 +16,24 @@ const scifi = require('../data/data-scifi')
 const err = new Error(scifi.msg[1])
 
 // Adding hostname and pid to match pino log string
-const jlog = jrep.create({v, hostname, pid, write: dest.write.bind(dest)})
-// const dlog = jrepd.create({v, hostname, pid, write: dest.write.bind(dest)})
+const jlog = perj.create({v, hostname, pid, write: dest.write.bind(dest)})
+// const dlog = perjd.create({v, hostname, pid, write: dest.write.bind(dest)})
 const plog = pino(dest)
 
 const run = bench([
-  // function jrep (done) {
+  // function perj (done) {
   //   jobWithChild(jlog)
   //   // jlog.info('message')
   //   // jlog.info({ foo: 'bar' })
   //   setImmediate(done)
   // },
-  // function jrepDiff (done) {
+  // function perjDiff (done) {
   //   jobWithChild(dlog)
   //   // dlog.info('message')
   //   // jlog.info({ foo: 'bar' })
   //   setImmediate(done)
   // }
-  function jrepCommonOperations (done) {
+  function perjCommonOperations (done) {
     job(jlog)
     setImmediate(done)
   },
@@ -41,7 +41,7 @@ const run = bench([
     job(plog)
     setImmediate(done)
   },
-  function jrepCommonWithError (done) {
+  function perjCommonWithError (done) {
     jobWithError(jlog)
     setImmediate(done)
   },
@@ -49,7 +49,7 @@ const run = bench([
     jobWithError(plog)
     setImmediate(done)
   },
-  function jrepCommonWithChild (done) {
+  function perjCommonWithChild (done) {
     jobWithChild(jlog)
     setImmediate(done)
   },

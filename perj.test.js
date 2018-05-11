@@ -9,8 +9,8 @@ function getType (value) {
   return Object.prototype.toString.call(value).slice(8).slice(0, -1)
 }
 
-// const jrep = require('./index')
-const jrep = require('./jrep')
+// const perj = require('./index')
+const perj = require('./perj')
 const msg1 = 'the quick brown fox'
 const msg2 = 'jumped over the lazy dog'
 const msg3 = 'and back again.'
@@ -24,18 +24,18 @@ beforeEach(() => {
 })
 
 describe('logger object tests', () => {
-  test('jrep member tests', () => {
-    expect(getType(jrep.create)).toBe('Function')
-    expect(getType(jrep.dateTimeFunctions)).toBe('Object')
-    expect(getType(jrep.dateTimeFunctions.epoch)).toBe('Function')
-    expect(getType(jrep.dateTimeFunctions.epoch())).toBe('Number')
-    expect(getType(jrep.dateTimeFunctions.unix)).toBe('Function')
-    expect(getType(jrep.dateTimeFunctions.unix())).toBe('Number')
-    expect(getType(jrep.dateTimeFunctions.iso)).toBe('Function')
-    expect(getType(jrep.dateTimeFunctions.iso())).toBe('String')
+  test('perj member tests', () => {
+    expect(getType(perj.create)).toBe('Function')
+    expect(getType(perj.dateTimeFunctions)).toBe('Object')
+    expect(getType(perj.dateTimeFunctions.epoch)).toBe('Function')
+    expect(getType(perj.dateTimeFunctions.epoch())).toBe('Number')
+    expect(getType(perj.dateTimeFunctions.unix)).toBe('Function')
+    expect(getType(perj.dateTimeFunctions.unix())).toBe('Number')
+    expect(getType(perj.dateTimeFunctions.iso)).toBe('Function')
+    expect(getType(perj.dateTimeFunctions.iso())).toBe('String')
   })
   test('log member tests', () => {
-    const log = jrep.create()
+    const log = perj.create()
     expect(getType(log.level)).toBe('String')
     expect(log.level).toBe('info')
     expect(getType(log.levels)).toBe('Object')
@@ -53,10 +53,10 @@ describe('logger object tests', () => {
     expect(log.level).toBe('debug')
   })
   test('options tests', () => {
-    let log = jrep.create()
+    let log = perj.create()
     let custLevels = Object.assign({}, log.levels)
     custLevels.silly = 42
-    log = jrep.create({
+    log = perj.create({
       levels: custLevels,
       level: 'trace',
       levelNumberKey: 'levelNo',
@@ -99,10 +99,10 @@ describe('logger object tests', () => {
     expect(output.message).toBe(msg1)
     expect(output.objectData).toMatchObject(data1)
     expect(data1).toMatchObject(output.objectData)
-    expect(() => { jrep.create({level: 'abc'}) }).toThrow('The level option must be a valid key in the levels object.')
+    expect(() => { perj.create({level: 'abc'}) }).toThrow('The level option must be a valid key in the levels object.')
   })
   test('convenience methods', () => {
-    const log = jrep.create({ level: 'debug', write })
+    const log = perj.create({ level: 'debug', write })
     const foo = { one: [1, 2, 3], two: { inner: true }, three: 3.14 }
     log.stringify(foo)
     expect(output.one[2]).toBe(3)
@@ -117,7 +117,7 @@ describe('logger object tests', () => {
 })
 
 describe('logger option tests', () => {
-  let log = jrep.create({
+  let log = perj.create({
     levels: { foo: 100, bar: 200 },
     level: 'foo',
     write,
@@ -162,7 +162,7 @@ describe('logger option tests', () => {
 
 describe('logging tests', () => {
   for (const level of levels) {
-    const log = jrep.create({write, level: level})
+    const log = perj.create({write, level: level})
 
     test(level + ': one message', () => {
       log[level](msg1)
@@ -229,7 +229,7 @@ describe('logging tests', () => {
 
 describe('logging level tests', () => {
   test('level: fatal', () => {
-    const log = jrep.create({level: 'fatal', write})
+    const log = perj.create({level: 'fatal', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     output = {}
@@ -245,7 +245,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: error', () => {
-    const log = jrep.create({level: 'error', write})
+    const log = perj.create({level: 'error', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -261,7 +261,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: warn', () => {
-    const log = jrep.create({level: 'warn', write})
+    const log = perj.create({level: 'warn', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -277,7 +277,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: info', () => {
-    const log = jrep.create({level: 'info', write})
+    const log = perj.create({level: 'info', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -293,7 +293,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: debug', () => {
-    const log = jrep.create({level: 'debug', write})
+    const log = perj.create({level: 'debug', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -309,7 +309,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBeUndefined()
   })
   test('level: trace', () => {
-    const log = jrep.create({level: 'trace', write})
+    const log = perj.create({level: 'trace', write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -324,7 +324,7 @@ describe('logging level tests', () => {
     expect(output.msg).toBe('trace')
   })
   test('change level', () => {
-    const log = jrep.create({write})
+    const log = perj.create({write})
     log.fatal('fatal')
     expect(output.msg).toBe('fatal')
     log.error('error')
@@ -364,7 +364,7 @@ describe('logging level tests', () => {
 })
 
 describe('logging error tests', () => {
-  const log = jrep.create({level: 'trace', write, name: 'error tests'})
+  const log = perj.create({level: 'trace', write, name: 'error tests'})
   let err1 = new Error(msg1)
   let err2 = new Error(msg2)
 

@@ -1,7 +1,7 @@
 // To test on Node.js, uncomment these lines.
 // let location = {}
 // location.hostname = 'http://abc.net'
-const jrep = require('../jrep')
+const perj = require('../perj')
 const name = 'full'
 const host = location.hostname
 const scifi = require('../data-scifi')
@@ -25,7 +25,7 @@ Features:
 - Stringified objects displayed on next line.
 */
 
-const log = jrep.create({ name, write, host })
+const log = perj.create({ name, write, host })
 
 function write (logString) {
   const item = JSON.parse(logString)

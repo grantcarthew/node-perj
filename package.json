@@ -1,14 +1,14 @@
 {
-  "name": "jrep",
+  "name": "perj",
   "version": "1.0.0",
   "description": "A simple, fast JSON logger.",
   "main": "index.js",
-  "homepage": "https://github.com/grantcarthew/node-jrep",
+  "homepage": "https://github.com/grantcarthew/node-perj",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grantcarthew/node-jrep.git"
+    "url": "git+https://github.com/grantcarthew/node-perj.git"
   },
-  "bugs": "https://github.com/grantcarthew/node-jrep/issues",
+  "bugs": "https://github.com/grantcarthew/node-perj/issues",
   "scripts": {
     "clean": "del index.js",
     "test": "jest",
@@ -21,7 +21,7 @@
     "watch": "jest --watch",
     "eg": "nodemon example.js",
     "lint": "standard",
-    "build": "npm run clean && standard && babel jrep.js --out-file index.js && npm test",
+    "build": "npm run clean && standard && babel perj.js --out-file index.js && npm test",
     "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",
     "upgrade:rm": "rm node_modules -Rf",
     "upgrade:ncu": "npm-check-updates --upgradeAll",

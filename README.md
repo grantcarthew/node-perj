@@ -16,7 +16,7 @@ A simple, fast JSON logger.
 ## Installing
 
 * Node: Works with v6.0.0 and above. Not tested under v6.0.0.
-* Browser: Not tested
+* Browser: Not tested (🤔 working on it.)
 
 ```sh
 
@@ -27,12 +27,12 @@ npm install --save perj
 
 The `perj` project has the following goals:
 
-* KISS: Keep it simple smiley.
-* Designed to be integrated rather than used out of the box (DIY).
-* Cross platform (Node.js and Browser) with no platform dependencies.
-* Flexible log and additional property options.
-* Fast.
-* Feature limited.
+* KISS: Keep it simple smiley. ✔️
+* Designed to be integrated rather than used out of the box (DIY). ✔️
+* Cross platform (Node.js and Browser) with no platform dependencies. ✔️
+* Flexible log and additional property options. ✔️
+* Fast. ✔️
+* Feature limited. ✔️
 
 ## Features
 

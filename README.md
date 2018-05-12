@@ -2,7 +2,7 @@
 
 A simple, fast JSON logger.
 
-[![Codacy Badge][codacy-badge]][codacy-url]
+[![Codacy Badge][codacy-image]][codacy-url]
 [![Build Status][travisci-image]][travisci-url]
 [![js-standard-style][js-standard-image]][js-standard-url]
 [![NSP Status][nsp-image]][nsp-url]
@@ -23,6 +23,27 @@ A simple, fast JSON logger.
 npm install --save perj
 
 ```
+## Goals
+
+The `perj` project has the following goals:
+
+* KISS: Keep it simple smiley.
+* Designed to be integrated rather than used out of the box (DIY).
+* Cross platform (Node.js and Browser) with no platform dependencies.
+* Flexible log and additional property options.
+* Fast.
+* Feature limited.
+
+## Features
+
+* No dependencies.
+* Flexible log methods:
+  * Log items can be any number in any order of any type.
+* The first string is nested under the 'msg' key:
+  * First string includes a string argument or an Error message.
+  * Additional string arguments are nested under the data property.
+* Objects are nested under the 'data' key as an object or array of objects.
+* No transports included (see primary goal).
 
 ## Quick Start
 
@@ -112,8 +133,8 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 
 [travisci-image]: https://travis-ci.org/grantcarthew/node-perj.svg?branch=master
 [travisci-url]: https://travis-ci.org/grantcarthew/node-perj
-[codacy-badge]: https://www.codacy.com/app/grantcarthew/node-perj?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=grantcarthew/node-perj&amp;utm_campaign=Badge_Grade
-[codacy-url]: https://api.codacy.com/project/badge/Grade/fa9e7647f42842d09349746b91e5b8ca
+[codacy-image]: https://api.codacy.com/project/badge/Grade/fa9e7647f42842d09349746b91e5b8ca
+[codacy-url]: https://www.codacy.com/app/grantcarthew/node-perj?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=grantcarthew/node-perj&amp;utm_campaign=Badge_Grade
 [js-standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [js-standard-url]: http://standardjs.com/
 [nsp-image]: https://nodesecurity.io/orgs/openjs/projects/4367c7cb-163d-4335-be3c-fe3429c69385/badge

@@ -68,7 +68,7 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 /*
 
-The resulting string is sent out of process.stdout:
+The following string is sent to standard out:
 
 {"level":"info","lvl":30,"ver":1,"name":"QuickStart","host":"Dev","pid":233241,"file":"quick.js","time":1526102959677,"msg":"the quick brown fox jumps over the lazy dog","data":""}
 
@@ -97,7 +97,7 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 /*
 
-The resulting string is sent to the console:
+The following string is sent to the console:
 
 {"level":"info","lvl":30,"ver":1,"name":"QuickStart","host":"http://Dev","time":1526103303019,"msg":"the quick brown fox jumps over the lazy dog","data":""}
 

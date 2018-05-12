@@ -41,7 +41,7 @@ The `perj` project has the following goals:
   * Log items can be any number in any order of any type.
 * The first string is nested under the 'msg' key:
   * First string includes a string argument or an Error message.
-  * Additional string arguments are nested under the data property.
+  * Additional string arguments are nested under the data key.
 * Objects are nested under the 'data' key as an object or array of objects.
 * No transports included (see primary goal).
 

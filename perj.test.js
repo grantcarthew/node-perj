@@ -147,9 +147,14 @@ describe('logger option tests', () => {
     expect(output.newDataKey).toMatchObject(data1)
   })
   test('child logger properties', () => {
-    log = log.child({ env: 'dev' })
+    const child = log.child({ env: 'dev' })
+    console.probe(log)
+    console.probe(child)
     output = {}
-    log.bar(msg2, data2)
+    log.foo(msg1)
+    expect(output.env).toBeUndefined()
+    output = {}
+    child.bar(msg2, data2)
     expect(Object.keys(output).length).toBe(9)
     expect(getType(output.time)).toBe('Number')
     expect(output.level).toBe('bar')

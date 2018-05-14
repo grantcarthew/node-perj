@@ -127,6 +127,7 @@ class Perj {
       }
     }
     newChild.parent = this
+    newChild[symHeaders] = Object.assign({}, this[symHeaders])
     for (const level in this[symOptions].levels) {
       newChild[symAddLogHeader](level)
     }

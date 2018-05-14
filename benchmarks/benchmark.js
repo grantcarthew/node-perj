@@ -13,7 +13,10 @@ const pid = process.pid
 const v = 1
 const dest = fs.createWriteStream('/dev/null')
 const scifi = require('../data/data-scifi')
-const err = new Error(scifi.msg[1])
+const err = []
+for (let i = 0; i < 5; i++) {
+  err.push(new Error('Error object number: ' + i))
+}
 
 // Adding hostname and pid to match pino log string
 const jlog = perj.create({v, hostname, pid, write: dest.write.bind(dest)})
@@ -41,32 +44,35 @@ const run = bench([
     job(plog)
     setImmediate(done)
   },
-  function perjCommonWithError (done) {
-    jobWithError(jlog)
+  function perjLogErrors (done) {
+    multipleErrors(jlog)
     setImmediate(done)
   },
-  function pinoCommonWithError (done) {
-    jobWithError(plog)
+  function pinoLogErrors (done) {
+    multipleErrors(plog)
     setImmediate(done)
   },
-  function perjCommonWithChild (done) {
-    jobWithChild(jlog)
+  function perjCreateChild (done) {
+    createChild(jlog)
     setImmediate(done)
   },
-  function pinoCommonWithChild (done) {
-    jobWithChild(plog)
+  function pinoCreateChild (done) {
+    createChild(plog)
     setImmediate(done)
   }
-], 10000000)
+], 1000000)
 
-function jobWithError (log) {
-  log.error(err)
-  job(log)
+function multipleErrors (log) {
+  for (let i = 0; i < 5; i++) {
+    log.error(err[i])
+  }
 }
 
-function jobWithChild (log) {
-  let clog = log.child({ foo: 'bar' })
-  job(clog)
+function createChild (log) {
+  let c1log = log.child({ foo: 'bar' })
+  c1log.info(scifi.msg[0])
+  let c2log = c1log.child({ foobar: 'baz' })
+  c2log.info(scifi.msg[0])
 }
 
 function job (log) {

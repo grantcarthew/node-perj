@@ -4,6 +4,7 @@ Documentation.
 Replace bithound.
 Run benchmarks with scifi.
 Split options has been improved. Need to look at creating child logger without logger options, only top values. Using parent methods.
+Check for undefined top and throw.
 
 Return benchmarks to normal.
 pino child: 24sec, perj child: 50sec

@@ -1,14 +1,14 @@
 // Note:
 // The pino logger is not a dependency of this package.
 // Install pino prior to running.
-// npm install pino
+// npm install pino --no-save
 
 const perj = require('../perj')
 // const perjd = require('./perj.diff')
 const pino = require('pino')
 const bench = require('fastbench')
 const fs = require('fs')
-const hostname = require('os').hostname
+const hostname = require('os').hostname()
 const pid = process.pid
 const v = 1
 const dest = fs.createWriteStream('/dev/null')
@@ -57,7 +57,7 @@ const run = bench([
     jobWithChild(plog)
     setImmediate(done)
   }
-], 1000000)
+], 10000000)
 
 function jobWithError (log) {
   log.error(err)

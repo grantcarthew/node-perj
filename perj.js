@@ -92,7 +92,7 @@ class Perj {
         }
         this[symOptions][key] = options[key]
       } else {
-        this[symTopString] += ',"' + key + '":' + stringify(options[key])
+        this[symTopString] += ',"' + key + '":' + stringifyTopValue(options[key])
       }
     }
   }
@@ -123,10 +123,11 @@ class Perj {
     const newChild = Object.create(this)
     for (const key in tops) {
       if (!defaultOptions.hasOwnProperty(key)) {
-        newChild[symTopString] += ',"' + key + '":' + stringify(tops[key])
+        newChild[symTopString] += ',"' + key + '":' + stringifyTopValue(tops[key])
       }
     }
     newChild.parent = this
+    newChild[symOptions] = Object.assign({}, this[symOptions])
     newChild[symHeaders] = Object.assign({}, this[symHeaders])
     for (const level in this[symOptions].levels) {
       newChild[symAddLogHeader](level)
@@ -135,11 +136,11 @@ class Perj {
   }
 
   stringify (obj, replacer, spacer) {
-    this[symOptions].write(stringify(obj, replacer, spacer))
+    return stringify(obj, replacer, spacer)
   }
 
   json (data) {
-    this[symOptions].write(stringify(data, null, 2))
+    console.log(stringify(data, null, 2))
   }
 }
 
@@ -171,6 +172,11 @@ function stringifyLogItems (items) {
 
   result.data = stringify(result.data)
   return result
+}
+
+function stringifyTopValue (value) {
+  let str = stringify(value)
+  return str === undefined ? '""' : str
 }
 
 // =================================================================

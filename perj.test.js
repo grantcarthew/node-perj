@@ -106,15 +106,9 @@ describe('logger object tests', () => {
   test('convenience methods', () => {
     const log = perj.create({ level: 'debug', write })
     const foo = { one: [1, 2, 3], two: { inner: true }, three: 3.14 }
-    log.stringify(foo)
-    expect(output.one[2]).toBe(3)
-    expect(output.two.inner).toBeTruthy()
-    expect(output.three).toBe(3.14)
+    output = log.stringify(foo)
+    expect(getType(output)).toBe('String')
     output = {}
-    log.json(foo)
-    expect(output.one[2]).toBe(3)
-    expect(output.two.inner).toBeTruthy()
-    expect(output.three).toBe(3.14)
   })
 })
 
@@ -130,11 +124,14 @@ describe('logger option tests', () => {
     platform: {
       name: 'node',
       pid: 1234
-    }
+    },
+    undef: undefined,
+    nul: null,
+    empty: ''
   })
   test('top level properties', () => {
     log.foo(msg1, data1)
-    expect(Object.keys(output).length).toBe(8)
+    expect(Object.keys(output).length).toBe(11)
     expect(output.level).toBe('foo')
     expect(getType(output.time)).toBe('Number')
     expect(output.newMessageKey).toBe(msg1)
@@ -143,19 +140,20 @@ describe('logger option tests', () => {
     expect(output.session).toBe(12345)
     expect(output.platform.name).toBe('node')
     expect(output.platform.pid).toBe(1234)
+    expect(output.undef).toBe('')
+    expect(output.nul).toBe(null)
+    expect(output.empty).toBe('')
     expect(data1).toMatchObject(output.newDataKey)
     expect(output.newDataKey).toMatchObject(data1)
   })
   test('child logger properties', () => {
     const child = log.child({ env: 'dev' })
-    console.probe(log)
-    console.probe(child)
     output = {}
     log.foo(msg1)
     expect(output.env).toBeUndefined()
     output = {}
     child.bar(msg2, data2)
-    expect(Object.keys(output).length).toBe(9)
+    expect(Object.keys(output).length).toBe(12)
     expect(getType(output.time)).toBe('Number')
     expect(output.level).toBe('bar')
     expect(output.newMessageKey).toBe(msg2)
@@ -164,6 +162,17 @@ describe('logger option tests', () => {
     expect(output.project).toBe('elephant')
     expect(output.env).toBe('dev')
     expect(() => { log.child() }).toThrow('Provide top level arguments to create a child logger.')
+  })
+  test('child logger level', () => {
+    log = perj.create({ level: 'fatal', write })
+    let child = log.child({ child: true })
+    child.level = 'trace'
+    output = {}
+    log.info(msg1)
+    expect(output.msg).toBeUndefined()
+    output = {}
+    child.info(msg1)
+    expect(output.msg).toBe(msg1)
   })
 })
 

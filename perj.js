@@ -30,9 +30,8 @@ const defaultOptions = {
 }
 
 function defaultWriter () {
-  const isBrowser = typeof window !== 'undefined' &&
-    Object.prototype.toString.call(window) === '[object Window]'
-  return isBrowser ? console.log : process.stdout.write.bind(process.stdout)
+  const isNode = Object.prototype.toString.call(process) === '[object process]'
+  return isNode ? process.stdout.write.bind(process.stdout) : console.log
 }
 
 module.exports = Object.freeze({

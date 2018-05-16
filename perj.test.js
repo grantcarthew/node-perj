@@ -41,6 +41,7 @@ describe('logger object tests', () => {
     expect(getType(log.levels)).toBe('Object')
     expect(log.levels.info).toBe(30)
     expect(getType(log.write)).toBe('Function')
+    expect(log.write.name).not.toMatch(/log/)
     expect(getType(log.child)).toBe('Function')
     expect(getType(log.fatal)).toBe('Function')
     expect(getType(log.error)).toBe('Function')
@@ -109,6 +110,13 @@ describe('logger object tests', () => {
     output = log.stringify(foo)
     expect(getType(output)).toBe('String')
     output = {}
+    const conLog = console.log
+    console.log = write
+    foo.foo = foo
+    log.json(foo)
+    expect(output.one[0]).toBe(1)
+    expect(output.foo).toBe('[Circular]')
+    console.log = conLog
   })
 })
 
@@ -368,6 +376,9 @@ describe('logging level tests', () => {
     log.trace('trace')
     expect(output.msg).toBe('trace')
     log.addLevel({ spiderman: 600, batman: 500 })
+    expect(Object.keys(log).length).toBe(8)
+    log.addLevel({ spiderman: 3 })
+    expect(Object.keys(log).length).toBe(8)
     log.spiderman('spiderman')
     expect(output.level).toBe('spiderman')
     expect(output.lvl).toBe(600)

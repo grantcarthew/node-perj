@@ -14,7 +14,7 @@ Find example files here that can get you started using the [perj](https://github
 
 The files within the `examples` directory follow this naming standard:
 
-[env]-[type]-[platform]-[target]-[detail]
+`[env]-[type]-[platform]-[target]-[detail]`
 
 ### env
 
@@ -53,7 +53,7 @@ Any extra notes or labels to explain the use of the example.
 
 dev-inprocess-both-console-slim.js
 
-Development environment that supplies a `write` function to `perj` so that the messages can be processed in the application. It supports both the browser and Node.js and outputs to the console. It described as a slim output.
+Development environment that supplies a `write` function to `perj` so that the messages can be processed in the application. It supports both the browser and Node.js and outputs to the console. It is described as a slim output.
 
 ## File List
 

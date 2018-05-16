@@ -2,7 +2,8 @@
 
 A simple, fast JSON logger.
 
-[![Codacy Badge][codacy-image]][codacy-url]
+[![Maintainability][cc-maintain-badge]][cc-maintain-url]
+[![Test Coverage][cc-coverage-badge]][cc-coverage-url]
 [![Build Status][travisci-image]][travisci-url]
 [![js-standard-style][js-standard-image]][js-standard-url]
 [![NSP Status][nsp-image]][nsp-url]
@@ -133,8 +134,10 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 
 [travisci-image]: https://travis-ci.org/grantcarthew/node-perj.svg?branch=master
 [travisci-url]: https://travis-ci.org/grantcarthew/node-perj
-[codacy-image]: https://api.codacy.com/project/badge/Grade/fa9e7647f42842d09349746b91e5b8ca
-[codacy-url]: https://www.codacy.com/app/grantcarthew/node-perj?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=grantcarthew/node-perj&amp;utm_campaign=Badge_Grade
+[cc-maintain-badge]: https://api.codeclimate.com/v1/badges/14946690a2410b71177e/maintainability
+[cc-maintain-url]: https://codeclimate.com/github/grantcarthew/node-perj/maintainability
+[cc-coverage-badge]: https://api.codeclimate.com/v1/badges/14946690a2410b71177e/test_coverage
+[cc-coverage-url]: https://codeclimate.com/github/grantcarthew/node-perj/test_coverage
 [js-standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [js-standard-url]: http://standardjs.com/
 [nsp-image]: https://nodesecurity.io/orgs/openjs/projects/4367c7cb-163d-4335-be3c-fe3429c69385/badge

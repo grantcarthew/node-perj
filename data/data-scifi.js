@@ -226,9 +226,13 @@ module.exports = {
   dataMedium: serenity,
   dataLarge: deathStar,
   rndMsg () {
-    return this.msg[Math.floor(Math.random() * this.msg.length)]
+    return this.msg[getRndIndex(this.msg.length)]
   },
   rndData () {
-    return this.data[Math.floor(Math.random() * this.data.length)]
+    return this.data[getRndIndex(this.data.length)]
   }
+}
+
+function getRndIndex (length) {
+  return Math.floor(Math.random() * length)
 }

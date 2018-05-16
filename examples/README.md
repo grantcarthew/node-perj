@@ -21,11 +21,13 @@ The files within the `examples` directory follow this naming standard:
 * dev: Development Environment.
   * May be used in production however there are probably better options.
 * prod: Production Environment.
+* both: Can be used for both development and production environments.
 
 ### type
 
 * inprocess: Logging is running within the application process.
 * stdin: Logging data is passed from stdout to stdin.
+* util: A utility file for tooling.
 
 ### platform
 

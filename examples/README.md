@@ -3,11 +3,6 @@
 Find example files here that can get you started using the [perj](https://github.com/grantcarthew/node-perj) logger within your project.
 
 * [File Namimg Standard](#file-naming-standard)
-  * [env](#env)
-  * [type](#type)
-  * [platform](#platform)
-  * [target](#target)
-  * [detail](#detail)
 * [File List](#file-list)
 
 ## File Naming Standard

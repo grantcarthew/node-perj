@@ -60,7 +60,7 @@ const run = bench([
     createChild(plog)
     setImmediate(done)
   }
-], 1000000)
+], 10000000)
 
 function multipleErrors (log) {
   for (let i = 0; i < 5; i++) {

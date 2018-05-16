@@ -11,7 +11,7 @@ Description:
 A full detail console log output including formatted data.
 
 When to use:
-Great for development.
+Great for development or production.
 
 Platform:
 - Browser only due to location.hostname

@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple, fast JSON logger.",
   "main": "index.js",
   "homepage": "https://github.com/grantcarthew/node-perj",
@@ -21,6 +21,7 @@
     "watch": "jest --watch",
     "example": "nodemon examples/dev-util-node-console-npm-run-example.js",
     "lint": "standard",
+    "prepublish": "npm build && npm test",
     "build": "npm run clean && standard && babel perj.js --out-file index.js && npm test",
     "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",
     "upgrade:rm": "rm node_modules -Rf",

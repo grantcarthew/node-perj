@@ -1,7 +1,10 @@
 const symSplitOptions = Symbol('SplitOptions')
 const symOptions = Symbol('Options')
 const symTopString = Symbol('TopString')
+const symTopObject = Symbol('TopObject')
 const symHeaders = Symbol('Headers')
+const symHeaderStrings = Symbol('Headers')
+const symHeaderObjects = Symbol('Headers')
 const symAddLogHeader = Symbol('AddLogHeader')
 const symAddLogFunction = Symbol('AddLogFunction')
 const dateTimeFunctions = Object.freeze({
@@ -9,7 +12,7 @@ const dateTimeFunctions = Object.freeze({
   unix () { return Math.round(Date.now() / 1000.0) },
   iso () { return '"' + (new Date()).toISOString() + '"' }
 })
-
+require('console-probe').apply()
 const defaultOptions = {
   levels: {
     fatal: 60,
@@ -26,6 +29,7 @@ const defaultOptions = {
   dateTimeFunction: dateTimeFunctions.epoch,
   messageKey: 'msg',
   dataKey: 'data',
+  passThrough: false,
   write: defaultWriter()
 }
 
@@ -45,8 +49,11 @@ class Perj {
   constructor (options) {
     this[symOptions] = Object.assign({}, defaultOptions)
     this[symTopString] = ''
+    this[symTopObject] = {}
     this[symSplitOptions](options)
     this[symHeaders] = {}
+    this[symHeaderStrings] = {}
+    this[symHeaderObjects] = {}
     for (const level in this[symOptions].levels) {
       this[symAddLogHeader](level)
       this[symAddLogFunction](level)
@@ -92,12 +99,25 @@ class Perj {
         this[symOptions][key] = options[key]
       } else {
         this[symTopString] += ',"' + key + '":' + stringifyTopValue(options[key])
+        if (this[symOptions].passThrough) {
+          this[symTopObject][key] = options[key]
+        }
       }
     }
   }
 
   [symAddLogHeader] (level) {
-    this[symHeaders][level] = `{"${this[symOptions].levelKey}":"${level}","${this[symOptions].levelNumberKey}":${this[symOptions].levels[level]}${this[symTopString]},"${this[symOptions].dateTimeKey}":`
+    this[symHeaderStrings][level] = '{"' +
+      this[symOptions].levelKey + '":"' + level + '","' +
+      this[symOptions].levelNumberKey + '":' + this[symOptions].levels[level] +
+      this[symTopString] + ',"' +
+      this[symOptions].dateTimeKey + '":'
+    if (this[symOptions].passThrough) {
+      this[symHeaderObjects][level] = Object.assign({
+        [this[symOptions].levelKey]: level,
+        [this[symOptions].levelNumberKey]: this[symOptions].levels[level]
+      }, this[symTopObject])
+    }
   }
 
   [symAddLogFunction] (level) {
@@ -106,12 +126,21 @@ class Perj {
         this[symOptions].levels[level]) {
         return
       }
+      const time = this[symOptions].dateTimeFunction()
       const splitItems = stringifyLogItems(items)
-      const text = this[symHeaders][level] + this[symOptions].dateTimeFunction() +
+      const json = this[symHeaderStrings][level] + time +
           ',"' + this[symOptions].messageKey + '":"' + splitItems.msg +
-          '","' + this[symOptions].dataKey + '":' + splitItems.data + '}\n'
-
-      this[symOptions].write(text)
+          '","' + this[symOptions].dataKey + '":' + splitItems.dataStr + '}\n'
+      if (this[symOptions].passThrough) {
+        const obj = Object.assign(this[symHeaderObjects][level], {
+          [this[symOptions].dateTimeKey]: time,
+          [this[symOptions].messageKey]: splitItems.msg,
+          [this[symOptions].dataKey]: splitItems.data
+        })
+        this[symOptions].write(json, obj)
+      } else {
+        this[symOptions].write(json)
+      }
     }
   }
 
@@ -123,11 +152,17 @@ class Perj {
     for (const key in tops) {
       if (!defaultOptions.hasOwnProperty(key)) {
         newChild[symTopString] += ',"' + key + '":' + stringifyTopValue(tops[key])
+        if (this[symOptions].passThrough) {
+          newChild[symTopObject][key] = tops[key]
+        }
       }
     }
     newChild.parent = this
     newChild[symOptions] = Object.assign({}, this[symOptions])
-    newChild[symHeaders] = Object.assign({}, this[symHeaders])
+    newChild[symHeaderStrings] = Object.assign({}, this[symHeaderStrings])
+    if (this[symOptions].passThrough) {
+      newChild[symHeaderObjects] = Object.assign({}, this[symHeaderObjects])
+    }
     for (const level in this[symOptions].levels) {
       newChild[symAddLogHeader](level)
     }
@@ -144,7 +179,7 @@ class Perj {
 }
 
 function stringifyLogItems (items) {
-  let result = {msg: '', data: []}
+  let result = { msg: '', data: [], dataStr: '' }
 
   for (const item of items) {
     if (Object.prototype.toString.call(item) === '[object String]') {
@@ -169,7 +204,7 @@ function stringifyLogItems (items) {
     result.data = result.data[0]
   }
 
-  result.data = stringify(result.data)
+  result.dataStr = stringify(result.data)
   return result
 }
 

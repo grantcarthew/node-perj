@@ -19,7 +19,7 @@ for (let i = 0; i < 5; i++) {
 }
 
 // Adding hostname and pid to match pino log string
-const jlog = perj.create({v, hostname, pid, write: dest.write.bind(dest)})
+const jlog = perj.create({v, hostname, pid, write: (json, obj) => { dest.write(json) }})
 // const dlog = perjd.create({v, hostname, pid, write: dest.write.bind(dest)})
 const plog = pino(dest)
 
@@ -60,7 +60,7 @@ const run = bench([
     createChild(plog)
     setImmediate(done)
   }
-], 10000000)
+], 10000)
 
 function multipleErrors (log) {
   for (let i = 0; i < 5; i++) {

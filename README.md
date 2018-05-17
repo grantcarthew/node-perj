@@ -13,6 +13,9 @@ A simple, fast JSON logger.
 
 [![NPM][nodei-npm-image]][nodei-npm-url]
 
+## Status
+
+__Under heavy development. Do not use. API is changing.__
 
 ## Installing
 

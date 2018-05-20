@@ -9,3 +9,7 @@ https://github.com/timberio/log-event-json-schema
 Add a https://github.com/Microsoft/napajs example.
 
 
+
+https://github.com/pinojs/pino/issues/416
+
+

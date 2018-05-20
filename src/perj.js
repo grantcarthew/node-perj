@@ -1,7 +1,9 @@
+const stringify = require('./stringify')
+const serializerr = require('./serializerr')
 const symSplitOptions = Symbol('SplitOptions')
 const symOptions = Symbol('Options')
 const symTopString = Symbol('TopString')
-const symTopObject = Symbol('TopObject')
+const symTopCache = Symbol('TopCache')
 const symHeaders = Symbol('Headers')
 const symHeaderStrings = Symbol('Headers')
 const symHeaderObjects = Symbol('Headers')
@@ -29,6 +31,7 @@ const defaultOptions = {
   dateTimeFunction: dateTimeFunctions.epoch,
   messageKey: 'msg',
   dataKey: 'data',
+  separator: ' > ',
   passThrough: false,
   write: defaultWriter()
 }
@@ -49,7 +52,7 @@ class Perj {
   constructor (options) {
     this[symOptions] = Object.assign({}, defaultOptions)
     this[symTopString] = ''
-    this[symTopObject] = {}
+    this[symTopCache] = {}
     this[symSplitOptions](options)
     this[symHeaders] = {}
     this[symHeaderStrings] = {}
@@ -100,7 +103,7 @@ class Perj {
       } else {
         this[symTopString] += ',"' + key + '":' + stringifyTopValue(options[key])
         if (this[symOptions].passThrough) {
-          this[symTopObject][key] = options[key]
+          this[symTopCache][key] = options[key]
         }
       }
     }
@@ -116,7 +119,7 @@ class Perj {
       this[symHeaderObjects][level] = Object.assign({
         [this[symOptions].levelKey]: level,
         [this[symOptions].levelNumberKey]: this[symOptions].levels[level]
-      }, this[symTopObject])
+      }, this[symTopCache])
     }
   }
 
@@ -149,13 +152,21 @@ class Perj {
       throw new Error('Provide top level arguments to create a child logger.')
     }
     const newChild = Object.create(this)
+    newChild[symTopCache] = Object.assign({}, this[symTopCache])
     for (const key in tops) {
       if (!defaultOptions.hasOwnProperty(key)) {
-        newChild[symTopString] += ',"' + key + '":' + stringifyTopValue(tops[key])
-        if (this[symOptions].passThrough) {
-          newChild[symTopObject][key] = tops[key]
+        if (this[symTopCache].hasOwnProperty(key) &&
+            isString(this[symTopCache][key]) &&
+            isString(tops[key])) {
+          newChild[symTopCache][key] = this[symTopCache][key] + this[symOptions].separator + tops[key]
+        } else {
+          newChild[symTopCache][key] = tops[key]
         }
       }
+    }
+    newChild[symTopString] = ''
+    for (const key in newChild[symTopCache]) {
+      newChild[symTopString] += ',"' + key + '":' + stringifyTopValue(newChild[symTopCache][key])
     }
     newChild.parent = this
     newChild[symOptions] = Object.assign({}, this[symOptions])
@@ -182,7 +193,7 @@ function stringifyLogItems (items) {
   let result = { msg: '', data: [], dataStr: '' }
 
   for (const item of items) {
-    if (Object.prototype.toString.call(item) === '[object String]') {
+    if (isString(item)) {
       if (result.msg) {
         result.data.push(item)
       } else {
@@ -213,83 +224,6 @@ function stringifyTopValue (value) {
   return str === undefined ? '""' : str
 }
 
-// =================================================================
-// Following code is from the fast-safe-stringify package.
-// =================================================================
-
-const arr = []
-
-// Regular stringify
-function stringify (obj, replacer, spacer) {
-  decirc(obj, '', [], undefined)
-  const res = JSON.stringify(obj, replacer, spacer)
-  while (arr.length !== 0) {
-    const part = arr.pop()
-    part[0][part[1]] = part[2]
-  }
-  return res
-}
-function decirc (val, k, stack, parent) {
-  let i
-  if (typeof val === 'object' && val !== null) {
-    for (i = 0; i < stack.length; i++) {
-      if (stack[i] === val) {
-        parent[k] = '[Circular]'
-        arr.push([parent, k, val])
-        return
-      }
-    }
-    stack.push(val)
-    // Optimize for Arrays. Big arrays could kill the performance otherwise!
-    if (Array.isArray(val)) {
-      for (i = 0; i < val.length; i++) {
-        decirc(val[i], i, stack, val)
-      }
-    } else {
-      const keys = Object.keys(val)
-      for (i = 0; i < keys.length; i++) {
-        const key = keys[i]
-        decirc(val[key], key, stack, val)
-      }
-    }
-    stack.pop()
-  }
-}
-
-// =================================================================
-// Following code is from the serializerr package.
-// =================================================================
-
-function serializerr (obj = {}) {
-  const chain = protochain(obj)
-    .filter(obj => obj !== Object.prototype)
-  return [obj]
-    .concat(chain)
-    .map(item => Object.getOwnPropertyNames(item))
-    .reduce((result, names) => {
-      names.forEach(name => {
-        result[name] = obj[name]
-      })
-      return result
-    }, {})
-}
-
-// =================================================================
-// Following code is from the protochain package.
-// =================================================================
-
-function protochain (obj) {
-  const chain = []
-  let target = getPrototypeOf(obj)
-  while (target) {
-    chain.push(target)
-    target = getPrototypeOf(target)
-  }
-
-  return chain
-}
-
-function getPrototypeOf (obj) {
-  if (obj == null) return null
-  return Object.getPrototypeOf(Object(obj))
+function isString (value) {
+  return Object.prototype.toString.call(value) === '[object String]'
 }

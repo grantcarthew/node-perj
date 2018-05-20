@@ -16,7 +16,7 @@ function getType (value) {
 }
 
 // const perj = require('./index')
-const perj = require('./perj')
+const perj = require('../src/perj')
 const msg1 = 'the quick brown fox'
 const msg2 = 'jumped over the lazy dog'
 const msg3 = 'and back again.'

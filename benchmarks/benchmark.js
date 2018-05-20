@@ -3,7 +3,7 @@
 // Install pino prior to running.
 // npm install pino --no-save
 
-const perj = require('../perj')
+const perj = require('../src/perj')
 // const perjd = require('./perj.diff')
 const pino = require('pino')
 const bench = require('fastbench')

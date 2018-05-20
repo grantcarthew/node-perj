@@ -1,5 +1,8 @@
 const stringify = require('./stringify')
 const serializerr = require('./serializerr')
+const defaultOptions = require('./options')
+const dateTimeFunctions = require('./date-time')
+
 const symSplitOptions = Symbol('SplitOptions')
 const symOptions = Symbol('Options')
 const symTopString = Symbol('TopString')
@@ -9,37 +12,9 @@ const symHeaderStrings = Symbol('Headers')
 const symHeaderObjects = Symbol('Headers')
 const symAddLogHeader = Symbol('AddLogHeader')
 const symAddLogFunction = Symbol('AddLogFunction')
-const dateTimeFunctions = Object.freeze({
-  epoch () { return Date.now() },
-  unix () { return Math.round(Date.now() / 1000.0) },
-  iso () { return '"' + (new Date()).toISOString() + '"' }
-})
-require('console-probe').apply()
-const defaultOptions = {
-  levels: {
-    fatal: 60,
-    error: 50,
-    warn: 40,
-    info: 30,
-    debug: 20,
-    trace: 10
-  },
-  level: 'info',
-  levelKey: 'level',
-  levelNumberKey: 'lvl',
-  dateTimeKey: 'time',
-  dateTimeFunction: dateTimeFunctions.epoch,
-  messageKey: 'msg',
-  dataKey: 'data',
-  separator: ' > ',
-  passThrough: false,
-  write: defaultWriter()
-}
 
-function defaultWriter () {
-  const isNode = Object.prototype.toString.call(process) === '[object process]'
-  return isNode ? process.stdout.write.bind(process.stdout) : console.log
-}
+// TODO: Remove this line.
+require('console-probe').apply()
 
 module.exports = Object.freeze({
   create (obj) {
@@ -102,6 +77,7 @@ class Perj {
         this[symOptions][key] = options[key]
       } else {
         this[symTopString] += ',"' + key + '":' + stringifyTopValue(options[key])
+        this[symTopCache][key] = options[key]
         if (this[symOptions].passThrough) {
           this[symTopCache][key] = options[key]
         }

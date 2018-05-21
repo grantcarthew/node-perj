@@ -157,7 +157,7 @@ describe('deep child separator', () => {
   let deepLog = perj.create({ test: 'p', write, passThrough, separator: '#' })
   let value = 'p'
   test('parent deep', () => {
-    deepLog.info('p', { parent: true })
+    deepLog.info(value, { parent: true })
     expect(writer.jsonOut.level).toBe('info')
     expect(writer.jsonOut.lvl).toBe(30)
     expect(writer.getType(writer.jsonOut.time)).toBe('Number')
@@ -166,7 +166,7 @@ describe('deep child separator', () => {
     expect(writer.jsonOut.test).toBe(value)
   })
   test('child deep separator', () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 4; i++) {
       value += '#c' + i
       deepLog = deepLog.child({ test: 'c' + i })
       deepLog.info('c' + i, { c: i })

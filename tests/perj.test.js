@@ -113,6 +113,7 @@ describe('logger object tests', () => {
   test('options passThrough', () => {
     let log = perj.create({ write, passThrough: true, foo: 'bar' })
     log.info(msg1, data1)
+    // console.log(logJson)
     expect(logObj.level).toBe('info')
     expect(logObj.lvl).toBe(30)
     expect(getType(logObj.time)).toBe('Number')

@@ -7,6 +7,7 @@ class Writer {
   }
 
   write (json, obj) {
+    console.dir(json)
     this.jsonOut = JSON.parse(json)
     this.objOut = obj
   }

@@ -6,6 +6,7 @@ const dateTimeFunctions = require('./date-time')
 const symSplitOptions = Symbol('SplitOptions')
 const symOptions = Symbol('Options')
 const symTopString = Symbol('TopString')
+const symTopStringSnip = Symbol('TopStringPart')
 const symTopCache = Symbol('TopCache')
 const symHeaders = Symbol('Headers')
 const symHeaderStrings = Symbol('Headers')
@@ -27,6 +28,7 @@ class Perj {
   constructor (options) {
     this[symOptions] = Object.assign({}, defaultOptions)
     this[symTopString] = ''
+    this[symTopStringSnip] = {}
     this[symTopCache] = {}
     this[symSplitOptions](options)
     this[symHeaders] = {}
@@ -76,11 +78,10 @@ class Perj {
         }
         this[symOptions][key] = options[key]
       } else {
-        this[symTopString] += ',"' + key + '":' + stringifyTopValue(options[key])
+        const snip = ',"' + key + '":' + stringifyTopValue(options[key])
+        this[symTopString] += snip
+        this[symTopStringSnip][key] = snip
         this[symTopCache][key] = options[key]
-        if (this[symOptions].passThrough) {
-          this[symTopCache][key] = options[key]
-        }
       }
     }
   }
@@ -128,21 +129,24 @@ class Perj {
       throw new Error('Provide top level arguments to create a child logger.')
     }
     const newChild = Object.create(this)
+    newChild[symTopStringSnip] = Object.assign({}, this[symTopStringSnip])
     newChild[symTopCache] = Object.assign({}, this[symTopCache])
     for (const key in tops) {
-      if (!defaultOptions.hasOwnProperty(key)) {
-        if (this[symTopCache].hasOwnProperty(key) &&
+      if (defaultOptions.hasOwnProperty(key)) { continue }
+      if (this[symTopCache].hasOwnProperty(key) &&
             isString(this[symTopCache][key]) &&
             isString(tops[key])) {
-          newChild[symTopCache][key] = this[symTopCache][key] + this[symOptions].separator + tops[key]
-        } else {
-          newChild[symTopCache][key] = tops[key]
-        }
+        const snip = this[symTopCache][key] + this[symOptions].separator + tops[key]
+        newChild[symTopCache][key] = snip
+        newChild[symTopStringSnip][key] = ',"' + key + '":"' + snip + '"'
+      } else {
+        newChild[symTopCache][key] = tops[key]
+        newChild[symTopStringSnip][key] = ',"' + key + '":' + stringifyTopValue(tops[key])
       }
     }
     newChild[symTopString] = ''
-    for (const key in newChild[symTopCache]) {
-      newChild[symTopString] += ',"' + key + '":' + stringifyTopValue(newChild[symTopCache][key])
+    for (const key in newChild[symTopStringSnip]) {
+      newChild[symTopString] += newChild[symTopStringSnip][key]
     }
     newChild.parent = this
     newChild[symOptions] = Object.assign({}, this[symOptions])

@@ -11,7 +11,7 @@
   "bugs": "https://github.com/grantcarthew/node-perj/issues",
   "scripts": {
     "clean": "del index.js",
-    "test": "jest --coverage",
+    "test": "jest",
     "benchmark": "node benchmarks/benchmark.js",
     "benchmark-object-loop": "node benchmarks/benchmark-object-loop.js",
     "benchmark-array-loop": "node benchmarks/benchmark-array-loop.js",
@@ -50,6 +50,14 @@
     ],
     "ignore": [
       "index.js"
+    ]
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/tests/"
     ]
   },
   "dependencies": {},

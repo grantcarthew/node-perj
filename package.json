@@ -65,16 +65,17 @@
     "babel-cli": "^6.26.0",
     "babel-minify": "^0.4.1",
     "babel-preset-env": "^1.7.0",
+    "benchmark": "^2.1.4",
     "chalk": "^2.4.1",
     "console-probe": "^3.2.0",
     "del-cli": "^1.1.0",
-    "fastbench": "^1.0.1",
     "file-stream-rotator": "^0.2.1",
     "jest": "^22.4.3",
     "json-colorizer": "^1.1.0",
     "nodemon": "^1.17.4",
     "npm-check-updates": "^2.14.2",
     "pump": "^3.0.0",
-    "standard": "^11.0.1"
+    "standard": "^11.0.1",
+    "table": "^4.0.3"
   }
 }

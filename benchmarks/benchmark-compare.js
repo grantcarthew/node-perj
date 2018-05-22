@@ -7,7 +7,7 @@ require('console-probe').apply()
 const { table } = require('table')
 const chalk = require('chalk')
 const Benchmark = require('benchmark')
-const perj = require('../src/perj')
+const perj = require('../index')
 const pino = require('pino')
 const fs = require('fs')
 const hostname = require('os').hostname()
@@ -28,10 +28,17 @@ deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 
 // Adding hostname and pid to match pino log string
-const perjLog = perj.create({v, hostname, pid, write: (json, obj) => { dest.write(json) }})
+const perjLog = perj.create({v, hostname, pid, write: (json) => { dest.write(json) }})
 const pinoLog = pino(dest)
 
 const suite = new Benchmark.Suite()
+const line = '='.repeat(process.stdout.columns)
+const page = '\n'.repeat(process.stdout.rows)
+
+console.log(page)
+console.log(line)
+console.log(' perj vs pino Benchmark')
+console.log(line)
 
 suite.add('perj Common Log Operations', function () {
   job(perjLog)
@@ -57,12 +64,28 @@ suite.add('pino Single Long String', function () {
   pinoLog.info(longString)
 })
 
-suite.add('perj Single Object Data', function () {
+suite.add('perj Flat Object Data', function () {
   perjLog.info({ foo: 'bar' })
 })
 
-suite.add('pino Single Object Data', function () {
+suite.add('pino Flat Object Data', function () {
   pinoLog.info({ foo: 'bar' })
+})
+
+suite.add('perj Simple Object Data', function () {
+  perjLog.info(scifi.tardis)
+})
+
+suite.add('pino Simple Object Data', function () {
+  pinoLog.info(scifi.tardis)
+})
+
+suite.add('perj Complex Object Data', function () {
+  perjLog.info(scifi.deathStar)
+})
+
+suite.add('pino Complex Object Data', function () {
+  pinoLog.info(scifi.deathStar)
 })
 
 suite.add('perj Deep Object Data', function () {
@@ -97,20 +120,20 @@ suite.add('pino Create Single Child', function () {
   createChild(pinoLog, 1)
 })
 
+suite.add('perj Create Two Children', function () {
+  createChild(perjLog, 2)
+})
+
+suite.add('pino Create Two Children', function () {
+  createChild(pinoLog, 2)
+})
+
 suite.add('perj Create Three Children', function () {
   createChild(perjLog, 3)
 })
 
 suite.add('pino Create Three Children', function () {
   createChild(pinoLog, 3)
-})
-
-suite.add('perj Create Five Children', function () {
-  createChild(perjLog, 5)
-})
-
-suite.add('pino Create Five Children', function () {
-  createChild(pinoLog, 5)
 })
 
 function multipleErrors (log) {
@@ -140,7 +163,7 @@ suite.on('cycle', function (event) {
 
 suite.on('complete', function () {
   console.log(chalk.red('NOTE: pino is not using extreme mode.'))
-  const data = [
+  const compare = table([
     [chalk.blue('Benchmark Ops/Sec'),
       chalk.green('perj'),
       chalk.yellow('pino'),
@@ -148,16 +171,18 @@ suite.on('complete', function () {
     row('Common Log Operations', this[0], this[1]),
     row('Single String Message', this[2], this[3]),
     row('Single Long String', this[4], this[5]),
-    row('Single Object Data', this[6], this[7]),
-    row('Deep Object Data', this[8], this[9]),
-    row('Single String And Object Data', this[10], this[11]),
-    row('Logging Error Objects', this[12], this[13]),
-    row('Create Single Child', this[14], this[15]),
-    row('Create Three Children', this[16], this[17]),
-    row('Create Five Children', this[18], this[19])
-  ]
-  const output = table(data)
-  console.log(output)
+    row('Flat Object Data', this[6], this[7]),
+    row('Simple Object Data', this[8], this[9]),
+    row('Complex Object Data', this[10], this[11]),
+    row('Deep Object Data', this[12], this[13]),
+    row('Single String And Object Data', this[14], this[15]),
+    row('Logging Error Objects', this[16], this[17]),
+    row('Create Single Child', this[18], this[19]),
+    row('Create Two Children', this[20], this[21]),
+    row('Create Three Children', this[22], this[23])
+  ])
+  console.log(compare)
+  console.log(line)
 })
 
 suite.run({ 'async': true })

@@ -33,9 +33,9 @@ const perjComp = perj.create({component: 'parent', write: (json) => { dest.write
 
 const suite = new Benchmark.Suite()
 const line = '='.repeat(process.stdout.columns)
-const page = '\n'.repeat(process.stdout.rows)
+// const page = '\n'.repeat(process.stdout.rows)
 
-console.log(page)
+// console.log(page)
 console.log(line)
 console.log(' perj Benchmark')
 console.log(line)

@@ -14,9 +14,6 @@ const _HeaderValues = Symbol('HeaderValues')
 const _SetLevelHeader = Symbol('SetLevelHeader')
 const _SetLevelFunction = Symbol('SetLevelFunction')
 
-// TODO: Remove this line.
-require('console-probe').apply()
-
 module.exports = Object.freeze({
   create (obj) {
     return new Perj(obj)

@@ -106,15 +106,63 @@ class Perj {
         return
       }
       const time = this[_Options].dateTimeFunction()
-      const splitItems = stringifyLogItems(items)
+      let msg = ''
+      let data = []
+      let dataJson = ''
+
+      if (items.length === 1) {
+        // Single item processing
+        const item = items[0]
+        if (typeof item === 'string') {
+          msg = item
+          dataJson = '""'
+        } else if (item instanceof Error) {
+          msg = item.message
+          data = serializerr(item)
+          dataJson = stringify(data)
+        } else {
+          data = item
+          dataJson = stringify(item)
+        }
+      } else {
+        // Multiple item processing
+        for (const item of items) {
+          if (typeof item === 'string') {
+            if (msg) {
+              data.push(item)
+            } else {
+              msg = item
+            }
+            continue
+          }
+          if (item instanceof Error) {
+            data.push(serializerr(item))
+            if (!msg) { msg = item.message }
+            continue
+          }
+          data.push(item)
+        }
+
+        if (data.length < 1) {
+          data = ''
+          dataJson = '""'
+        } else if (data.length === 1) {
+          data = data[0]
+          dataJson = stringify(data)
+        } else {
+          dataJson = stringify(data)
+        }
+      }
+
       const json = this[_HeaderStrings][level] + time +
-          ',"' + this[_Options].messageKey + '":"' + splitItems.msg +
-          '","' + this[_Options].dataKey + '":' + splitItems.dataStr + '}\n'
+          ',"' + this[_Options].messageKey + '":"' + msg +
+          '","' + this[_Options].dataKey + '":' + dataJson + '}\n'
+
       if (this[_Options].passThrough) {
         const obj = Object.assign(this[_HeaderValues][level], {
           [this[_Options].dateTimeKey]: time,
-          [this[_Options].messageKey]: splitItems.msg,
-          [this[_Options].dataKey]: splitItems.data
+          [this[_Options].messageKey]: msg,
+          [this[_Options].dataKey]: data
         })
         this[_Options].write(json, obj)
       } else {
@@ -138,8 +186,8 @@ class Perj {
     for (const key in tops) {
       if (defaultOptions.hasOwnProperty(key)) { continue }
       if (this[_TopValues].hasOwnProperty(key) &&
-            isString(this[_TopValues][key]) &&
-            isString(tops[key])) {
+            typeof this[_TopValues][key] === 'string' &&
+            typeof tops[key] === 'string') {
         const snip = this[_TopValues][key] + this[_Options].separator + tops[key]
         newChild[_TopValues][key] = snip
         newChild[_TopSnip][key] = ',"' + key + '":"' + snip + '"'
@@ -168,41 +216,7 @@ class Perj {
   }
 }
 
-function stringifyLogItems (items) {
-  let result = { msg: '', data: [], dataStr: '' }
-
-  for (const item of items) {
-    if (isString(item)) {
-      if (result.msg) {
-        result.data.push(item)
-      } else {
-        result.msg = item
-      }
-      continue
-    }
-    if (item instanceof Error) {
-      result.data.push(serializerr(item))
-      if (!result.msg) { result.msg = item.message }
-      continue
-    }
-    result.data.push(item)
-  }
-
-  if (result.data.length < 1) {
-    result.data = ''
-  } else if (result.data.length === 1) {
-    result.data = result.data[0]
-  }
-
-  result.dataStr = stringify(result.data)
-  return result
-}
-
 function stringifyTopValue (value) {
   let str = stringify(value)
   return str === undefined ? '""' : str
-}
-
-function isString (value) {
-  return Object.prototype.toString.call(value) === '[object String]'
 }

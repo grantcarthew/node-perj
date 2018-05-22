@@ -25,7 +25,7 @@ describe('child separator', () => {
     expect(writer.getType(writer.jsonOut.time)).toBe('Number')
     expect(writer.jsonOut.msg).toBe('first child')
     expect(writer.jsonOut.data.c1).toBe(true)
-    expect(writer.jsonOut.test).toBe('parent > first child')
+    expect(writer.jsonOut.test).toBe('parent:first child')
   })
   test('second child', () => {
     child.push(child[0].child({ test: 'second child' }))
@@ -35,7 +35,7 @@ describe('child separator', () => {
     expect(writer.getType(writer.jsonOut.time)).toBe('Number')
     expect(writer.jsonOut.msg).toBe('second child')
     expect(writer.jsonOut.data.c2).toBe(true)
-    expect(writer.jsonOut.test).toBe('parent > first child > second child')
+    expect(writer.jsonOut.test).toBe('parent:first child:second child')
   })
   test('third child', () => {
     child.push(child[1].child({ test: 'third child' }))
@@ -45,7 +45,7 @@ describe('child separator', () => {
     expect(writer.getType(writer.jsonOut.time)).toBe('Number')
     expect(writer.jsonOut.msg).toBe('third child')
     expect(writer.jsonOut.data.c3).toBe(true)
-    expect(writer.jsonOut.test).toBe('parent > first child > second child > third child')
+    expect(writer.jsonOut.test).toBe('parent:first child:second child:third child')
   })
   test('parent unchanged', () => {
     log.info('parent', { parent: true })

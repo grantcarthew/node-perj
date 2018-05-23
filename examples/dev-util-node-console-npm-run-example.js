@@ -1,6 +1,6 @@
 require('console-probe').apply()
 const perj = require('../perj')
-const scifi = require('../data/data-scifi')
+const data = require('../data')
 const line = '='.repeat(process.stdout.columns)
 const page = '\n'.repeat(process.stdout.rows)
 
@@ -32,12 +32,12 @@ console.log(line)
 log.info('This is a raw JSON log string')
 console.log(line)
 console.log('Note: This is logging a message and a complex object.')
-console.log("Code: log.info('Simple Message', scifi.serenity)")
+console.log("Code: log.info('Simple Message', data.serenity)")
 console.log(line)
-log.info('Simple Message and Complex Object', scifi.rndMsg(), scifi.serenity)
+log.info('Simple Message and Complex Object', data.rndMsg(), data.serenity)
 console.log(line)
 console.log('Note: Same complex object in a slightly easier to read format.')
-console.log("Code: log.info('Complex Object', scifi.serenity)")
+console.log("Code: log.info('Complex Object', data.serenity)")
 console.log(line)
 log = perj.create({
   name,
@@ -46,5 +46,5 @@ log = perj.create({
   file,
   write: (s) => { console.json(JSON.parse(s), null, 2) }
 })
-log.info('Complex Object', scifi.serenity)
+log.info('Complex Object', data.serenity)
 console.log(line)

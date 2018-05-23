@@ -4,7 +4,7 @@
 const perj = require('../perj')
 const name = 'full'
 const host = location.hostname
-const scifi = require('../data-scifi')
+const data = require('../data')
 
 /*
 Description:
@@ -35,10 +35,10 @@ function write (logString) {
   console.log(output)
 }
 
-log.info(scifi.tardis)
-log.info(scifi.rndMsg(), scifi.serenity)
-log.info(scifi.rndMsg(), scifi.rndMsg(), scifi.deathStar)
-log.info(scifi.rndMsg(), scifi.rndMsg(), scifi.tardis, scifi.serenity)
+log.info(data.tardis)
+log.info(data.rndMsg(), data.serenity)
+log.info(data.rndMsg(), data.rndMsg(), data.deathStar)
+log.info(data.rndMsg(), data.rndMsg(), data.tardis, data.serenity)
 
 /*
 Example console output:

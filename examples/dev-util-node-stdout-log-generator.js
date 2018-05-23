@@ -3,7 +3,7 @@ const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)
 const name = 'Log Generator'
-const scifi = require('../data/data-scifi')
+const data = require('../data')
 const log = perj.create({ host, pid, file, name })
 const levels = Object.keys(log.levels)
 
@@ -26,7 +26,7 @@ Features:
 
 function genLog () {
   const level = getLevel()
-  log[level](scifi.rndMsg(), scifi.rndData())
+  log[level](data.rndMsg(), data.rndData())
   setTimeout(genLog, 100)
 }
 

@@ -16,7 +16,7 @@ module.exports = {
   dateTimeFunction: dateTimeFunctions.epoch,
   messageKey: 'msg',
   dataKey: 'data',
-  separator: ':',
+  separatorString: ':',
   passThrough: false,
   write: defaultWriter()
 }

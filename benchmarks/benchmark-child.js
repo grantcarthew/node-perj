@@ -26,7 +26,7 @@ const suite = new Benchmark.Suite()
 const line = '='.repeat(80)
 
 console.log(line)
-console.log(' perj vs pino Benchmark')
+console.log(' perj vs pino Child Benchmark')
 console.log(line)
 
 suite.add('perj Create Single Child', function () {
@@ -67,7 +67,6 @@ suite.on('cycle', function (event) {
 })
 
 suite.on('complete', function () {
-  console.log(chalk.red('NOTE: pino is not using extreme mode.'))
   const compare = table([
     [chalk.blue('Benchmark Ops/Sec'),
       chalk.green('perj'),

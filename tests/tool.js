@@ -1,6 +1,6 @@
 require('console-probe').apply()
 
-class Writer {
+class Tool {
   constructor () {
     this.jsonOut = {}
     this.objOut = {}
@@ -30,4 +30,4 @@ class Writer {
   }
 }
 
-module.exports = Writer
+module.exports = Tool

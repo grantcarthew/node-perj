@@ -7,7 +7,6 @@ const dateTimeFunctions = require('./date-time')
 const _SplitOptions = Symbol('SplitOptions')
 const _Options = Symbol('Options')
 const _TopString = Symbol('TopString')
-const _TopSnip = Symbol('TopSnip')
 const _TopValues = Symbol('TopValues')
 const _HeaderStrings = Symbol('HeaderStrings')
 const _HeaderValues = Symbol('HeaderValues')
@@ -25,7 +24,6 @@ class Perj {
   constructor (options) {
     this[_Options] = Object.assign({}, defaultOptions)
     this[_TopString] = ''
-    this[_TopSnip] = {}
     this[_TopValues] = {}
     this[_SplitOptions](options)
     this[_HeaderStrings] = {}
@@ -43,6 +41,10 @@ class Perj {
   set level (level) {
     if (!(this[_Options].levels.hasOwnProperty(level))) {
       throw new Error('The level option must be a valid key in the levels object.')
+    }
+    if (!this.hasOwnProperty(_Options)) {
+      // Attaching the options object to this instance
+      this[_Options] = Object.assign({}, this[_Options])
     }
     this[_Options].level = level
   }
@@ -74,9 +76,7 @@ class Perj {
         }
         this[_Options][key] = options[key]
       } else {
-        const snip = ',"' + key + '":' + (stringify(options[key]) || '""')
-        this[_TopString] += snip
-        this[_TopSnip][key] = snip
+        this[_TopString] += ',"' + key + '":' + (stringify(options[key]) || '""')
         this[_TopValues][key] = options[key]
       }
     }
@@ -168,10 +168,7 @@ class Perj {
       throw new Error('Provide top level arguments to create a child logger.')
     }
     const newChild = Object.create(this)
-    newChild[_Options] = Object.assign({}, this[_Options])
-    newChild[_HeaderStrings] = Object.assign({}, this[_HeaderStrings])
     newChild[_TopValues] = Object.assign({}, this[_TopValues])
-    newChild[_TopSnip] = Object.assign({}, this[_TopSnip])
     if (this[_Options].passThrough) {
       newChild[_HeaderValues] = Object.assign({}, this[_HeaderValues])
     }
@@ -185,19 +182,17 @@ class Perj {
       if (this[_TopValues].hasOwnProperty(key) &&
             typeof this[_TopValues][key] === 'string' &&
             typeof tops[key] === 'string') {
-        const snip = this[_TopValues][key] + this[_Options].separatorString + tops[key]
-        newChild[_TopValues][key] = snip
-        newChild[_TopSnip][key] = ',"' + key + '":"' + snip + '"'
+        newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key]
       } else {
         newChild[_TopValues][key] = tops[key]
-        newChild[_TopSnip][key] = ',"' + key + '":' + (stringify(tops[key]) || '""')
       }
     }
     newChild[_TopString] = ''
-    for (const key in newChild[_TopSnip]) {
-      newChild[_TopString] += newChild[_TopSnip][key]
+    for (const key in newChild[_TopValues]) {
+      newChild[_TopString] += ',"' + key + '":' + (stringify(newChild[_TopValues][key]) || '""')
     }
     newChild.parent = this
+    newChild[_HeaderStrings] = {}
     for (const level in this[_Options].levels) {
       newChild[_SetLevelHeader](level)
     }

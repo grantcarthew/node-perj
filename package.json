@@ -55,7 +55,8 @@
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
       "<rootDir>/node_modules/",
-      "<rootDir>/tests/"
+      "<rootDir>/tests/",
+      "<rootDir>/data/"
     ]
   },
   "dependencies": {},

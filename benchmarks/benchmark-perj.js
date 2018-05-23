@@ -15,13 +15,13 @@ const v = 1
 const dest = fs.createWriteStream('/dev/null')
 
 // Data
-const scifi = require('../data/data-scifi')
+const data = require('../data')
 const err = []
 for (let i = 0; i < 5; i++) {
   err.push(new Error('Error object number: ' + i))
 }
-const longString = scifi.msg[4].repeat(1000)
-const deep = Object.assign({}, scifi.deathStar)
+const longString = data.msg[4].repeat(1000)
+const deep = Object.assign({}, data.deathStar)
 deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
@@ -32,10 +32,8 @@ const passThrough = perj.create({passThrough: true, write: (json, obj) => { dest
 const perjComp = perj.create({component: 'parent', write: (json) => { dest.write(json) }})
 
 const suite = new Benchmark.Suite()
-const line = '='.repeat(process.stdout.columns)
-// const page = '\n'.repeat(process.stdout.rows)
+const line = '='.repeat(80)
 
-// console.log(page)
 console.log(line)
 console.log(' perj Benchmark')
 console.log(line)
@@ -73,19 +71,19 @@ suite.add('Flat Object Data passThrough', function () {
 })
 
 suite.add('Simple Object Data', function () {
-  perjLog.info(scifi.tardis)
+  perjLog.info(data.tardis)
 })
 
 suite.add('Simple Object Data passThrough', function () {
-  passThrough.info(scifi.tardis)
+  passThrough.info(data.tardis)
 })
 
 suite.add('Complex Object Data', function () {
-  perjLog.info(scifi.deathStar)
+  perjLog.info(data.deathStar)
 })
 
 suite.add('Complex Object Data passThrough', function () {
-  passThrough.info(scifi.deathStar)
+  passThrough.info(data.deathStar)
 })
 
 suite.add('Deep Object Data', function () {
@@ -114,7 +112,7 @@ suite.add('Create Single Child', function () {
 
 suite.add('Create Child with Separator', function () {
   let childComp = perjComp.child({ component: 'child' })
-  childComp.info(scifi.msg[0])
+  childComp.info(data.msg[0])
 })
 
 suite.add('Create Two Children', function () {
@@ -136,14 +134,14 @@ function createChild (log, total) {
   for (let i = 0; i < total; i++) {
     let child = 'child' + i
     clog = clog.child({ child })
-    clog.info(scifi.msg[0])
+    clog.info(data.msg[0])
   }
 }
 
 function job (log) {
-  log.fatal(scifi.msg[0])
-  log.warn(scifi.dataLarge)
-  log.trace(scifi.dataLarge, scifi.msg[0])
+  log.fatal(data.msg[0])
+  log.warn(data.dataLarge)
+  log.trace(data.dataLarge, data.msg[0])
 }
 
 suite.on('cycle', function (event) {

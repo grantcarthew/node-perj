@@ -74,7 +74,7 @@ class Perj {
         }
         this[_Options][key] = options[key]
       } else {
-        const snip = ',"' + key + '":' + stringifyTopValue(options[key])
+        const snip = ',"' + key + '":' + (stringify(options[key]) || '""')
         this[_TopString] += snip
         this[_TopSnip][key] = snip
         this[_TopValues][key] = options[key]
@@ -140,15 +140,10 @@ class Perj {
           data.push(item)
         }
 
-        if (data.length < 1) {
-          data = ''
-          dataJson = '""'
-        } else if (data.length === 1) {
+        if (data.length === 1) {
           data = data[0]
-          dataJson = stringify(data)
-        } else {
-          dataJson = stringify(data)
         }
+        dataJson = stringify(data)
       }
 
       const json = this[_HeaderStrings][level] + time +
@@ -181,16 +176,21 @@ class Perj {
       newChild[_HeaderValues] = Object.assign({}, this[_HeaderValues])
     }
     for (const key in tops) {
-      if (defaultOptions.hasOwnProperty(key)) { continue }
+      if (defaultOptions.hasOwnProperty(key) ||
+          this[_Options].levelKey === key ||
+          this[_Options].levelNumberKey === key ||
+          this[_Options].dateTimeKey === key ||
+          this[_Options].messageKey === key ||
+          this[_Options].dataKey === key) { continue }
       if (this[_TopValues].hasOwnProperty(key) &&
             typeof this[_TopValues][key] === 'string' &&
             typeof tops[key] === 'string') {
-        const snip = this[_TopValues][key] + this[_Options].separator + tops[key]
+        const snip = this[_TopValues][key] + this[_Options].separatorString + tops[key]
         newChild[_TopValues][key] = snip
         newChild[_TopSnip][key] = ',"' + key + '":"' + snip + '"'
       } else {
         newChild[_TopValues][key] = tops[key]
-        newChild[_TopSnip][key] = ',"' + key + '":' + stringifyTopValue(tops[key])
+        newChild[_TopSnip][key] = ',"' + key + '":' + (stringify(tops[key]) || '""')
       }
     }
     newChild[_TopString] = ''
@@ -211,9 +211,4 @@ class Perj {
   json (data) {
     console.log(stringify(data, null, 2))
   }
-}
-
-function stringifyTopValue (value) {
-  let str = stringify(value)
-  return str === undefined ? '""' : str
 }

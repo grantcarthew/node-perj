@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A simple, fast JSON logger.",
   "main": "index.js",
   "homepage": "https://github.com/grantcarthew/node-perj",
@@ -16,6 +16,7 @@
     "benchmark-perj": "node benchmarks/benchmark-perj.js",
     "benchmark-child": "node benchmarks/benchmark-child.js",
     "benchmark-typeof": "node benchmarks/benchmark-typeof.js",
+    "benchmark-map": "node benchmarks/benchmark-map.js",
     "profile": "node --prof benchmark.js && node --prof-process *.log && rm *.log",
     "sink": "npm run build && npm run benchmark && npm run profile",
     "watch": "jest --watch",

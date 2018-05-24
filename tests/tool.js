@@ -12,8 +12,8 @@ class Tool {
   }
 
   reset () {
-    this.jsonOut = {reset: true}
-    this.objOut = {reset: true}
+    this.jsonOut = {}
+    this.objOut = {}
   }
 
   show () {

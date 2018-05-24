@@ -7,7 +7,7 @@ const data = require('../data')
 
 const line = '='.repeat(80)
 console.log(line)
-console.log(' Type of benchmark')
+console.log(' Type of Benchmark')
 console.log(line)
 
 suite.add('typeof', typeofTest)

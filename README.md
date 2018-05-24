@@ -20,7 +20,7 @@ __Under heavy development. Do not use. API is changing.__
 ## Installing
 
 * Node: Works with v6.0.0 and above. Not tested under v6.0.0.
-* Browser: Not tested (🤔 working on it.)
+* Browser: Requires bundling - Not tested (🤔 working on it.)
 
 ```sh
 

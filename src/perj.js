@@ -6,12 +6,61 @@ const dateTimeFunctions = require('./date-time')
 // Symbols for functions and values
 const _SplitOptions = Symbol('SplitOptions')
 const _Options = Symbol('Options')
-const _TopString = Symbol('TopString')
+const _TopSnip = Symbol('TopSnip')
 const _TopValues = Symbol('TopValues')
+const _TopIsPrimitive = Symbol('TopIsPrimitive')
 const _HeaderStrings = Symbol('HeaderStrings')
 const _HeaderValues = Symbol('HeaderValues')
 const _SetLevelHeader = Symbol('SetLevelHeader')
 const _SetLevelFunction = Symbol('SetLevelFunction')
+
+/*
+Code Summary:
+Following are points of interest around the perj code choices.
+- Symbols used to hide internal properties and methods.
+- Duplicate Symbols due to major performance hit if using nested.
+- Deeply nested 'if' and 'for' statements due to performance benifits.
+- Some minor duplication due to performance benifits.
+
+Symbol Summary:
+_SplitOptions: <Function>
+  Used to split the user options from top level properties.
+  Helps to abstract the split function out of the constructor.
+
+_Options: <Object>
+  This holds an Object with the default or custom options.
+
+_TopSnip: <String>
+  This holds a JSON snippet of the user supplied top level properties.
+
+_TopValues: <Object>
+  This holds the user supplied top level properies.
+  It is used to build the _TopSnip string and when
+  'passThrough' is enabled.
+
+_TopIsPrimitive: <Boolean>
+  Object.assign is a real pig to work with in a high
+  performance project. To avoid using Object.assign, this flag
+  is used to indicate if the user has assigned a top level property
+  with values that are only primitives (string, number, boolean).
+  If the user assigned values are all primitive, a simple 'for' loop
+  is faster to duplicate an object than using Object.assign.
+
+_HeaderStrings: <Object>
+  The header for each log level is the same such as:
+  {"level":"error","lvl":50,"time":1525643291716
+  This caches the level headers.
+
+_HeaderValues: <Object>
+  Only used when 'passThrough' is enabled.
+  Permits rebuilding the JSON object for output.
+
+_SetLevelHeader: <Function>
+  Holds the function used to build the level header.
+
+_SetLevelFunction: <Function>
+  This function is used to generate the level functions.
+*/
 
 module.exports = Object.freeze({
   create (obj) {
@@ -23,8 +72,9 @@ module.exports = Object.freeze({
 class Perj {
   constructor (options) {
     this[_Options] = Object.assign({}, defaultOptions)
-    this[_TopString] = ''
+    this[_TopSnip] = ''
     this[_TopValues] = {}
+    this[_TopIsPrimitive] = true
     this[_SplitOptions](options)
     this[_HeaderStrings] = {}
     this[_HeaderValues] = {}
@@ -76,8 +126,18 @@ class Perj {
         }
         this[_Options][key] = options[key]
       } else {
-        this[_TopString] += ',"' + key + '":' + (stringify(options[key]) || '""')
-        this[_TopValues][key] = options[key]
+        const type = typeof options[key]
+        if (type === 'string') {
+          this[_TopSnip] += ',"' + key + '":"' + options[key] + '"'
+          this[_TopValues][key] = options[key]
+        } else if (type === 'number' || type === 'boolean') {
+          this[_TopSnip] += ',"' + key + '":' + options[key]
+          this[_TopValues][key] = options[key]
+        } else {
+          this[_TopSnip] += ',"' + key + '":' + (stringify(options[key]) || '""')
+          this[_TopValues][key] = options[key]
+          this[_TopIsPrimitive] = false
+        }
       }
     }
   }
@@ -86,7 +146,7 @@ class Perj {
     this[_HeaderStrings][level] = '{"' +
       this[_Options].levelKey + '":"' + level + '","' +
       this[_Options].levelNumberKey + '":' + this[_Options].levels[level] +
-      this[_TopString] + ',"' +
+      this[_TopSnip] + ',"' +
       this[_Options].dateTimeKey + '":'
     if (this[_Options].passThrough) {
       this[_HeaderValues][level] = Object.assign({
@@ -121,6 +181,8 @@ class Perj {
           data = item
           dataJson = stringify(item)
         }
+      } else if (items.length < 1) {
+        dataJson = '""'
       } else {
         // Multiple item processing
         for (const item of items) {
@@ -168,28 +230,51 @@ class Perj {
       throw new Error('Provide top level arguments to create a child logger.')
     }
     const newChild = Object.create(this)
-    newChild[_TopValues] = Object.assign({}, this[_TopValues])
-    if (this[_Options].passThrough) {
-      newChild[_HeaderValues] = Object.assign({}, this[_HeaderValues])
+    if (this[_TopIsPrimitive]) {
+      // Avoiding Object.assign which is not needed
+      newChild[_TopValues] = {}
+      newChild[_TopIsPrimitive] = true
+      for (const key in this[_TopValues]) {
+        newChild[_TopValues][key] = this[_TopValues][key]
+      }
+    } else {
+      // Object type as top value. Take the Object.assign hit like a man.
+      newChild[_TopValues] = Object.assign({}, this[_TopValues])
+      newChild[_TopIsPrimitive] = false
     }
     for (const key in tops) {
+      // Options and key names are not valid, skipping.
       if (defaultOptions.hasOwnProperty(key) ||
           this[_Options].levelKey === key ||
           this[_Options].levelNumberKey === key ||
           this[_Options].dateTimeKey === key ||
           this[_Options].messageKey === key ||
           this[_Options].dataKey === key) { continue }
+      const type = typeof tops[key]
       if (this[_TopValues].hasOwnProperty(key) &&
             typeof this[_TopValues][key] === 'string' &&
-            typeof tops[key] === 'string') {
+            type === 'string') {
+        // New top key is the same as parent and is a string. Appending separator string and new value.
         newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key]
       } else {
         newChild[_TopValues][key] = tops[key]
+        if (type !== 'string' && type !== 'number' && type !== 'boolean') {
+          this[_TopIsPrimitive] = false
+        }
       }
     }
-    newChild[_TopString] = ''
+    newChild[_TopSnip] = ''
     for (const key in newChild[_TopValues]) {
-      newChild[_TopString] += ',"' + key + '":' + (stringify(newChild[_TopValues][key]) || '""')
+      if (newChild[_TopIsPrimitive]) {
+        const type = typeof newChild[_TopValues][key]
+        if (type === 'string') {
+          newChild[_TopSnip] += ',"' + key + '":"' + newChild[_TopValues][key] + '"'
+        } else if (type === 'number' || type === 'boolean') {
+          newChild[_TopSnip] += ',"' + key + '":' + newChild[_TopValues][key]
+        }
+        continue
+      }
+      newChild[_TopSnip] += ',"' + key + '":' + (stringify(newChild[_TopValues][key]) || '""')
     }
     newChild.parent = this
     newChild[_HeaderStrings] = {}

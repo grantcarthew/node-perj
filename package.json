@@ -1,8 +1,9 @@
 {
   "name": "perj",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A simple, fast JSON logger.",
-  "main": "index.js",
+  "main": "dist/perj.js",
+  "module": "src/perj.js",
   "homepage": "https://github.com/grantcarthew/node-perj",
   "repository": {
     "type": "git",
@@ -23,9 +24,8 @@
     "example": "nodemon examples/dev-util-node-console-npm-run-example.js",
     "lint": "standard",
     "prepublish": "npm build && npm test",
-    "build": "npm run clean && npm test",
-    "webpack": "npm run clean && webpack && npm test",
-    "babel": "npm run clean && standard && babel src/perj.js --out-file index.js && npm test",
+    "build": "npm run clean && webpack && npm test",
+    "build:babel": "npm run clean && standard && babel src/perj.js --out-file index.js && npm test",
     "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",
     "upgrade:rm": "rm node_modules -Rf",
     "upgrade:ncu": "npm-check-updates --upgradeAll",
@@ -67,6 +67,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-minify": "^0.4.3",
+    "babel-minify-webpack-plugin": "^0.3.1",
     "babel-preset-env": "^1.7.0",
     "benchmark": "^2.1.4",
     "chalk": "^2.4.1",

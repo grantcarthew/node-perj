@@ -1,9 +1,21 @@
 const path = require('path')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
+const minifyOpts = { mangle: true }
 
 module.exports = {
-  entry: './index.js',
+  mode: 'production',
+  entry: './src/perj.js',
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'perj.js',
+    library: 'perj',
+    libraryTarget: 'umd'
+  },
+  externals: /node_modules/,
+  plugins: [
+    new MinifyPlugin(minifyOpts)
+  ],
+  stats: {
+    excludeModules: false
   }
 }

@@ -15,6 +15,14 @@ describe('log argument tests', () => {
   for (const level of Object.keys(log.levels)) {
     log = perj.create({write, level: level})
 
+    test(level + ': empty', () => {
+      log[level]()
+      expect(Object.keys(tool.jsonOut).length).toBe(5)
+      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
+      expect(tool.jsonOut.level).toBe(level)
+      expect(tool.jsonOut.msg).toBe('')
+      expect(tool.jsonOut.data).toBe('')
+    })
     test(level + ': one message', () => {
       log[level](data.msg[0])
       expect(Object.keys(tool.jsonOut).length).toBe(5)

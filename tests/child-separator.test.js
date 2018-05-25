@@ -22,7 +22,7 @@ describe('child separator tests', () => {
     expect(tool.jsonOut.test).toBe('parent')
   })
   test('first child', () => {
-    child.push(log.child({ test: 'first child' }))
+    child.push(log.child({ test: 'first child', test2: 'first child2' }))
     child[0].info('first child', { c1: true })
     expect(tool.jsonOut.level).toBe('info')
     expect(tool.jsonOut.lvl).toBe(30)
@@ -30,9 +30,10 @@ describe('child separator tests', () => {
     expect(tool.jsonOut.msg).toBe('first child')
     expect(tool.jsonOut.data.c1).toBe(true)
     expect(tool.jsonOut.test).toBe('parent:first child')
+    expect(tool.jsonOut.test2).toBe('first child2')
   })
   test('second child', () => {
-    child.push(child[0].child({ test: 'second child' }))
+    child.push(child[0].child({ test: 'second child', test2: 'second child2' }))
     child[1].info('second child', { c2: true })
     expect(tool.jsonOut.level).toBe('info')
     expect(tool.jsonOut.lvl).toBe(30)
@@ -40,9 +41,10 @@ describe('child separator tests', () => {
     expect(tool.jsonOut.msg).toBe('second child')
     expect(tool.jsonOut.data.c2).toBe(true)
     expect(tool.jsonOut.test).toBe('parent:first child:second child')
+    expect(tool.jsonOut.test2).toBe('first child2:second child2')
   })
   test('third child', () => {
-    child.push(child[1].child({ test: 'third child' }))
+    child.push(child[1].child({ test: 'third child', test2: 'third child2' }))
     child[2].info('third child', { c3: true })
     expect(tool.jsonOut.level).toBe('info')
     expect(tool.jsonOut.lvl).toBe(30)
@@ -50,6 +52,7 @@ describe('child separator tests', () => {
     expect(tool.jsonOut.msg).toBe('third child')
     expect(tool.jsonOut.data.c3).toBe(true)
     expect(tool.jsonOut.test).toBe('parent:first child:second child:third child')
+    expect(tool.jsonOut.test2).toBe('first child2:second child2:third child2')
   })
   test('parent unchanged', () => {
     log.info('parent', { parent: true })
@@ -59,6 +62,7 @@ describe('child separator tests', () => {
     expect(tool.jsonOut.msg).toBe('parent')
     expect(tool.jsonOut.data.parent).toBe(true)
     expect(tool.jsonOut.test).toBe('parent')
+    expect(tool.jsonOut.test2).toBeUndefined()
   })
 })
 

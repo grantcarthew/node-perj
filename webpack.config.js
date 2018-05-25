@@ -9,7 +9,8 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'perj.js',
     library: 'perj',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    globalObject: `typeof self !== 'undefined' ? self : this`
   },
   externals: /node_modules/,
   plugins: [

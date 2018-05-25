@@ -258,7 +258,8 @@ class Perj {
         newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key]
       } else {
         newChild[_TopValues][key] = tops[key]
-        if (type !== 'string' && type !== 'number' && type !== 'boolean') {
+        // Not using && so we can exit early
+        if (!(type === 'string' || type === 'number' || type === 'boolean')) {
           this[_TopIsPrimitive] = false
         }
       }
@@ -266,6 +267,7 @@ class Perj {
     newChild[_TopSnip] = ''
     for (const key in newChild[_TopValues]) {
       if (newChild[_TopIsPrimitive]) {
+        // Privitive JSON.stringify. Cheap.
         const type = typeof newChild[_TopValues][key]
         if (type === 'string') {
           newChild[_TopSnip] += ',"' + key + '":"' + newChild[_TopValues][key] + '"'

@@ -22,6 +22,9 @@ module.exports = {
 }
 
 function defaultWriter () {
-  const isNode = Object.prototype.toString.call(process) === '[object process]'
-  return isNode ? process.stdout.write.bind(process.stdout) : console.log
+  if (typeof process !== 'undefined' &&
+      Object.prototype.toString.call(process) === '[object process]') {
+    return process.stdout.write.bind(process.stdout)
+  }
+  return console.log
 }

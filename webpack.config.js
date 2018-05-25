@@ -22,7 +22,7 @@ plugins.webpack.IgnorePlugin:
   Ignores any modules that match the regex.
 
 plugins.webpack.DefinePlugin:
-  This is a fix because webpack tries to import a browser.js module.
+  This is a fix because webpack tries to import a ./node_modules/process/browser.js module.
 
 stats.excludeModules:
   Forces all build modules to be displayed on the console during building.

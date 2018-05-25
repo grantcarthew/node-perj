@@ -5,9 +5,12 @@ A simple, fast JSON logger.
 [![Maintainability][cc-maintain-badge]][cc-maintain-url]
 [![Test Coverage][cc-coverage-badge]][cc-coverage-url]
 [![Build Status][travisci-image]][travisci-url]
+[![File Size][file-size-badge]][file-size-url]
+[![NPM Version][npm-v-badge]][perj-npm]
 [![js-standard-style][js-standard-image]][js-standard-url]
 [![NSP Status][nsp-image]][nsp-url]
 [![Patreon Donation][patreon-image]][patreon-url]
+[![Twitter][twitter-badge]][twitter-url]
 
 [![perj][perj-image]][perj-url]
 
@@ -141,15 +144,21 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 [cc-maintain-url]: https://codeclimate.com/github/grantcarthew/node-perj/maintainability
 [cc-coverage-badge]: https://api.codeclimate.com/v1/badges/14946690a2410b71177e/test_coverage
 [cc-coverage-url]: https://codeclimate.com/github/grantcarthew/node-perj/test_coverage
+[npm-v-badge]: https://img.shields.io/npm/v/perj.svg
+[file-size-badge]: https://img.shields.io/github/size/grantcarthew/node-perj/dist/perj.js.svg
+[file-size-url]: https://github.com/grantcarthew/node-perj/blob/master/dist/perj.js
 [js-standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [js-standard-url]: http://standardjs.com/
 [nsp-image]: https://nodesecurity.io/orgs/openjs/projects/4367c7cb-163d-4335-be3c-fe3429c69385/badge
 [nsp-url]: https://nodesecurity.io/orgs/openjs/projects/4367c7cb-163d-4335-be3c-fe3429c69385
 [patreon-image]: https://img.shields.io/badge/patreon-donate-yellow.svg
 [patreon-url]: https://www.patreon.com/grantcarthew
+[twitter-badge]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+[twitter-url]: https://twitter.com/grantcarthew
 [nodei-npm-image]: https://nodei.co/npm/perj.png?downloads=true&downloadRank=true&stars=true
 [nodei-npm-url]: https://nodei.co/npm/perj/
 [perj-image]: https://rawgit.com/grantcarthew/node-perj/master/perj.svg
 [perj-url]: https://github.com/grantcarthew/node-perj
 [perj-wiki]: https://github.com/grantcarthew/node-perj/wiki
+[perj-npm]: https://www.npmjs.com/package/perj
 [pino-url]: https://www.npmjs.com/package/pino

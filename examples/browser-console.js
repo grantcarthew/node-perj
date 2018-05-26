@@ -11,12 +11,20 @@ Dependencies:
 
 Features:
 - Logs to the console only.
-- Logs time, level, name, host, and message properties.
+- Logs ver, time, level, name, host, message, and data properties.
 - Stringified objects displayed on next line.
+- The 'obj' variable has been sanitized so JSON.stringify is safe.
 
 Usage:
-- Copy and paste the code into your application.
+- Copy and paste the code into your application to a 'logger.js' file.
+- Import the module as 'logger', 'log', or something similar.
+- Change the value of the 'name' variable below.
+- Customize as needed.
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
+
+Suggestions:
+- Extend by sending the 'json' to a storage endpoint.
+- Add your apps session properties.perj
 
 Comment:
 To test on Node.js, add these lines.
@@ -36,7 +44,7 @@ module.exports = perj.create({ ver, name, host, passThrough, write })
 function write (json, obj) {
   const dt = new Date(obj.time)
   let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}) ${obj.msg}\n`
-  output += JSON.stringify(obj.data, null, 2)
+  output += JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
   console.log(output)
 
   // Extend by sending 'json' to your API or cloud storage.

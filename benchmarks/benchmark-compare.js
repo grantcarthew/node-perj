@@ -7,7 +7,7 @@ require('console-probe').apply()
 const { table } = require('table')
 const chalk = require('chalk')
 const Benchmark = require('benchmark')
-const perj = require('../index')
+const { Perj } = require('../index')
 const pino = require('pino')
 const fs = require('fs')
 const hostname = require('os').hostname()
@@ -28,7 +28,7 @@ deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 
 // Adding hostname and pid to match pino log string
-const perjLog = perj.create({v, hostname, pid, write: (json) => { dest.write(json) }})
+const { Perj }Log = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
 const pinoLog = pino(dest)
 
 const suite = new Benchmark.Suite()

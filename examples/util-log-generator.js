@@ -15,13 +15,13 @@ Features:
 
 */
 
-const perj = require('../perj')
+const { Perj } = require('../perj')
 const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)
 const name = 'Log Generator'
 const data = require('../data')
-const log = perj.create({ host, pid, file, name })
+const log = new Perj({ host, pid, file, name })
 const levels = Object.keys(log.levels)
 const ms = 100
 

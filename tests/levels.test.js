@@ -1,4 +1,4 @@
-const perj = require('../src/perj')
+const { Perj } = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const write = tool.write.bind(tool)
@@ -9,7 +9,7 @@ beforeEach(() => {
 
 describe('log level tests', () => {
   test('level: fatal', () => {
-    const log = perj.create({level: 'fatal', write})
+    const log = new Perj({level: 'fatal', write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     tool.reset()
@@ -25,7 +25,7 @@ describe('log level tests', () => {
     expect(tool.jsonOut.msg).toBeUndefined()
   })
   test('level: error', () => {
-    const log = perj.create({level: 'error', write})
+    const log = new Perj({level: 'error', write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     log.error('error')
@@ -41,7 +41,7 @@ describe('log level tests', () => {
     expect(tool.jsonOut.msg).toBeUndefined()
   })
   test('level: warn', () => {
-    const log = perj.create({level: 'warn', write})
+    const log = new Perj({level: 'warn', write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     log.error('error')
@@ -57,7 +57,7 @@ describe('log level tests', () => {
     expect(tool.jsonOut.msg).toBeUndefined()
   })
   test('level: info', () => {
-    const log = perj.create({level: 'info', write})
+    const log = new Perj({level: 'info', write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     log.error('error')
@@ -73,7 +73,7 @@ describe('log level tests', () => {
     expect(tool.jsonOut.msg).toBeUndefined()
   })
   test('level: debug', () => {
-    const log = perj.create({level: 'debug', write})
+    const log = new Perj({level: 'debug', write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     log.error('error')
@@ -89,7 +89,7 @@ describe('log level tests', () => {
     expect(tool.jsonOut.msg).toBeUndefined()
   })
   test('level: trace', () => {
-    const log = perj.create({level: 'trace', write})
+    const log = new Perj({level: 'trace', write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     log.error('error')
@@ -104,7 +104,7 @@ describe('log level tests', () => {
     expect(tool.jsonOut.msg).toBe('trace')
   })
   test('change level', () => {
-    const log = perj.create({write})
+    const log = new Perj({write})
     log.fatal('fatal')
     expect(tool.jsonOut.msg).toBe('fatal')
     log.error('error')

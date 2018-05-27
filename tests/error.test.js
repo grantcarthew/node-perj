@@ -1,4 +1,4 @@
-const perj = require('../src/perj')
+const { Perj } = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const data = require('../data')
@@ -9,7 +9,7 @@ beforeEach(() => {
 })
 
 describe('logging error tests', () => {
-  const log = perj.create({level: 'trace', write, name: 'error tests'})
+  const log = new Perj({level: 'trace', write, name: 'error tests'})
   let err1 = new Error(data.msg[0])
   let err2 = new Error(data.msg[1])
 

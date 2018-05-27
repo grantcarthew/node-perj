@@ -1,11 +1,11 @@
-const perj = require('../src/perj')
+const { Perj } = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const data = require('../data')
 const write = tool.write.bind(tool)
 const passThrough = true
 
-let log = perj.create({ write, passThrough })
+let log = new Perj({ write, passThrough })
 
 beforeEach(() => {
   tool.reset()
@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('log argument tests', () => {
   for (const level of Object.keys(log.levels)) {
-    log = perj.create({write, level: level})
+    log = new Perj({write, level: level})
 
     test(level + ': empty', () => {
       log[level]()

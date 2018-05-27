@@ -62,13 +62,6 @@ _SetLevelFunction: <Function>
   This function is used to generate the level functions.
 */
 
-module.exports = Object.freeze({
-  create (obj) {
-    return new Perj(obj)
-  },
-  dateTimeFunctions
-})
-
 class Perj {
   constructor (options) {
     this[_Options] = Object.assign({}, defaultOptions)
@@ -294,3 +287,8 @@ class Perj {
     console.log(stringify(data, null, 2))
   }
 }
+
+module.exports = Object.freeze({
+  Perj,
+  dateTimeFunctions
+})

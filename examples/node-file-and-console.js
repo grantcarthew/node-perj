@@ -1,4 +1,4 @@
-const perj = require('../perj')
+const { Perj } = require('../perj')
 const fs = require('fs')
 const host = require('os').hostname()
 const pid = process.pid
@@ -29,7 +29,7 @@ Features:
 - Stringified objects displayed on next line.
 */
 
-const log = perj.create({ name, write, host, pid, file })
+const log = new Perj({ name, write, host, pid, file })
 
 function write (logString) {
   fs.appendFile(destFile, logString, (err) => { if (err) throw err })

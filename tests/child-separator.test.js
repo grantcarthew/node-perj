@@ -1,10 +1,10 @@
-const perj = require('../src/perj')
+const { Perj } = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const write = tool.write.bind(tool)
 const passThrough = true
 
-let log = perj.create({ test: 'parent', write, passThrough })
+let log = new Perj({ test: 'parent', write, passThrough })
 let child = []
 
 beforeEach(() => {
@@ -68,7 +68,7 @@ describe('child separator tests', () => {
 
 describe('child custom separator tests', () => {
   test('custom parent', () => {
-    log = perj.create({ test: 'parent', write, passThrough, separatorString: ' > ' })
+    log = new Perj({ test: 'parent', write, passThrough, separatorString: ' > ' })
     child = []
     log.info('parent', { parent: true })
     expect(tool.jsonOut.level).toBe('info')
@@ -121,7 +121,7 @@ describe('child custom separator tests', () => {
 
 describe('object no child separator', () => {
   test('parent no child separator', () => {
-    log = perj.create({ test: { p: 1 }, write, passThrough, separatorString: '@' })
+    log = new Perj({ test: { p: 1 }, write, passThrough, separatorString: '@' })
     child = []
     log.info('parent', { parent: true })
     expect(tool.jsonOut.level).toBe('info')
@@ -163,7 +163,7 @@ describe('object no child separator', () => {
 })
 
 describe('deep child separator', () => {
-  let deepLog = perj.create({ test: 'p', write, passThrough, separatorString: '#' })
+  let deepLog = new Perj({ test: 'p', write, passThrough, separatorString: '#' })
   let value = 'p'
   test('parent deep', () => {
     deepLog.info(value, { parent: true })

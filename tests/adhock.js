@@ -1,5 +1,5 @@
 require('console-probe').apply()
-const perj = require('../src/perj')
-const log = perj.create()
+const { Perj } = require('../src/perj')
+const log = new Perj()
 const child = log.child({ child: true })
 console.probe(child)

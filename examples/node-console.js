@@ -24,7 +24,7 @@ Usage:
 
 */
 
-const perj = require('../perj')
+const { Perj } = require('../perj')
 const ver = 1
 const host = require('os').hostname()
 const pid = process.pid
@@ -32,7 +32,7 @@ const file = require('path').basename(module.filename)
 const name = 'Your App Name' // <======= CHANGE THIS NAME
 const passThrough = true
 
-module.exports = perj.create({ ver, name, host, pid, file, passThrough, write })
+module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })
 
 function write (json, obj) {
   const dt = new Date(obj.time)

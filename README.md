@@ -60,7 +60,7 @@ The following example adds a log format version `ver`, `name`, `host`, `pid` and
 
 ```js
 
-const perj = require('perj')
+const { Perj } = require('perj')
 
 // Customise the variables below as needed. They are not required.
 const ver = 1
@@ -69,7 +69,7 @@ const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)
 
-const log = perj.create({ver, name, host, pid, file})
+const log = new Perj({ver, name, host, pid, file})
 
 log.info('the quick brown fox jumps over the lazy dog')
 
@@ -91,14 +91,14 @@ The following example adds a format version `ver`, `name`, and `host` top level 
 
 ```js
 
-const perj = require('perj')
+const { Perj } = require('perj')
 
 // Customise the variables below as needed. They are not required.
 const ver = 1
 const name = 'QuickStart'
 const host = location.hostname
 
-const log = perj.create({ver, name, host})
+const log = new Perj({ver, name, host})
 
 log.info('the quick brown fox jumps over the lazy dog')
 

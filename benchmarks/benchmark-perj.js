@@ -7,7 +7,7 @@ require('console-probe').apply()
 const { table } = require('table')
 const chalk = require('chalk')
 const Benchmark = require('benchmark')
-const perj = require('../index')
+const { Perj } = require('../index')
 const fs = require('fs')
 const hostname = require('os').hostname()
 const pid = process.pid
@@ -27,9 +27,9 @@ deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 
 // Adding hostname and pid to match pino log string
-const perjLog = perj.create({v, hostname, pid, write: (json) => { dest.write(json) }})
-const passThrough = perj.create({passThrough: true, write: (json, obj) => { dest.write(json) }})
-const perjComp = perj.create({component: 'parent', write: (json) => { dest.write(json) }})
+const { Perj }Log = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
+const passThrough = new Perj({passThrough: true, write: (json, obj) => { dest.write(json) }})
+const { Perj }Comp = new Perj({component: 'parent', write: (json) => { dest.write(json) }})
 
 const suite = new Benchmark.Suite()
 const line = '='.repeat(80)
@@ -149,7 +149,7 @@ suite.on('cycle', function (event) {
 })
 
 suite.on('complete', function () {
-  const perj = table([
+  const { Perj } = table([
     [chalk.blue('Bechmark Ops/Sec'), chalk.blue('Result'), chalk.blue('Compare')],
     row('Common Log Operations', this[0]),
     row('Common Log Operations passThrough', this[1], this[0]),

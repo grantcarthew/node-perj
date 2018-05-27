@@ -1,4 +1,4 @@
-const perj = require('../perj')
+const { Perj } = require('../perj')
 const fs = require('fs')
 const chalk = require('chalk')
 const colorize = require('json-colorizer')
@@ -34,7 +34,7 @@ Features:
 - Stringified objects displayed on next line in colour.
 */
 
-const log = perj.create({ name, level: 'trace', write, host, pid, file })
+const log = new Perj({ name, level: 'trace', write, host, pid, file })
 
 function write (logString) {
   fs.appendFile(destFile, logString, (err) => { if (err) throw err })

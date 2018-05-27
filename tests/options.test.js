@@ -1,4 +1,4 @@
-const perj = require('../src/perj')
+const { Perj } = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const data = require('../data')
@@ -10,7 +10,7 @@ beforeEach(() => {
 })
 
 describe('logger option tests', () => {
-  let log = perj.create({
+  let log = new Perj({
     levels: { foo: 100, bar: 200 },
     level: 'foo',
     write,
@@ -27,10 +27,10 @@ describe('logger option tests', () => {
     empty: ''
   })
   test('options tests', () => {
-    let log = perj.create()
+    let log = new Perj()
     let custLevels = Object.assign({}, log.levels)
     custLevels.silly = 42
-    log = perj.create({
+    log = new Perj({
       levels: custLevels,
       level: 'trace',
       levelKey: 'logLevel',
@@ -76,10 +76,10 @@ describe('logger option tests', () => {
     expect(tool.jsonOut.message).toBe(data.msg[0])
     expect(tool.jsonOut.objectData).toMatchObject(data.tardis)
     expect(data.tardis).toMatchObject(tool.jsonOut.objectData)
-    expect(() => { perj.create({level: 'abc'}) }).toThrow('The level option must be a valid key in the levels object.')
+    expect(() => { new Perj({level: 'abc'}) }).toThrow('The level option must be a valid key in the levels object.')
   })
   test('options passThrough', () => {
-    let log = perj.create({ write, passThrough, foo: 'bar' })
+    let log = new Perj({ write, passThrough, foo: 'bar' })
     log.info(data.msg[0], data.tardis)
     expect(tool.objOut.level).toBe('info')
     expect(tool.objOut.lvl).toBe(30)
@@ -101,7 +101,7 @@ describe('logger option tests', () => {
     expect(data.tardis).toMatchObject(tool.objOut.data)
   })
   test('top level properties', () => {
-    let log = perj.create({ write, passThrough, foo: 'bar' })
+    let log = new Perj({ write, passThrough, foo: 'bar' })
     log.info(data.msg[0], data.tardis)
     expect(Object.keys(tool.jsonOut).length).toBe(6)
     expect(tool.jsonOut.level).toBe('info')
@@ -112,7 +112,7 @@ describe('logger option tests', () => {
     expect(tool.jsonOut.data).toMatchObject(data.tardis)
   })
   test('top level object', () => {
-    let log = perj.create({ write, passThrough, foo: 'bar', platform: { name: 'node', pid: 1234 } })
+    let log = new Perj({ write, passThrough, foo: 'bar', platform: { name: 'node', pid: 1234 } })
     log.info(data.msg[0], data.tardis)
     expect(Object.keys(tool.jsonOut).length).toBe(7)
     expect(tool.jsonOut.level).toBe('info')
@@ -139,7 +139,7 @@ describe('logger option tests', () => {
     expect(tool.jsonOut.platform.exit).toBe(false)
   })
   test('child logger properties', () => {
-    let log = perj.create({ write, passThrough, foo: 'bar' })
+    let log = new Perj({ write, passThrough, foo: 'bar' })
     const child = log.child({ env: 'dev' })
     tool.reset()
     log.info(data.msg[0])
@@ -156,7 +156,7 @@ describe('logger option tests', () => {
     expect(() => { log.child() }).toThrow('Provide top level arguments to create a child logger.')
   })
   test('undefined and null values', () => {
-    const log = perj.create({ undef: undefined, nul: null, write })
+    const log = new Perj({ undef: undefined, nul: null, write })
     log.info(data.msg[0])
     expect(tool.jsonOut.undef).toBe('')
     expect(tool.jsonOut.nul).toBe(null)
@@ -167,7 +167,7 @@ describe('logger option tests', () => {
     expect(tool.jsonOut.nul2).toBe(null)
   })
   test('child logger level', () => {
-    log = perj.create({ level: 'fatal', write })
+    log = new Perj({ level: 'fatal', write })
     let child = log.child({ child: true })
     child.level = 'trace'
     tool.reset()

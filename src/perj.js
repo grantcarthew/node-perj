@@ -165,6 +165,7 @@ class Perj {
         const item = items[0]
         if (typeof item === 'string') {
           msg = item
+          data = ''
           dataJson = '""'
         } else if (item instanceof Error) {
           msg = item.message
@@ -175,6 +176,7 @@ class Perj {
           dataJson = stringify(item)
         }
       } else if (items.length < 1) {
+        data = ''
         dataJson = '""'
       } else {
         // Multiple item processing

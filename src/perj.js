@@ -273,6 +273,7 @@ class Perj {
     }
     newChild.parent = this
     newChild[_HeaderStrings] = {}
+    newChild[_HeaderValues] = {}
     for (const level in this[_Options].levels) {
       newChild[_SetLevelHeader](level)
     }

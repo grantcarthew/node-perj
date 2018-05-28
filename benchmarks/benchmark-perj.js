@@ -27,9 +27,9 @@ deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 
 // Adding hostname and pid to match pino log string
-const { Perj }Log = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
+const perjLog = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
 const passThrough = new Perj({passThrough: true, write: (json, obj) => { dest.write(json) }})
-const { Perj }Comp = new Perj({component: 'parent', write: (json) => { dest.write(json) }})
+const perjComp = new Perj({component: 'parent', write: (json) => { dest.write(json) }})
 
 const suite = new Benchmark.Suite()
 const line = '='.repeat(80)

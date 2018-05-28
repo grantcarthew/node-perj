@@ -19,7 +19,7 @@ const dest = fs.createWriteStream('/dev/null')
 const data = require('../data')
 
 // Adding hostname and pid to match pino log string
-const { Perj }Log = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
+const perjLog = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
 const pinoLog = pino(dest)
 
 const suite = new Benchmark.Suite()

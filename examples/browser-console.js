@@ -4,7 +4,7 @@ Description:
 A full detail console log output including formatted data.
 
 Platform:
-- Browser only due to location.hostname
+- Browser only due to 'location.hostname'.
 
 Dependencies:
 - perj
@@ -24,7 +24,11 @@ Usage:
 
 Suggestions:
 - Extend by sending the 'json' to a storage endpoint.
-- Add your apps session properties.perj
+- Add your apps session properties or unique id.
+
+Performance:
+- Using 'toISOString' will have a medium effect on performance.
+- Using 'passThrough' will have a small effect on performance.
 
 Comment:
 To test on Node.js, add these lines.
@@ -51,6 +55,7 @@ function write (json, obj) {
 }
 
 /*
+
 Example console output:
 
 [2018-05-03T02:46:54.611Z][info][full](Dev:7094:console-full.js) Speak Friend and Enter.

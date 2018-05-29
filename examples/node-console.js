@@ -22,6 +22,16 @@ Usage:
 - Customize as needed.
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
 
+Suggestions:
+- Extend by sending the 'json' to a local file or database.
+- Add your apps session properties or unique id.
+- See the 'app' example for a more complete solution.
+
+Performance:
+- Logging is 'in process' so will effect application performance.
+- Using 'toISOString' will have a medium effect on performance.
+- Using 'passThrough' will have a small effect on performance.
+
 */
 
 const { Perj } = require('../perj')
@@ -37,13 +47,14 @@ module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })
 function write (json, obj) {
   const dt = new Date(obj.time)
   let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
-  output += JSON.stringify(obj.data, null, 2)
+  output += JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
   console.log(output)
 
   // Extend by sending 'json' to your API or cloud storage.
 }
 
 /*
+
 Example console output:
 
 [2018-05-03T02:46:54.611Z][info][full](Dev:7094:console-full.js)

@@ -1,6 +1,6 @@
 const os = require('os')
 const path = require('path')
-const { Perj } = require('../../src/perj')
+const { Perj } = require('perj')
 const ver = 1
 const host = os.hostname()
 const pid = process.pid

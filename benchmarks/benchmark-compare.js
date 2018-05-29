@@ -14,6 +14,9 @@ const hostname = require('os').hostname()
 const pid = process.pid
 const v = 1
 const dest = fs.createWriteStream('/dev/null')
+const csvPath = 'benchmarks/compare.csv'
+const csvHeader = `'perj Common Log Operations', 'pino Common Log Operations', 'perj Single String Message', 'pino Single String Message', 'perj Single Long String', 'pino Single Long String', 'perj Flat Object Data', 'pino Flat Object Data', 'perj Simple Object Data', 'pino Simple Object Data', 'perj Complex Object Data', 'pino Complex Object Data', 'perj Deep Object Data', 'pino Deep Object Data', 'perj Single String And Object Data', 'pino Single String And Object Data', 'perj Logging Error Objects', 'pino Logging Error Objects', 'perj Create Single Child', 'pino Create Single Child', 'perj Create Two Children', 'pino Create Two Children', 'perj Create Three Children', 'pino Create Three Children'\n`
+fs.writeFileSync(csvPath, csvHeader)
 
 // Data
 const data = require('../data')
@@ -37,6 +40,7 @@ const line = '='.repeat(80)
 console.log(line)
 console.log(' perj vs pino Benchmark')
 console.log(line)
+console.log(chalk.red('NOTE: pino is not using extreme mode.'))
 
 suite.add('perj Common Log Operations', function () {
   job(perjLog)
@@ -160,7 +164,6 @@ suite.on('cycle', function (event) {
 })
 
 suite.on('complete', function () {
-  console.log(chalk.red('NOTE: pino is not using extreme mode.'))
   const compare = table([
     [chalk.blue('Benchmark Ops/Sec'),
       chalk.green('perj'),
@@ -179,11 +182,10 @@ suite.on('complete', function () {
     row('Create Two Children', this[20], this[21]),
     row('Create Three Children', this[22], this[23])
   ])
+  fs.appendFileSync(csvPath, this.map((v) => v.hz).toString() + '\n')
   console.log(compare)
-  console.log(line)
+  suite.run({ 'async': true })
 })
-
-suite.run({ 'async': true })
 
 function row (name, perj, pino) {
   let perjHz = Number(perj.hz).toFixed(2)
@@ -200,3 +202,5 @@ function row (name, perj, pino) {
   }
   return [chalk.blue(name), perjHz, pinoHz, result]
 }
+
+suite.run({ 'async': true })

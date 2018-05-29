@@ -4,14 +4,14 @@ Description:
 A full detail console log output including formatted data.
 
 Platform:
-- Node.js only due to 'os' and 'path' module usage.
+- Browser only due to 'location.hostname'.
 
 Dependencies:
 - perj
 
 Features:
 - Logs to the console only.
-- Logs ver, time, level, name, host, pid, file, message, and data properties.
+- Logs ver, time, level, name, host, message, and data properties.
 - Stringified objects displayed on next line.
 - The 'obj' variable has been sanitized so JSON.stringify is safe.
 
@@ -23,30 +23,32 @@ Usage:
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
 
 Suggestions:
-- Extend by sending the 'json' to a local file or database.
+- If your browser supports it, log object data using console.dir().
+- Extend by sending the 'json' to a storage endpoint.
 - Add your apps session properties or unique id.
-- See the 'app' example for a more complete solution.
 
 Performance:
-- Logging is 'in process' so will effect application performance.
 - Using 'toISOString' will have a medium effect on performance.
 - Using 'passThrough' will have a small effect on performance.
 
+Comment:
+To test on Node.js, add these lines.
+const location = {}
+location.hostname = 'http://abc.net'
+
 */
 
-const { Perj } = require('../perj')
+const { Perj } = require('perj')
 const ver = 1
-const host = require('os').hostname()
-const pid = process.pid
-const file = require('path').basename(module.filename)
 const name = 'Your App Name' // <======= CHANGE THIS NAME
+const host = location.hostname
 const passThrough = true
 
-module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })
+module.exports = new Perj({ ver, name, host, passThrough, write })
 
 function write (json, obj) {
   const dt = new Date(obj.time)
-  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}) ${obj.msg}\n`
   output += JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
   console.log(output)
 
@@ -57,7 +59,7 @@ function write (json, obj) {
 
 Example console output:
 
-[2018-05-03T02:46:54.611Z][info][full](Dev:7094:console-full.js)
+[2018-05-03T02:46:54.611Z][info][full](Dev:7094:console-full.js) Speak Friend and Enter.
 {
   "name": "TARDIS",
   "class": "Time and Relative Dimension in Space",

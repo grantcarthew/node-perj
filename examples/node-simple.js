@@ -1,21 +1,22 @@
 /*
 
 Description:
-A full detail console log output including colourful properties
-and formatted data.
+A full detail console log output including formatted data.
 
 Platform:
-- Node.js only due to 'os', 'path', 'chalk', and 'json-colorizer'.
+- Node.js only due to:
+  - 'os' module.
+  - 'path' module.
+  - 'process' object.
 
 Dependencies:
 - perj
-- chalk
-- json-colorizer
 
 Features:
-- Logs colourful text to the console only.
+- Logs to the console if in development.
+- Logs to 'process.stdout' if in production.
 - Logs ver, time, level, name, host, pid, file, message, and data properties.
-- Stringified objects displayed on next line in colour.
+- Stringified objects displayed on next line.
 - The 'obj' variable has been sanitized so JSON.stringify is safe.
 
 Usage:
@@ -31,57 +32,48 @@ Suggestions:
 - See the 'app' example for a more complete solution.
 
 Performance:
-- Logging is 'in process' so will effect application performance.
-- Using colourful output will have a large effect on performance.
-- Using 'toISOString' will have a medium effect on performance.
-- Using 'passThrough' will have a small effect on performance.
+- Development Environment:
+  - Logging is 'in process' which will effect application performance.
+  - Using 'toISOString' will have a medium effect on performance.
+  - Using 'passThrough' will have a small effect on performance.
+- Production Environemnt:
+  - Performance will be at maximum.
 
 */
 
-const { Perj } = require('../perj')
-const chalk = require('chalk')
-const colorize = require('json-colorizer')
+const { Perj } = require('perj')
+const isProd = process.env.NODE_ENV === 'production'
 const ver = 1
 const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)
 const name = 'Your App Name' // <======= CHANGE THIS NAME
-const passThrough = true
+const passThrough = !isProd
+const write = envWriter()
 
 module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })
 
-function write (json, obj) {
-  const dt = chalk.magenta((new Date(obj.time)).toISOString())
-  const nameCol = chalk.magenta(obj.name)
-  let output = `[${dt}][${levelCol(obj.level)}][${nameCol}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
-  output += colorize(JSON.stringify(obj.data, null, 2)) // <=== Remove if you don't want data logged to the console.
+function envWriter () {
+  if (isProd) {
+    return process.stdout.write.bind(process.stdout)
+  }
+  return writeToConsole
+}
+
+function writeToConsole (json, obj) {
+  const dt = new Date(obj.time)
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
+  output += JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
   console.log(output)
 
   // Extend by sending 'json' to your API or cloud storage.
 }
 
-function levelCol (level) {
-  switch (level) {
-    case 'fatal':
-    case 'error':
-      return chalk.red(level)
-    case 'warn':
-      return chalk.yellow(level)
-    case 'info':
-      return chalk.blue(level)
-    case 'debug':
-      return chalk.green(level)
-    case 'trace':
-      return chalk.cyan(level)
-  }
-  return level
-}
-
 /*
 
-Example console output (colour not visible here):
+Example console output:
 
-[2018-05-03T05:17:14.935Z][info][full](Dev:7367:console-colourful.js)
+[2018-05-03T02:46:54.611Z][info][app](Dev:7094:node-simple.js)
 {
   "name": "TARDIS",
   "class": "Time and Relative Dimension in Space",

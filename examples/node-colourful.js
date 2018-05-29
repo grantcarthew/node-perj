@@ -30,6 +30,7 @@ Usage:
 - Change the value of the 'name' variable below.
 - Customize as needed.
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
+- In production you will need to pipe the process stdout to another process.
 
 Suggestions:
 - Extend by sending the 'json' to a local file or database.

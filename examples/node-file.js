@@ -28,8 +28,10 @@ Usage:
 - Change the value of the 'name' variable below.
 - Customize as needed.
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
+- In production you will need to pipe the process stdout to another process.
 
 Suggestions:
+- Consider using logrotate: https://github.com/logrotate/logrotate
 - Add your apps session properties or unique id.
 - See the 'app' example for a more complete solution.
 

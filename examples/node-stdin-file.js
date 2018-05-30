@@ -1,7 +1,7 @@
 /*
 
 Description:
-Saves standard in to a rotating log file.
+Saves standard input to a rotating log file.
 
 Platform:
 - Node.js only due to:

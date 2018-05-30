@@ -2,7 +2,7 @@
 
 Find examples here that can get you started using the [perj](https://github.com/grantcarthew/node-perj) logger within your project.
 
-Important Notes:
+## Important Notes
 
 * These are not best practise. Use them as suggestions on how to get started.
 * Documentation for each example is in the header of the `js` files.

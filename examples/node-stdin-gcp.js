@@ -4,7 +4,7 @@ Description:
 Saves standard in to a rotating log file and uploads the completed file to
 a Google Cloud Platform Cloud Storage bucket.
 
-Concider using StackDriver logging instead if you wish to fully integrate with Google Cloud Platform.
+Consider using StackDriver logging instead if you wish to fully integrate with Google Cloud Platform.
 https://cloud.google.com/stackdriver/
 
 Platform:
@@ -40,12 +40,13 @@ Usage:
 - Set the LOGFILEROOTPATH environment variable to the absolute path to store the log files (/tmp would be fine).
 - Set the LOGFILEPRIMARYNAME environment variable to something like 'app.log'.
 - Copy and paste the code into your application as a 'file-rotate-gcp.js' file.
-- Customize as needed.
+- Customize as needed. Change the Project ID and Bucket name.
 - Pipe your application stdout into this file using something like this:
   node examples/util-log-generator.js | node examples/node-stdin-gcp.js
 
 Suggestions:
 - Consider a solution to remove old log files.
+- Consider adding a graceful shutdown option to upload the partial log file.
 
 Performance:
 - Development Environment:

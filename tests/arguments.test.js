@@ -26,7 +26,7 @@ describe('log argument tests', () => {
       expect(tool.jsonOut.data).toBe('')
       expect(tool.objOut.data).toBe('')
     })
-    test.only(level + ': one undefined', () => {
+    test(level + ': one undefined', () => {
       log[level](undefined)
       expect(Object.keys(tool.jsonOut).length).toBe(5)
       expect(tool.getType(tool.jsonOut.time)).toBe('Number')

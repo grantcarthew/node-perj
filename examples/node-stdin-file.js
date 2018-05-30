@@ -16,14 +16,14 @@ Features:
 
 Usage:
 - Copy and paste the code into your application as a 'rotate-file.js' file.
-- Change the names of the environmet variables below if you are not happy with the existing names.
+- Set the LOGFILEROOTPATH environment variable to the absolute path to store the log files.
+- Set the LOGFILEPRIMARYNAME environment variable to something like 'app.log'.
 - Customize as needed.
 - Pipe your application stdout into this file using something like this:
-  node examples/util-log-generator.js | LOGFILEROOTPATH=Logs LOGFILEPRIMARYNAME=app.log node examples/node-stdin-file.js
+  node examples/util-log-generator.js | node examples/node-stdin-file.js
 
 Suggestions:
 - Consider using logrotate: https://github.com/logrotate/logrotate
-- Set the environment variables within the environment.
 
 Performance:
 - Development Environment:
@@ -51,15 +51,14 @@ function fileNameGenerator (time, index) {
   const fileId = logFilePrimaryName
   if (!time) { return fileId }
 
-  function pad (num) {
-    return (num > 9 ? '' : '0') + num
-  }
-  const ym = time.getFullYear() + '-' + pad(time.getMonth() + 1)
-  const d = pad(time.getDate())
-  const h = pad(time.getHours())
-  const m = pad(time.getMinutes())
+  const ym = time.getFullYear() + '-' + (time.getMonth() + 1).toString().padStart(2, '0')
+  const d = time.getDate().toString().padStart(2, '0')
+  const h = time.getHours().toString().padStart(2, '0')
+  const m = time.getMinutes().toString().padStart(2, '0')
+  const s = time.getSeconds().toString().padStart(2, '0')
+  const ms = time.getMilliseconds().toString().padStart(3, '0')
 
-  return `${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`
+  return `${ym}/${ym}-${d}-${h}-${m}-${s}.${ms}-${index}-${fileId}`
 }
 
 process.stdin.pipe(stream)

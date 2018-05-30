@@ -1,7 +1,7 @@
 /*
 
 Description:
-Saves standard in to a rotating log file and uploads the completed file to
+Saves 'standard input' to a rotating log file and uploads the completed file to
 a Google Cloud Platform Cloud Storage bucket.
 
 Consider using StackDriver logging instead if you wish to fully integrate with Google Cloud Platform.

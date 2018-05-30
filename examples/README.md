@@ -39,7 +39,7 @@ Saves `standard input` to a rotating log file.
 
 ### [node-stdin-gcp.js](/examples/node-stdin-gcp.js)
 
-Saves 'standard input' to a rotating log file and uploads the completed file to a Google Cloud Platform Cloud Storage bucket.
+Saves `standard input` to a rotating log file and uploads the completed file to a Google Cloud Platform Cloud Storage bucket.
 
 ### [util-log-generator.js](/examples/util-log-generator.js)
 

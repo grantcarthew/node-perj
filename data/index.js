@@ -172,7 +172,9 @@ module.exports = {
     'E.T. phone home.',
     'Get away from her, you bitch!',
     'Speak Friend and Enter.',
-    'That\'s no moon. It\'s a space station.'
+    'That\'s no moon. It\'s a space station.',
+    undefined,
+    null
   ],
   deathStar,
   serenity,
@@ -181,6 +183,8 @@ module.exports = {
     tardis,
     serenity,
     deathStar,
+    undefined,
+    null
   ],
   dataSmall: tardis,
   dataMedium: serenity,

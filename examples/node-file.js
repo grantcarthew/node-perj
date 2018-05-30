@@ -25,6 +25,7 @@ Features:
 Usage:
 - Copy and paste the code into your application to a 'logger.js' file.
 - Import the module as 'logger', 'log', or something similar.
+- Change the names of the environmet variables below if you are not happy with the existing names.
 - Change the value of the 'name' variable below.
 - Customize as needed.
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
@@ -33,6 +34,7 @@ Usage:
 Suggestions:
 - Consider using logrotate: https://github.com/logrotate/logrotate
 - Add your apps session properties or unique id.
+- Set the environment variables within the environment.
 - See the 'app' example for a more complete solution.
 
 Performance:
@@ -48,6 +50,8 @@ Performance:
 const { Perj } = require('../src/perj')
 const rfs = require('rotating-file-stream')
 const isProd = process.env.NODE_ENV === 'production'
+const logFileRootPath = process.env.LOGFILEROOTPATH // <======= CHANGE THIS ENV NAME
+const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME // <======= CHANGE THIS ENV NAME
 const ver = 1
 const host = require('os').hostname()
 const pid = process.pid
@@ -60,13 +64,14 @@ const write = envWriter()
 const stream = rfs(fileNameGenerator, {
   size: '1M',
   interval: '1d',
-  rotationTime: true
+  rotationTime: true,
+  path: logFileRootPath
 })
 stream.on('error', (err) => console.error(err))
 stream.on('warning', (err) => console.warn(err))
 
 function fileNameGenerator (time, index) {
-  const fileId = 'app.log' // <======= CHANGE THIS NAME
+  const fileId = logFilePrimaryName
   if (!time) { return fileId }
 
   function pad (num) {
@@ -77,8 +82,7 @@ function fileNameGenerator (time, index) {
   const h = pad(time.getHours())
   const m = pad(time.getMinutes())
 
-  // Logs to a 'logs/yearmonth/' path. \/======= CHANGE THIS PATH
-  return `logs/${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`
+  return `${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`
 }
 
 module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })

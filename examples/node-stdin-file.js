@@ -1,42 +1,65 @@
-// const split = require('split2')
-const pump = require('pump')
-// const fs = require('fs')
-// const through = require('through2')
-const fsr = require('file-stream-rotator')
-
-// const myTransport = through.obj(function (chunk, enc, cb) {
-//   // do whatever you want here!
-//   console.log(chunk)
-//   cb()
-// })
-
-// pump(process.stdin, split(JSON.parse), myTransport)
-
-const source = process.stdin
-const dest = fsr.getStream({ filename: 'app.log', frequency: 'daily', size: '1m', verbose: true })
-// const dest = fs.createWriteStream('app.log')
-
-pump(source, dest, function (err) {
-  console.log('pipe finished', err)
-})
-
-// setTimeout(function() {
-//   dest.destroy() // when dest is closed pump will destroy source
-// }, 1000)
 /*
-pipe finished undefined
-events.js:167
-      throw er; // Unhandled 'error' event
-      ^
 
-Error: write EPIPE
-    at WriteWrap.afterWrite [as oncomplete] (net.js:835:14)
-Emitted 'error' event at:
-    at onwriteError (_stream_writable.js:434:12)
-    at onwrite (_stream_writable.js:459:5)
-    at _destroy (internal/streams/destroy.js:40:7)
-    at Socket.stdout._destroy (internal/process/stdio.js:24:7)
-    at Socket.destroy (internal/streams/destroy.js:32:8)
-    at WriteWrap.afterWrite [as oncomplete] (net.js:837:10)
-grant@Dev:~/node-perj/examples$
+Description:
+Saves standard in to a rotating log file.
+
+Platform:
+- Node.js only due to:
+  - 'rotating-file-stream' module.
+
+Dependencies:
+- rotating-file-stream
+
+Features:
+- Pipes 'process.stdin' to a rotating file.
+- Logs data out of your application process.
+
+Usage:
+- Copy and paste the code into your application as a 'rotate-file.js' file.
+- Change the names of the environmet variables below if you are not happy with the existing names.
+- Customize as needed.
+- Pipe your application stdout into this file using something like this:
+  node examples/util-log-generator.js | LOGFILEROOTPATH=Logs LOGFILEPRIMARYNAME=app.log node examples/node-stdin-file.js
+
+Suggestions:
+- Consider using logrotate: https://github.com/logrotate/logrotate
+- Set the environment variables within the environment.
+
+Performance:
+- Development Environment:
+  - Logging is 'out of process' so it will not effect the application process.
+- Production Environemnt:
+  - Logging is 'out of process' so it will not effect the application process.
+
 */
+
+const rfs = require('rotating-file-stream')
+const logFileRootPath = process.env.LOGFILEROOTPATH // <======= CHANGE THIS ENV NAME
+const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME // <======= CHANGE THIS ENV NAME
+
+// Rotate file every day or > 1MB.
+const stream = rfs(fileNameGenerator, {
+  size: '1M',
+  interval: '1d',
+  rotationTime: true,
+  path: logFileRootPath
+})
+stream.on('error', (err) => console.error(err))
+stream.on('warning', (err) => console.warn(err))
+
+function fileNameGenerator (time, index) {
+  const fileId = logFilePrimaryName
+  if (!time) { return fileId }
+
+  function pad (num) {
+    return (num > 9 ? '' : '0') + num
+  }
+  const ym = time.getFullYear() + '-' + pad(time.getMonth() + 1)
+  const d = pad(time.getDate())
+  const h = pad(time.getHours())
+  const m = pad(time.getMinutes())
+
+  return `${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`
+}
+
+process.stdin.pipe(stream)

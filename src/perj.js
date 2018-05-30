@@ -178,6 +178,7 @@ class Perj {
         }
       } else if (items.length > 1) {
         // Multiple item processing
+        data = []
         for (const item of items) {
           if (typeof item === 'string') {
             if (msg) {

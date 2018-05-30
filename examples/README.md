@@ -2,9 +2,22 @@
 
 Find examples here that can get you started using the [perj](https://github.com/grantcarthew/node-perj) logger within your project.
 
+Important Notes:
+
+* These are not best practise. Use them as suggestions on how to get started.
+* Documentation for each example is in the header of the `js` files.
+* Files titled `stdin` do not use `perj` and expect you to pipe logs into the process.
+* The `app` directory expects you to pipe `stdout` into a `stdin` module.
+* Customize these in your project.
+
+
 ## File List
 
-### [browser-simple.js](https://github.com/grantcarthew/node-perj/blob/master/examples/browser-console-full.js)
+### [app Directory](/examples/app/README.md)
+
+This example shows how you could integrate `perj` into a simple web application running on [express.js](https://expressjs.com/).
+
+### [browser-simple.js](/examples/browser-console-full.js)
 
 A great starting place for client side console logging.
 

@@ -157,8 +157,8 @@ class Perj {
       }
       const time = this[_Options].dateTimeFunction()
       let msg = ''
-      let data = []
-      let dataJson = ''
+      let data = ''
+      let dataJson = '""'
 
       if (items.length === 1) {
         // Single item processing
@@ -166,19 +166,17 @@ class Perj {
         if (typeof item === 'string') {
           msg = item
           data = ''
-          dataJson = '""'
         } else if (item instanceof Error) {
           msg = item.message
           data = serializerr(item)
           dataJson = stringify(data)
+        } else if (item === undefined) {
+          data = dataJson = null
         } else {
           data = item
           dataJson = stringify(item)
         }
-      } else if (items.length < 1) {
-        data = ''
-        dataJson = '""'
-      } else {
+      } else if (items.length > 1) {
         // Multiple item processing
         for (const item of items) {
           if (typeof item === 'string') {
@@ -192,6 +190,10 @@ class Perj {
           if (item instanceof Error) {
             data.push(serializerr(item))
             if (!msg) { msg = item.message }
+            continue
+          }
+          if (typeof item === 'undefined') {
+            data.push(null)
             continue
           }
           data.push(item)

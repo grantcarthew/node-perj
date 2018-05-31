@@ -28,9 +28,10 @@ Usage:
 - Create a Table Store in the Storage Account: https://docs.microsoft.com/en-au/azure/cosmos-db/table-storage-how-to-use-nodejs
 - Set the AZURE_STORAGE_ACCOUNT environment variable to name of the storage account.
 - Set the AZURE_STORAGE_TABLE_NAME environment variable to name of the storage account table.
+- Set the AZURE_STORAGE_PARTITION_NAME environment variable to name of the storage account table partition.
 - Set the AZURE_STORAGE_ACCESS_KEY environment variable to one of the storage account access keys.
 - Copy and paste the code into your application as a 'azure-table-insert.js' file.
-- Customize as needed. Change the partition name.
+- Customize as needed. Change the mapped properties.
 - Pipe your application stdout into this file using something like this:
   node examples/util-log-generator.js | node examples/node-stdin-azure.js
 
@@ -51,6 +52,7 @@ const split = require('split2')
 const tableService = azure.createTableService()
 const entGen = azure.TableUtilities.entityGenerator
 const tableName = process.env.AZURE_STORAGE_TABLE_NAME
+const partitionName = process.env.AZURE_STORAGE_PARTITION_NAME
 
 process.stdin.setEncoding('utf8')
 const writable = process.stdin.pipe(split(JSON.parse))
@@ -59,8 +61,9 @@ writable.on('finish', onFinish)
 writable.on('error', onError)
 
 function onData (chunk) {
+  // Match the below properties to your log output <======= CHANGE MAPPING
   const logEntity = {
-    PartitionKey: entGen.String('logs'), // <======= CHANGE PARTITION NAME
+    PartitionKey: entGen.String(partitionName),
     RowKey: entGen.String(chunk.time.toString()),
     level: entGen.String(chunk.level),
     lvl: entGen.Int32(chunk.lvl),

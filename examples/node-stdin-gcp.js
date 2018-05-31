@@ -9,8 +9,9 @@ https://cloud.google.com/stackdriver/
 
 Platform:
 - Node.js only due to:
+  - process.stdin
   - 'rotating-file-stream' module.
-  - '@google-cloud/Storage/ module.
+  - '@google-cloud/Storage' module.
 
 Dependencies:
 - rotating-file-stream

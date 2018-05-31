@@ -5,6 +5,7 @@ Saves 'standard input' to a rotating log file.
 
 Platform:
 - Node.js only due to:
+  - process.stdin
   - 'rotating-file-stream' module.
 
 Dependencies:

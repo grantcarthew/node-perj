@@ -85,7 +85,7 @@ The following string is sent to standard out:
 
 ### Browser Usage
 
-__Total size is 2.8kB minified index file.__
+__Total size is 5.3kB minified index file.__
 
 The following example adds a format version `ver`, `name`, and `host` top level property to the log entries.
 

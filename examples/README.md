@@ -33,6 +33,10 @@ A full detail console log output including formatted data. Raw JSON log data is 
 
 A full detail console log output including formatted data.
 
+### [node-stdin-azure.js](/examples/node-stdin-azure.js)
+
+Sends 'standard input' to an Azure Storage Account Table.
+
 ### [node-stdin-file.js](/examples/node-stdin-file.js)
 
 Saves `standard input` to a rotating log file.

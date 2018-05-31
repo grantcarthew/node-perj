@@ -71,11 +71,10 @@ const stream = rfs(fileNameGenerator, {
   rotationTime: true,
   path: logFileRootPath
 })
-stream.on('error', (err) => console.error(err))
-stream.on('warning', (err) => console.warn(err))
-stream.on('rotated', function (fileName) {
-  uploadFile(fileName)
-})
+process.stdin.pipe(stream)
+stream.on('error', onError)
+stream.on('warning', onWarning)
+stream.on('rotated', onRotated)
 
 function fileNameGenerator (time, index) {
   const fileId = logFilePrimaryName
@@ -92,7 +91,7 @@ function fileNameGenerator (time, index) {
 }
 
 // Upload log file to Google Cloud Storage
-function uploadFile (fileName) {
+function onRotated (fileName) {
   return storage
     .bucket(bucketName)
     .upload(fileName)
@@ -104,4 +103,10 @@ function uploadFile (fileName) {
     })
 }
 
-process.stdin.pipe(stream)
+function onWarning (err) {
+  console.warn(err)
+}
+
+function onError (err) {
+  console.log(err)
+}

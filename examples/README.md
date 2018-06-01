@@ -33,9 +33,13 @@ A full detail console log output including formatted data. Raw JSON log data is 
 
 A full detail console log output including formatted data.
 
+### [node-stdin-aws.js](/examples/node-stdin-aws.js)
+
+Sends `standard input` to an AWS CloudWatch Logs store.
+
 ### [node-stdin-azure.js](/examples/node-stdin-azure.js)
 
-Sends 'standard input' to an Azure Storage Account Table.
+Sends `standard input` to an Azure Storage Account Table.
 
 ### [node-stdin-file.js](/examples/node-stdin-file.js)
 

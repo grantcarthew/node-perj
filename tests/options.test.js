@@ -10,23 +10,7 @@ beforeEach(() => {
 })
 
 describe('logger option tests', () => {
-  let log = new Perj({
-    levels: { foo: 100, bar: 200 },
-    level: 'foo',
-    write,
-    messageKey: 'newMessageKey',
-    dataKey: 'newDataKey',
-    project: 'elephant',
-    session: 12345,
-    platform: {
-      name: 'node',
-      pid: 1234
-    },
-    undef: undefined,
-    nul: null,
-    empty: ''
-  })
-  test('options tests', () => {
+  test('more options tests', () => {
     let log = new Perj()
     let custLevels = Object.assign({}, log.levels)
     custLevels.silly = 42
@@ -156,18 +140,22 @@ describe('logger option tests', () => {
     expect(() => { log.child() }).toThrow('Provide top level arguments to create a child logger.')
   })
   test('undefined and null values', () => {
-    const log = new Perj({ undef: undefined, nul: null, write })
+    const log = new Perj({ undef: undefined, nul: null, passThrough, write })
     log.info(data.msg[0])
-    expect(tool.jsonOut.undef).toBe('')
+    expect(tool.jsonOut.undef).toBe(null)
+    expect(tool.objOut.undef).toBe(null)
     expect(tool.jsonOut.nul).toBe(null)
+    expect(tool.objOut.nul).toBe(null)
     tool.reset()
     const child = log.child({ undef2: undefined, nul2: null })
     child.info(data.msg[0])
-    expect(tool.jsonOut.undef2).toBe('')
+    expect(tool.jsonOut.undef2).toBe(null)
+    expect(tool.objOut.undef2).toBe(null)
     expect(tool.jsonOut.nul2).toBe(null)
+    expect(tool.objOut.nul2).toBe(null)
   })
   test('child logger level', () => {
-    log = new Perj({ level: 'fatal', write })
+    let log = new Perj({ level: 'fatal', write })
     let child = log.child({ child: true })
     child.level = 'trace'
     tool.reset()

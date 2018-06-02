@@ -121,13 +121,16 @@ class Perj {
       } else {
         const type = typeof options[key]
         if (type === 'string') {
-          this[_TopSnip] += ',"' + key + '":"' + options[key] + '"'
+          this[_TopSnip] += '"' + key + '":"' + options[key] + '",'
           this[_TopValues][key] = options[key]
         } else if (type === 'number' || type === 'boolean') {
-          this[_TopSnip] += ',"' + key + '":' + options[key]
+          this[_TopSnip] += '"' + key + '":' + options[key] + ','
           this[_TopValues][key] = options[key]
+        } else if (type === 'undefined') {
+          this[_TopSnip] += '"' + key + '":null,'
+          this[_TopValues][key] = null
         } else {
-          this[_TopSnip] += ',"' + key + '":' + (stringify(options[key]) || '""')
+          this[_TopSnip] += '"' + key + '":' + ((stringify(options[key]) || '""') + ',')
           this[_TopValues][key] = options[key]
           this[_TopIsPrimitive] = false
         }
@@ -136,16 +139,17 @@ class Perj {
   }
 
   [_SetLevelHeader] (level) {
-    this[_HeaderStrings][level] = '{"' +
-      this[_Options].levelKey + '":"' + level + '","' +
-      this[_Options].levelNumberKey + '":' + this[_Options].levels[level] +
-      this[_TopSnip] + ',"' +
-      this[_Options].dateTimeKey + '":'
+    this[_HeaderStrings][level] = '{'
+    this[_Options].levelKeyEnabled && (this[_HeaderStrings][level] += '"' + this[_Options].levelKey + '":"' + level + '",')
+    this[_Options].levelNumberKeyEnabled && (this[_HeaderStrings][level] += '"' + this[_Options].levelNumberKey + '":' + this[_Options].levels[level] + ',')
+    this[_TopSnip] !== '' && (this[_HeaderStrings][level] += this[_TopSnip])
+    this[_HeaderStrings][level] += '"' + this[_Options].dateTimeKey + '":'
+
     if (this[_Options].passThrough) {
-      this[_HeaderValues][level] = Object.assign({
-        [this[_Options].levelKey]: level,
-        [this[_Options].levelNumberKey]: this[_Options].levels[level]
-      }, this[_TopValues])
+      const levelObj = {}
+      this[_Options].levelKeyEnabled && (levelObj[this[_Options].levelKey] = level)
+      this[_Options].levelNumberKeyEnabled && (levelObj[this[_Options].levelNumberKey] = this[_Options].levels[level])
+      this[_HeaderValues][level] = Object.assign(levelObj, this[_TopValues])
     }
   }
 
@@ -254,6 +258,8 @@ class Perj {
             type === 'string') {
         // New top key is the same as parent and is a string. Appending separator string and new value.
         newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key]
+      } else if (type === 'undefined') {
+        newChild[_TopValues][key] = null
       } else {
         newChild[_TopValues][key] = tops[key]
         // Not using && so we can exit early
@@ -268,13 +274,13 @@ class Perj {
         // Privitive JSON.stringify. Cheap.
         const type = typeof newChild[_TopValues][key]
         if (type === 'string') {
-          newChild[_TopSnip] += ',"' + key + '":"' + newChild[_TopValues][key] + '"'
+          newChild[_TopSnip] += '"' + key + '":"' + newChild[_TopValues][key] + '",'
         } else if (type === 'number' || type === 'boolean') {
-          newChild[_TopSnip] += ',"' + key + '":' + newChild[_TopValues][key]
+          newChild[_TopSnip] += '"' + key + '":' + newChild[_TopValues][key] + ','
         }
         continue
       }
-      newChild[_TopSnip] += ',"' + key + '":' + (stringify(newChild[_TopValues][key]) || '""')
+      newChild[_TopSnip] += '"' + key + '":' + ((stringify(newChild[_TopValues][key]) || '""') + ',')
     }
     newChild.parent = this
     newChild[_HeaderStrings] = {}

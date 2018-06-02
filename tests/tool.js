@@ -7,7 +7,12 @@ class Tool {
   }
 
   write (json, obj) {
-    this.jsonOut = JSON.parse(json)
+    try {
+      this.jsonOut = JSON.parse(json)
+    } catch (error) {
+      console.log(error.message)
+      console.log(json)
+    }
     this.objOut = obj
   }
 

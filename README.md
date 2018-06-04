@@ -31,7 +31,7 @@ npm install --save perj
 
 ## Goals
 
-* Designed to be integrated rather than used out of the box (DIY) ✔️
+* Designed to be integrated (DIY) ✔️
 * Cross platform (Node.js and Browser) with no platform dependencies ✔️
 * Flexible log and additional property options ✔️
 * Fast ✔️

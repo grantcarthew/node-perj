@@ -1,6 +1,6 @@
 # perj
 
-A simple, fast JSON logger.
+A fast, flexible JSON logger.
 
 [![Maintainability][cc-maintain-badge]][cc-maintain-url]
 [![Test Coverage][cc-coverage-badge]][cc-coverage-url]
@@ -16,6 +16,8 @@ A simple, fast JSON logger.
 
 [![NPM][nodei-npm-image]][nodei-npm-url]
 
+Standing on the sholders of [GIANTS][pino-url], `perj` offers a flexible alternative.
+
 ## Status
 
 __Under heavy development. Do not use. API is changing.__
@@ -30,27 +32,28 @@ __Under heavy development. Do not use. API is changing.__
 npm install --save perj
 
 ```
+
 ## Goals
 
 The `perj` project has the following goals:
 
-* KISS: Keep it simple smiley ✔️
 * Designed to be integrated rather than used out of the box (DIY) ✔️
 * Cross platform (Node.js and Browser) with no platform dependencies ✔️
 * Flexible log and additional property options ✔️
 * Fast ✔️
-* Feature limited ✔️
 
 ## Features
 
 * No dependencies.
+* Flexible API ([change almost everything][perj-options]).
 * Flexible log methods:
   * Log items can be any number in any order of any type.
 * The first string is nested under the 'msg' key:
   * First string includes a string argument or an Error message.
   * Additional string arguments are nested under the data key.
 * Objects are nested under the 'data' key as an object or array of objects.
-* No transports included (see primary goal).
+* Repeated string top level properties become [hierarchical][perj-separatorString].
+* [Examples][perj-examples] to get you started.
 
 ## Quick Start
 
@@ -67,7 +70,7 @@ const ver = 1
 const name = 'QuickStart'
 const host = require('os').hostname()
 const pid = process.pid
-const file = require('path').basename(module.filename)
+const file = require('path').basename(module.filename, '.js')
 
 const log = new Perj({ver, name, host, pid, file})
 
@@ -77,7 +80,7 @@ log.info('the quick brown fox jumps over the lazy dog')
 
 The following string is sent to standard out:
 
-{"level":"info","lvl":30,"ver":1,"name":"QuickStart","host":"Dev","pid":233241,"file":"quick.js","time":1526102959677,"msg":"the quick brown fox jumps over the lazy dog","data":""}
+{"level":"info","lvl":30,"ver":1,"name":"QuickStart","host":"Dev","pid":233241,"file":"quick-start","time":1526102959677,"msg":"the quick brown fox jumps over the lazy dog","data":""}
 
 */
 
@@ -159,6 +162,9 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 [nodei-npm-url]: https://nodei.co/npm/perj/
 [perj-image]: https://rawgit.com/grantcarthew/node-perj/master/perj.svg
 [perj-url]: https://github.com/grantcarthew/node-perj
-[perj-wiki]: https://github.com/grantcarthew/node-perj/wiki
 [perj-npm]: https://www.npmjs.com/package/perj
+[perj-wiki]: https://github.com/grantcarthew/node-perj/wiki
+[perj-options]: https://github.com/grantcarthew/node-perj/wiki/Options
+[perj-separatorString]: https://github.com/grantcarthew/node-perj/wiki/separatorString
+[perj-examples]: https://github.com/grantcarthew/node-perj/wiki/Examples
 [pino-url]: https://www.npmjs.com/package/pino

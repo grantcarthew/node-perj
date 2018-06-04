@@ -16,8 +16,6 @@ A fast, flexible JSON logger.
 
 [![NPM][nodei-npm-image]][nodei-npm-url]
 
-Standing on the shoulders of [GIANTS][pino-url], `perj` offers a flexible alternative.
-
 ## Status
 
 __Under heavy development. Do not use. API is changing.__

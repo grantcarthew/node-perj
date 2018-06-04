@@ -31,8 +31,6 @@ npm install --save perj
 
 ## Goals
 
-The `perj` project has the following goals:
-
 * Designed to be integrated rather than used out of the box (DIY) ✔️
 * Cross platform (Node.js and Browser) with no platform dependencies ✔️
 * Flexible log and additional property options ✔️

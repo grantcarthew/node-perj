@@ -165,6 +165,7 @@ class Perj {
       let dataJson = '""'
 
       const serialize = (item) => {
+        if (!this[_Options].serializers) { return item }
         if (item == null) { return null }
         const graded = {}
         for (const key in item) {

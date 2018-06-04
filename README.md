@@ -14,8 +14,6 @@ A fast, flexible JSON logger.
 
 [![perj][perj-image]][perj-url]
 
-[![NPM][nodei-npm-image]][nodei-npm-url]
-
 ## Status
 
 __Under heavy development. Do not use. API is changing.__
@@ -156,8 +154,6 @@ See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 [patreon-url]: https://www.patreon.com/grantcarthew
 [twitter-badge]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
 [twitter-url]: https://twitter.com/grantcarthew
-[nodei-npm-image]: https://nodei.co/npm/perj.png?downloads=true&downloadRank=true&stars=true
-[nodei-npm-url]: https://nodei.co/npm/perj/
 [perj-image]: https://rawgit.com/grantcarthew/node-perj/master/perj.svg
 [perj-url]: https://github.com/grantcarthew/node-perj
 [perj-npm]: https://www.npmjs.com/package/perj

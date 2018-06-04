@@ -164,6 +164,21 @@ class Perj {
       let data = ''
       let dataJson = '""'
 
+      const serialize = (item) => {
+        if (item == null) { return null }
+        const graded = {}
+        for (const key in item) {
+          let value = item[key]
+          if (item.hasOwnProperty && item.hasOwnProperty(key) && this[_Options].serializers[key]) {
+            value = this[_Options].serializers[key](value)
+          }
+          if (value !== undefined) {
+            graded[key] = value
+          }
+        }
+        return graded
+      }
+
       if (items.length === 1) {
         // Single item processing
         const item = items[0]
@@ -177,14 +192,15 @@ class Perj {
         } else if (item === undefined) {
           data = dataJson = null
         } else {
-          data = item
-          dataJson = stringify(item)
+          data = serialize(item)
+          dataJson = stringify(data)
         }
       } else if (items.length > 1) {
         // Multiple item processing
         data = []
         for (const item of items) {
-          if (typeof item === 'string') {
+          const type = typeof item
+          if (type === 'string') {
             if (msg) {
               data.push(item)
             } else {
@@ -192,16 +208,17 @@ class Perj {
             }
             continue
           }
+          if (type === 'undefined') {
+            data.push(null)
+            continue
+          }
           if (item instanceof Error) {
             data.push(serializerr(item))
             if (!msg) { msg = item.message }
             continue
           }
-          if (typeof item === 'undefined') {
-            data.push(null)
-            continue
-          }
-          data.push(item)
+
+          data.push(serialize(item))
         }
 
         if (data.length === 1) {

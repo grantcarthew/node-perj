@@ -19,6 +19,7 @@ module.exports = {
   messageKey: 'msg',
   dataKey: 'data',
   separatorString: ':',
+  serializers: {},
   passThrough: false,
   write: defaultWriter()
 }

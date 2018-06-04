@@ -8,17 +8,17 @@ const name = 'app'
 
 class Logger extends Perj {
   child (mod, tops) {
-    const file = path.basename(mod.filename)
-    tops.file = file
+    if (tops == null) { tops = {} }
+    tops.name = path.basename(mod.filename, '.js')
     return Perj.prototype.child.call(this, tops)
-  }
-
-  req (reqObj) {
-    const { method, url, headers, params, query, connection } = reqObj
-    const remoteAddress = connection && connection.remoteAddress
-    const remotePort = connection && connection.remotePort
-    return { method, url, headers, params, query, remoteAddress, remotePort }
   }
 }
 
-module.exports = new Logger({ ver, host, pid, name })
+module.exports = new Logger({ ver, host, pid, name, serializers: { req: reqSerializer } })
+
+function reqSerializer (reqObj) {
+  const { method, url, headers, params, query, connection } = reqObj
+  const remoteAddress = connection && connection.remoteAddress
+  const remotePort = connection && connection.remotePort
+  return { method, url, headers, params, query, remoteAddress, remotePort }
+}

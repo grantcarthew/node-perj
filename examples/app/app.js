@@ -4,7 +4,9 @@ const log = require('./logger')
 const auth = require('./auth')
 
 app.use(function (req, res, next) {
-  log.info(log.req(req))
+  // Nesting 'req' under a 'req' key to enable the 'req' serializer.
+  // Equivalent to log.info({ req: req })
+  log.info({ req })
   next()
 })
 

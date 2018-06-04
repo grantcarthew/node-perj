@@ -1,4 +1,4 @@
-const log = require('./logger').child(module, { name: 'auth' })
+const log = require('./logger').child(module)
 
 module.exports = function (req, res, next) {
   // Check user is authenticated here.

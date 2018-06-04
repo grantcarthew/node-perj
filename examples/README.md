@@ -49,6 +49,10 @@ Saves `standard input` to a rotating log file.
 
 Saves `standard input` to a rotating log file and uploads the completed file to a Google Cloud Platform Cloud Storage bucket.
 
+### [serializers.js](/examples/serializers.js)
+
+A simple example to show how serializers work.
+
 ### [util-log-generator.js](/examples/util-log-generator.js)
 
 This is a utility module to generate log data.

@@ -84,17 +84,6 @@ describe('logger option tests', () => {
     expect(tool.objOut.data).toMatchObject(data.tardis)
     expect(data.tardis).toMatchObject(tool.objOut.data)
   })
-  test('top level properties', () => {
-    let log = new Perj({ write, passThrough, foo: 'bar' })
-    log.info(data.msg[0], data.tardis)
-    expect(Object.keys(tool.jsonOut).length).toBe(6)
-    expect(tool.jsonOut.level).toBe('info')
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe(data.msg[0])
-    expect(tool.jsonOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.jsonOut.data)
-    expect(tool.jsonOut.data).toMatchObject(data.tardis)
-  })
   test('top level object', () => {
     let log = new Perj({ write, passThrough, foo: 'bar', platform: { name: 'node', pid: 1234 } })
     log.info(data.msg[0], data.tardis)

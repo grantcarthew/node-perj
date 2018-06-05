@@ -6,6 +6,7 @@ const dateTimeFunctions = require('./date-time')
 // Symbols for functions and values
 const _SplitOptions = Symbol('SplitOptions')
 const _Options = Symbol('Options')
+const _Stringify = Symbol('Stringify')
 const _TopSnip = Symbol('TopSnip')
 const _TopValues = Symbol('TopValues')
 const _TopIsPrimitive = Symbol('TopIsPrimitive')
@@ -29,6 +30,9 @@ _SplitOptions: <Function>
 
 _Options: <Object>
   This holds an Object with the default or custom options.
+
+_Stringify: <Function>
+  This holds the configured stringify function.
 
 _TopSnip: <String>
   This holds a JSON snippet of the user supplied top level properties.
@@ -65,7 +69,7 @@ _SetLevelFunction: <Function>
 class Perj {
   constructor (options) {
     this[_Options] = Object.assign({}, defaultOptions)
-    this[_Options].stringifyFunction = this[_Options].stringifyFunction || stringify
+    this[_Stringify] = options && options.stringifyFunction ? options.stringifyFunction : stringify
     this[_TopSnip] = ''
     this[_TopValues] = {}
     this[_TopIsPrimitive] = true
@@ -131,7 +135,7 @@ class Perj {
           this[_TopSnip] += '"' + key + '":null,'
           this[_TopValues][key] = null
         } else {
-          this[_TopSnip] += '"' + key + '":' + ((this[_Options].stringifyFunction(options[key]) || '""') + ',')
+          this[_TopSnip] += '"' + key + '":' + this[_Stringify](options[key]) + ','
           this[_TopValues][key] = options[key]
           this[_TopIsPrimitive] = false
         }
@@ -190,12 +194,12 @@ class Perj {
         } else if (item instanceof Error) {
           msg = item.message
           data = serializerr(item)
-          dataJson = this[_Options].stringifyFunction(data)
+          dataJson = this[_Stringify](data)
         } else if (item === undefined) {
           data = dataJson = null
         } else {
           data = serialize(item)
-          dataJson = this[_Options].stringifyFunction(data)
+          dataJson = this[_Stringify](data)
         }
       } else if (items.length > 1) {
         // Multiple item processing
@@ -226,7 +230,7 @@ class Perj {
         if (data.length === 1) {
           data = data[0]
         }
-        dataJson = this[_Options].stringifyFunction(data)
+        dataJson = this[_Stringify](data)
       }
 
       const json = this[_HeaderStrings][level] + time +
@@ -272,9 +276,9 @@ class Perj {
           this[_Options].messageKey === key ||
           this[_Options].dataKey === key) { continue }
       const type = typeof tops[key]
-      if (this[_TopValues].hasOwnProperty(key) &&
-            typeof this[_TopValues][key] === 'string' &&
-            type === 'string') {
+      if (type === 'string' &&
+          this[_TopValues].hasOwnProperty(key) &&
+          typeof this[_TopValues][key] === 'string') {
         // New top key is the same as parent and is a string. Appending separator string and new value.
         newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key]
       } else if (type === 'undefined') {
@@ -289,17 +293,17 @@ class Perj {
     }
     newChild[_TopSnip] = ''
     for (const key in newChild[_TopValues]) {
-      if (newChild[_TopIsPrimitive] && !this[_Options].stringifyFunction) {
+      if (newChild[_TopIsPrimitive] && !(this[_Options].stringifyFunction)) {
         // Privitive JSON.stringify. Cheap.
         const type = typeof newChild[_TopValues][key]
         if (type === 'string') {
           newChild[_TopSnip] += '"' + key + '":"' + newChild[_TopValues][key] + '",'
-        } else if (type === 'number' || type === 'boolean') {
+        } else {
           newChild[_TopSnip] += '"' + key + '":' + newChild[_TopValues][key] + ','
         }
         continue
       }
-      newChild[_TopSnip] += '"' + key + '":' + ((this[_Options].stringifyFunction(newChild[_TopValues][key]) || '""') + ',')
+      newChild[_TopSnip] += '"' + key + '":' + (this[_Stringify](newChild[_TopValues][key])) + ','
     }
     newChild.parent = this
     newChild[_HeaderStrings] = {}
@@ -311,11 +315,11 @@ class Perj {
   }
 
   stringify (obj, replacer, spacer) {
-    return this[_Options].stringifyFunction(obj, replacer, spacer)
+    return this[_Stringify](obj, replacer, spacer)
   }
 
   json (data) {
-    console.log(this[_Options].stringifyFunction(data, null, 2))
+    console.log(this[_Stringify](data, null, 2))
   }
 }
 

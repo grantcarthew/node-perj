@@ -65,6 +65,7 @@ _SetLevelFunction: <Function>
 class Perj {
   constructor (options) {
     this[_Options] = Object.assign({}, defaultOptions)
+    this[_Options].stringifyFunction = this[_Options].stringifyFunction || stringify
     this[_TopSnip] = ''
     this[_TopValues] = {}
     this[_TopIsPrimitive] = true
@@ -130,7 +131,7 @@ class Perj {
           this[_TopSnip] += '"' + key + '":null,'
           this[_TopValues][key] = null
         } else {
-          this[_TopSnip] += '"' + key + '":' + ((stringify(options[key]) || '""') + ',')
+          this[_TopSnip] += '"' + key + '":' + ((this[_Options].stringifyFunction(options[key]) || '""') + ',')
           this[_TopValues][key] = options[key]
           this[_TopIsPrimitive] = false
         }
@@ -189,12 +190,12 @@ class Perj {
         } else if (item instanceof Error) {
           msg = item.message
           data = serializerr(item)
-          dataJson = stringify(data)
+          dataJson = this[_Options].stringifyFunction(data)
         } else if (item === undefined) {
           data = dataJson = null
         } else {
           data = serialize(item)
-          dataJson = stringify(data)
+          dataJson = this[_Options].stringifyFunction(data)
         }
       } else if (items.length > 1) {
         // Multiple item processing
@@ -225,7 +226,7 @@ class Perj {
         if (data.length === 1) {
           data = data[0]
         }
-        dataJson = stringify(data)
+        dataJson = this[_Options].stringifyFunction(data)
       }
 
       const json = this[_HeaderStrings][level] + time +
@@ -288,7 +289,7 @@ class Perj {
     }
     newChild[_TopSnip] = ''
     for (const key in newChild[_TopValues]) {
-      if (newChild[_TopIsPrimitive]) {
+      if (newChild[_TopIsPrimitive] && !this[_Options].stringifyFunction) {
         // Privitive JSON.stringify. Cheap.
         const type = typeof newChild[_TopValues][key]
         if (type === 'string') {
@@ -298,7 +299,7 @@ class Perj {
         }
         continue
       }
-      newChild[_TopSnip] += '"' + key + '":' + ((stringify(newChild[_TopValues][key]) || '""') + ',')
+      newChild[_TopSnip] += '"' + key + '":' + ((this[_Options].stringifyFunction(newChild[_TopValues][key]) || '""') + ',')
     }
     newChild.parent = this
     newChild[_HeaderStrings] = {}
@@ -310,11 +311,11 @@ class Perj {
   }
 
   stringify (obj, replacer, spacer) {
-    return stringify(obj, replacer, spacer)
+    return this[_Options].stringifyFunction(obj, replacer, spacer)
   }
 
   json (data) {
-    console.log(stringify(data, null, 2))
+    console.log(this[_Options].stringifyFunction(data, null, 2))
   }
 }
 

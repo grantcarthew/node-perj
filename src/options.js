@@ -20,6 +20,7 @@ module.exports = {
   dataKey: 'data',
   separatorString: ':',
   serializers: false,
+  stringifyFunction: false,
   passThrough: false,
   write: defaultWriter()
 }

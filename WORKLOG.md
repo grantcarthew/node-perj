@@ -1,7 +1,5 @@
 # Worklog
 
-* Consider serializers
-* Consider redactor
 * Review performance
 * Review documentation
 

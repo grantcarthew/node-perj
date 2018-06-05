@@ -10,7 +10,7 @@ beforeEach(() => {
 })
 
 describe('logger option tests', () => {
-  test('more options tests', () => {
+  test('options tests', () => {
     let log = new Perj()
     let custLevels = Object.assign({}, log.levels)
     custLevels.silly = 42

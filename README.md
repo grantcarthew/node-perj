@@ -14,14 +14,10 @@ A fast, flexible JSON logger.
 
 [![perj][perj-image]][perj-url]
 
-## Status
-
-__Under heavy development. Do not use. API is changing.__
-
 ## Installing
 
 * Node: Compiled for v6.0.0 and above. Not tested under v6.0.0.
-* Browser: Requires bundling - Not tested (🤔 working on it.)
+* Browser: Use the [dist/perj.js][perj-dist] file or bundle from [src][perj-src].
 
 ```sh
 
@@ -170,6 +166,8 @@ Not to mention the other packages and resources used to help develop on the Node
 [perj-url]: https://github.com/grantcarthew/node-perj
 [perj-npm]: https://www.npmjs.com/package/perj
 [perj-wiki]: https://github.com/grantcarthew/node-perj/wiki
+[perj-src]: https://github.com/grantcarthew/node-perj/tree/master/src
+[perj-dist]: https://github.com/grantcarthew/node-perj/tree/master/dist
 [perj-options]: https://github.com/grantcarthew/node-perj/wiki/Options
 [perj-separatorString]: https://github.com/grantcarthew/node-perj/wiki/separatorString
 [perj-examples]: https://github.com/grantcarthew/node-perj/wiki/Examples

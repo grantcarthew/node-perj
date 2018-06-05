@@ -53,13 +53,13 @@ npm install --save perj
 
 ### Node.js Usage
 
-The following example adds a log format version `ver`, `name`, `host`, `pid` and `file` top level property to the log output.
+The following example adds `ver`, `name`, `host`, `pid` and `file` top level property to the log output:
 
 ```js
 
 const { Perj } = require('perj')
 
-// Customise the variables below as needed. They are not required.
+// Customize the variables below as needed. They are not required.
 const ver = 1
 const name = 'QuickStart'
 const host = require('os').hostname()
@@ -82,15 +82,13 @@ The following string is sent to standard out:
 
 ### Browser Usage
 
-__Total size is 5.3kB minified index file.__
-
-The following example adds a format version `ver`, `name`, and `host` top level property to the log entries.
+The following example adds `ver`, `name`, and `host` top level property to the log entries:
 
 ```js
 
 const { Perj } = require('perj')
 
-// Customise the variables below as needed. They are not required.
+// Customize the variables below as needed. They are not required.
 const ver = 1
 const name = 'QuickStart'
 const host = location.hostname

@@ -127,6 +127,22 @@ If you are using my projects and would like to thank me or support me, please cl
 
 See my [other projects on NPM](https://www.npmjs.com/~grantcarthew).
 
+## Credit
+
+This project only exists because it is standing on the shoulders of [GIANTS][pino-url].
+
+Special thanks to the [guys](https://github.com/pinojs/pino/graphs/contributors) working on [pino][pino-url] being:
+
+* [David Mark Clements](https://github.com/davidmarkclements)
+* [Matteo Collina](https://github.com/mcollina)
+* [James Sumners](https://github.com/jsumners)
+
+A lot of the inspiration for `perj` came from the [pino][pino-url] package.
+
+Thanks also goes to [Tim Oxley](https://github.com/timoxley) for his [serializerr](https://www.npmjs.com/package/serializerr) package.
+
+Not to mention the other packages and resources used to help develop on the Node.js platform.
+
 ## Contributing
 
 1.  Fork it!

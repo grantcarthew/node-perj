@@ -1,4 +1,5 @@
-const dateTimeFunctions = require('./date-time')
+const stringifyFunction = require('./stringify')
+const dateTimeFunction = require('./date-time').epoch
 
 module.exports = {
   levels: {
@@ -15,12 +16,12 @@ module.exports = {
   levelNumberKey: 'lvl',
   levelNumberKeyEnabled: true,
   dateTimeKey: 'time',
-  dateTimeFunction: dateTimeFunctions.epoch,
+  dateTimeFunction,
   messageKey: 'msg',
   dataKey: 'data',
   separatorString: ':',
   serializers: false,
-  stringifyFunction: false,
+  stringifyFunction,
   passThrough: false,
   write: defaultWriter()
 }

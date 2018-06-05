@@ -13,7 +13,6 @@ describe('logger custom stringify tests', () => {
   test('custom stringify function tests', () => {
     let log = new Perj({ stringifyFunction, write, passThrough })
     log.info('stringify test', data.tardis)
-    // tool.show()
     expect(tool.jsonOut.data.name).toBe('Not TARDIS')
     expect(tool.objOut.data.name).toBe('TARDIS')
     expect(tool.jsonOut.data.class).toBe(data.tardis.class)

@@ -21,9 +21,14 @@ class Tool {
     this.objOut = {}
   }
 
-  show () {
+  dir () {
     console.dir(this.jsonOut)
     console.dir(this.objOut)
+  }
+
+  json () {
+    console.log(JSON.stringify(this.jsonOut, null, 2))
+    console.log(JSON.stringify(this.objOut, null, 2))
   }
 
   probe () {

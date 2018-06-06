@@ -1,3 +1,4 @@
+const serializeError = require('./serialize-error')
 const stringifyFunction = require('./stringify')
 const dateTimeFunction = require('./date-time').epoch
 
@@ -21,6 +22,7 @@ module.exports = {
   dataKey: 'data',
   separatorString: ':',
   serializers: false,
+  serializeErrorFunction: serializeError,
   stringifyFunction,
   passThrough: false,
   write: defaultWriter()

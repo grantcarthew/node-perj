@@ -133,8 +133,6 @@ Special thanks to the [guys](https://github.com/pinojs/pino/graphs/contributors)
 
 A lot of the inspiration for `perj` came from the [pino][pino-url] package.
 
-Thanks also goes to [Tim Oxley](https://github.com/timoxley) for his [serializerr](https://www.npmjs.com/package/serializerr) package.
-
 Not to mention the other packages and resources used to help develop on the Node.js platform.
 
 ## Contributing

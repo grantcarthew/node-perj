@@ -1,4 +1,3 @@
-const serializerr = require('./serializerr')
 const defaultOptions = require('./options')
 const dateTimeFunctions = require('./date-time')
 
@@ -17,7 +16,7 @@ const _SetLevelFunction = Symbol('SetLevelFunction')
 Code Summary:
 Following are points of interest around the perj code choices.
 - Symbols used to hide internal properties and methods.
-- Duplicate Symbols due to major performance hit if using nested.
+- Multiple Symbols due to major performance hit if using nested.
 - Deeply nested 'if' and 'for' statements due to performance benifits.
 - Some minor duplication due to performance benifits.
 
@@ -192,7 +191,7 @@ class Perj {
           data = ''
         } else if (item instanceof Error) {
           msg = item.message
-          data = serializerr(item)
+          data = this[_Options].serializeErrorFunction(item)
           dataJson = this[_Options].stringifyFunction(data)
         } else if (item === undefined) {
           data = dataJson = null
@@ -218,7 +217,7 @@ class Perj {
             continue
           }
           if (item instanceof Error) {
-            data.push(serializerr(item))
+            data.push(this[_Options].serializeErrorFunction(item))
             if (!msg) { msg = item.message }
             continue
           }
@@ -262,7 +261,7 @@ class Perj {
         newChild[_TopValues][key] = this[_TopValues][key]
       }
     } else {
-      // Object type as top value. Take the Object.assign hit like a man.
+      // Top value is an object. Take the Object.assign hit like a man.
       newChild[_TopValues] = Object.assign({}, this[_TopValues])
       newChild[_TopIsPrimitive] = false
     }

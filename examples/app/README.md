@@ -21,7 +21,7 @@ A `reqSerializer` function has been added to aid in serializing the `request` ob
 
 This is a simple example of an `express` middleware function which will emit logs.
 
-Notice how the local `log` variable is being set to a child logger and passing in the `Node.js` `module` object which will add the filename to the top level property `name`. The resulting name will be `app:auth` due to the separatorString options of the `perj` logger.
+Notice how the local `log` variable is being set to a child logger and passing in the `Node.js` `module` object which will add the filename to the top level property `name`. The resulting name will be `app:auth` due to the `separatorString` option of the `perj` logger.
 
 ### `app.js`
 

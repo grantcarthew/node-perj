@@ -8,7 +8,7 @@ const name = 'app'
 
 class Logger extends Perj {
   child (mod, tops) {
-    if (tops == null) { tops = {} }
+    tops = tops || {}
     tops.name = path.basename(mod.filename, '.js')
     return Perj.prototype.child.call(this, tops)
   }

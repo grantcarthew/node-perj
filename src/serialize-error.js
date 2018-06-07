@@ -15,16 +15,17 @@ function serializeError (obj) {
     const propNames = Object.getOwnPropertyNames(obj)
 
     for (let i = 0; i < propNames.length; i++) {
-      let type = getJSONType(obj[propNames[i]])
-      if (type === 'error' || type === 'object') {
-        if (seen.has(obj[propNames[i]])) {
+      const value = obj[propNames[i]]
+      const type = typeCheck(value)
+      if (type === 'object') {
+        if (seen.has(value)) {
           node[propNames[i]] = '[Circular]'
         } else {
-          seen.add(obj[propNames[i]])
-          node[propNames[i]] = serializeError(obj[propNames[i]])
+          seen.add(value)
+          node[propNames[i]] = serializeError(value)
         }
       } else if (type) {
-        node[propNames[i]] = obj[propNames[i]]
+        node[propNames[i]] = value
       }
     }
 
@@ -36,16 +37,19 @@ function serializeError (obj) {
   return tree
 }
 
-function getJSONType (value) {
+function typeCheck (value) {
   try {
     const type = typeof value
-    if (type === 'string') { return 'string' }
-    if (type === 'number') { return 'number' }
-    if (type === 'boolean') { return 'boolean' }
-    if (Array.isArray(value)) { return 'array' }
-    if (value === null) { return 'null' }
-    if (value instanceof Error) { return 'error' }
-    if (Object.prototype.toString.call(value) === '[object Object]') { return 'object' }
+    if (type === 'string' ||
+        type === 'number' ||
+        type === 'boolean' ||
+        Array.isArray(value) ||
+        value === null) {
+      return true
+    }
+    if (type === 'object') {
+      return 'object'
+    }
   } catch (err) { }
 
   return false

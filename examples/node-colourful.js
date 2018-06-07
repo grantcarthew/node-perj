@@ -48,7 +48,7 @@ Performance:
 
 */
 
-const { Perj } = require('perj')
+const Perj = require('perj')
 const chalk = require('chalk')
 const colorize = require('json-colorizer')
 const isProd = process.env.NODE_ENV === 'production'

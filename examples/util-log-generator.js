@@ -15,7 +15,7 @@ Features:
 
 */
 
-const { Perj } = require('../src/perj')
+const Perj = require('../src/perj')
 const host = require('os').hostname()
 const pid = process.pid
 const file = require('path').basename(module.filename)

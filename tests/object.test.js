@@ -1,4 +1,4 @@
-const { Perj, dateTimeFunctions } = require('../src/perj')
+const Perj = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const write = tool.write.bind(tool)
@@ -10,13 +10,6 @@ beforeEach(() => {
 describe.only('logger object tests', () => {
   test('perj member tests', () => {
     expect(tool.getType(Perj)).toBe('Function')
-    expect(tool.getType(dateTimeFunctions)).toBe('Object')
-    expect(tool.getType(dateTimeFunctions.epoch)).toBe('Function')
-    expect(tool.getType(dateTimeFunctions.epoch())).toBe('Number')
-    expect(tool.getType(dateTimeFunctions.unix)).toBe('Function')
-    expect(tool.getType(dateTimeFunctions.unix())).toBe('Number')
-    expect(tool.getType(dateTimeFunctions.iso)).toBe('Function')
-    expect(tool.getType(dateTimeFunctions.iso())).toBe('String')
   })
   test('log member tests', () => {
     const log = new Perj()

@@ -7,7 +7,7 @@ require('console-probe').apply()
 const { table } = require('table')
 const chalk = require('chalk')
 const Benchmark = require('benchmark')
-const { Perj } = require('../index')
+const Perj = require('../index')
 const fs = require('fs')
 const hostname = require('os').hostname()
 const pid = process.pid
@@ -149,7 +149,7 @@ suite.on('cycle', function (event) {
 })
 
 suite.on('complete', function () {
-  const { Perj } = table([
+  const perj = table([
     [chalk.blue('Bechmark Ops/Sec'), chalk.blue('Result'), chalk.blue('Compare')],
     row('Common Log Operations', this[0]),
     row('Common Log Operations passThrough', this[1], this[0]),

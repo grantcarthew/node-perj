@@ -1,5 +1,4 @@
 const defaultOptions = require('./options')
-const dateTimeFunctions = require('./date-time')
 
 // Symbols for functions and values
 const _SplitOptions = Symbol('SplitOptions')
@@ -321,7 +320,4 @@ class Perj {
   }
 }
 
-module.exports = Object.freeze({
-  Perj,
-  dateTimeFunctions
-})
+module.exports = Perj

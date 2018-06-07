@@ -1,6 +1,5 @@
 const serializeError = require('./serialize-error')
 const stringifyFunction = require('./stringify')
-const dateTimeFunction = require('./date-time').epoch
 
 module.exports = {
   levels: {
@@ -26,6 +25,11 @@ module.exports = {
   stringifyFunction,
   passThrough: false,
   write: defaultWriter()
+}
+
+function dateTimeFunction () {
+  // Returns epoch time.
+  return Date.now()
 }
 
 function defaultWriter () {

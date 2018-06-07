@@ -53,7 +53,7 @@ The following example adds `ver`, `name`, `host`, `pid` and `file` top level pro
 
 ```js
 
-const { Perj } = require('perj')
+const Perj = require('perj')
 
 // Customize the variables below as needed. They are not required.
 const ver = 1
@@ -82,7 +82,7 @@ The following example adds `ver`, `name`, and `host` top level property to the l
 
 ```js
 
-const { Perj } = require('perj')
+const Perj = require('perj')
 
 // Customize the variables below as needed. They are not required.
 const ver = 1

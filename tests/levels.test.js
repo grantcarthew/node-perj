@@ -1,4 +1,4 @@
-const { Perj } = require('../src/perj')
+const Perj = require('../src/perj')
 const Tool = require('./tool')
 const tool = new Tool()
 const write = tool.write.bind(tool)

@@ -38,7 +38,7 @@ location.hostname = 'http://abc.net'
 
 */
 
-const { Perj } = require('perj')
+const Perj = require('perj')
 const ver = 1
 const name = 'Your App Name' // <======= CHANGE THIS NAME
 const host = location.hostname

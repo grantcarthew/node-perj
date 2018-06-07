@@ -35,7 +35,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'perj.js',
-    library: 'perj',
+    library: 'Perj',
     libraryTarget: 'umd',
     globalObject: `typeof self !== 'undefined' ? self : this`
   },

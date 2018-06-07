@@ -47,7 +47,7 @@ Performance:
 
 */
 
-const { Perj } = require('../src/perj')
+const Perj = require('perj')
 const rfs = require('rotating-file-stream')
 const isProd = process.env.NODE_ENV === 'production'
 const logFileRootPath = process.env.LOGFILEROOTPATH // <======= CHANGE THIS ENV NAME

@@ -42,7 +42,7 @@ Performance:
 
 */
 
-const { Perj } = require('perj')
+const Perj = require('perj')
 const isProd = process.env.NODE_ENV === 'production'
 const ver = 1
 const host = require('os').hostname()

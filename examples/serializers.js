@@ -27,7 +27,7 @@ Performance:
 
 */
 
-const { Perj } = require('perj')
+const Perj = require('perj')
 const log = new Perj({ serializers: { req: reqSerializer, res: resSerializer } })
 
 function reqSerializer (value) {

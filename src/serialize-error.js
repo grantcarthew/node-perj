@@ -3,6 +3,7 @@ module.exports = serializeError
 function serializeError (obj) {
   if (obj == null) { return {} }
 
+  const seen = new WeakSet([obj])
   let tree = null
   let currentNode = {}
 
@@ -16,7 +17,12 @@ function serializeError (obj) {
     for (let i = 0; i < propNames.length; i++) {
       let type = getJSONType(obj[propNames[i]])
       if (type === 'error' || type === 'object') {
-        node[propNames[i]] = serializeError(obj[propNames[i]])
+        if (seen.has(obj[propNames[i]])) {
+          node[propNames[i]] = '[Circular]'
+        } else {
+          seen.add(obj[propNames[i]])
+          node[propNames[i]] = serializeError(obj[propNames[i]])
+        }
       } else if (type) {
         node[propNames[i]] = obj[propNames[i]]
       }

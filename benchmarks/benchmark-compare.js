@@ -10,6 +10,8 @@ const Benchmark = require('benchmark')
 const Perj = require('../src/perj')
 const pino = require('pino')
 const fs = require('fs')
+const levelKeyEnabled = false
+const levelNumberKey = 'level'
 const hostname = require('os').hostname()
 const pid = process.pid
 const v = 1
@@ -20,6 +22,7 @@ fs.writeFileSync(csvPath, csvHeader)
 
 // Data
 const data = require('../data')
+const flat = { foo: 'bar', baz: null, plubus: true }
 const err = []
 for (let i = 0; i < 5; i++) {
   err.push(new Error('Error object number: ' + i))
@@ -31,7 +34,7 @@ deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 deep.deep.deep.deep = Object.assign({}, JSON.parse(JSON.stringify(deep)))
 
 // Adding hostname and pid to match pino log string
-const perjLog = new Perj({v, hostname, pid, write: (json) => { dest.write(json) }})
+const perjLog = new Perj({ levelKeyEnabled, levelNumberKey, pid, hostname, v, write: dest.write.bind(dest) })
 const pinoLog = pino(dest)
 
 const suite = new Benchmark.Suite()
@@ -67,11 +70,11 @@ suite.add('pino Single Long String', function () {
 })
 
 suite.add('perj Flat Object Data', function () {
-  perjLog.info({ foo: 'bar' })
+  perjLog.info(flat)
 })
 
 suite.add('pino Flat Object Data', function () {
-  pinoLog.info({ foo: 'bar' })
+  pinoLog.info(flat)
 })
 
 suite.add('perj Simple Object Data', function () {

@@ -34,7 +34,7 @@ Use the [dist][perj-dist] files or bundle from [src][perj-src].
 |-|-|-|
 | gzipped | [![File Size][size-gzip-badge]][size-gzip-url] | https://unpkg.com/perj/dist/perj.min.js.gz |
 | minified | [![File Size][size-min-badge]][size-min-url] | https://unpkg.com/perj/dist/perj.min.js |
-| full (source map) | [![File Size][size-gzip-badge]][size-full-url] | https://unpkg.com/perj/dist/perj.js |
+| full (source map) | [![File Size][size-full-badge]][size-full-url] | https://unpkg.com/perj/dist/perj.js |
 
 See [Unpkg](https://unpkg.com/) for fixed version options.
 

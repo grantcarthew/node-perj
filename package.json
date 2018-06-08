@@ -1,8 +1,8 @@
 {
   "name": "perj",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple, fast JSON logger.",
-  "main": "dist/perj.js",
+  "main": "dist/perj.min.js",
   "module": "src/perj.js",
   "homepage": "https://github.com/grantcarthew/node-perj",
   "repository": {
@@ -72,6 +72,7 @@
     "babel-preset-env": "^1.7.0",
     "benchmark": "^2.1.4",
     "chalk": "^2.4.1",
+    "compression-webpack-plugin": "^1.1.11",
     "console-probe": "^3.2.0",
     "del-cli": "^1.1.0",
     "jest": "^23.1.0",

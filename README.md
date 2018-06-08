@@ -5,7 +5,7 @@ A fast, flexible JSON logger.
 [![Maintainability][cc-maintain-badge]][cc-maintain-url]
 [![Test Coverage][cc-coverage-badge]][cc-coverage-url]
 [![Build Status][travisci-image]][travisci-url]
-[![File Size][file-size-badge]][file-size-url]
+[![File Size][size-gzip-badge]][size-gzip-url]
 [![NPM Version][npm-v-badge]][perj-npm]
 [![js-standard-style][js-standard-image]][js-standard-url]
 [![NSP Status][nsp-image]][nsp-url]
@@ -16,14 +16,27 @@ A fast, flexible JSON logger.
 
 ## Installing
 
-* Node: Compiled for v6.0.0 and above. Not tested under v6.0.0.
-* Browser: Use the [dist/perj.js][perj-dist] file or bundle from [src][perj-src].
+### Node.js
+
+Perj has been compiled for v6.0.0 and above.
 
 ```sh
 
 npm install --save perj
 
 ```
+
+### Browser
+
+Use the [dist][perj-dist] files or bundle from [src][perj-src].
+
+| Type | Size | CDN |
+|-|-|-|
+| gzipped | [![File Size][size-gzip-badge]][size-gzip-url] | https://unpkg.com/perj/dist/perj.min.js.gz |
+| minified | [![File Size][size-min-badge]][size-min-url] | https://unpkg.com/perj/dist/perj.min.js |
+| full (source map) | [![File Size][size-gzip-badge]][size-full-url] | https://unpkg.com/perj/dist/perj.js |
+
+See [Unpkg](https://unpkg.com/) for fixed version options.
 
 ## Goals
 
@@ -150,8 +163,12 @@ Not to mention the other packages and resources used to help develop on the Node
 [cc-coverage-badge]: https://api.codeclimate.com/v1/badges/14946690a2410b71177e/test_coverage
 [cc-coverage-url]: https://codeclimate.com/github/grantcarthew/node-perj/test_coverage
 [npm-v-badge]: https://img.shields.io/npm/v/perj.svg
-[file-size-badge]: https://img.shields.io/github/size/grantcarthew/node-perj/dist/perj.js.svg
-[file-size-url]: https://github.com/grantcarthew/node-perj/blob/master/dist/perj.js
+[size-gzip-badge]: https://img.shields.io/github/size/grantcarthew/node-perj/dist/perj.min.js.gz.svg
+[size-gzip-url]: https://github.com/grantcarthew/node-perj/blob/master/dist/perj.min.js.gz
+[size-min-badge]: https://img.shields.io/github/size/grantcarthew/node-perj/dist/perj.min.js.svg
+[size-min-url]: https://github.com/grantcarthew/node-perj/blob/master/dist/perj.min.js
+[size-full-badge]: https://img.shields.io/github/size/grantcarthew/node-perj/dist/perj.js.svg
+[size-full-url]: https://github.com/grantcarthew/node-perj/blob/master/dist/perj.js
 [js-standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [js-standard-url]: http://standardjs.com/
 [nsp-image]: https://nodesecurity.io/orgs/openjs/projects/4367c7cb-163d-4335-be3c-fe3429c69385/badge

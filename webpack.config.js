@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const MinifyPlugin = require('babel-minify-webpack-plugin')
-const minifyOpts = { mangle: true }
+const CompressionPlugin = require('compression-webpack-plugin')
 
 /*
 WebPack Configuration Notes:
@@ -29,9 +29,17 @@ stats.excludeModules:
 
 */
 
-module.exports = {
-  mode: 'production',
+const config = {
   entry: './src/perj.js',
+  stats: {
+    excludeModules: false
+  }
+}
+
+// Unminified, uncompressed, inline source map.
+const stdConfig = Object.assign({}, config, {
+  mode: 'development',
+  devtool: 'inline-source-map',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'perj.js',
@@ -40,11 +48,30 @@ module.exports = {
     globalObject: `typeof self !== 'undefined' ? self : this`
   },
   plugins: [
-    new MinifyPlugin(minifyOpts),
     new webpack.IgnorePlugin(/node_modules/),
     new webpack.DefinePlugin({ process: 'process' })
-  ],
-  stats: {
-    excludeModules: false
-  }
-}
+  ]
+})
+
+// Minify and compress producing a min and min.gz file.
+const minConfig = Object.assign({}, config, {
+  mode: 'production',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'perj.min.js',
+    library: 'Perj',
+    libraryTarget: 'umd',
+    globalObject: `typeof self !== 'undefined' ? self : this`
+  },
+  plugins: [
+    new webpack.IgnorePlugin(/node_modules/),
+    new webpack.DefinePlugin({ process: 'process' }),
+    new MinifyPlugin({ mangle: true }),
+    new CompressionPlugin()
+  ]
+})
+
+// Return Array of Configurations
+module.exports = [
+  stdConfig, minConfig
+]

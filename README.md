@@ -18,7 +18,12 @@ A fast, flexible JSON logger.
 
 ### Node.js
 
-Perj has been compiled for v6.0.0 and above.
+The [package.json](https://github.com/grantcarthew/node-perj/blob/master/package.json) has two configurations related to Node.js installations:
+
+* `main`: points to the minified version compiled for v6.0.0 and above.
+* `module`: points to the [src][perj-src] files. [Module field details](https://github.com/nodejs/node-eps/blob/4217dca299d89c8c18ac44c878b5fe9581974ef3/002-es6-modules.md#51-determining-if-source-is-an-es-module).
+
+The [index.js](https://github.com/grantcarthew/node-perj/blob/master/index.js) points to the minified version compiled for v6.0.0 and above.
 
 ```sh
 

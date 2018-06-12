@@ -163,8 +163,8 @@ class Perj {
       }
       const time = this[_Options].dateTimeFunction()
       let msg = ''
-      let data = ''
-      let dataJson = '""'
+      let data = null
+      let dataJson = 'null'
 
       const serialize = (item) => {
         if (!this[_Options].serializers) { return item }
@@ -185,15 +185,18 @@ class Perj {
       if (items.length === 1) {
         // Single item processing
         const item = items[0]
-        if (typeof item === 'string') {
+        const type = typeof item
+        if (type === 'string') {
           msg = item
-          data = ''
+        } else if (item == null) {
+          // Undefined or null, keep defaults.
+        } else if (type === 'number' || type === 'boolean') {
+          data = item
+          dataJson = '' + item
         } else if (item instanceof Error) {
           msg = item.message
           data = this[_Options].serializeErrorFunction(item)
           dataJson = this[_Options].stringifyFunction(data)
-        } else if (item === undefined) {
-          data = dataJson = null
         } else {
           data = serialize(item)
           dataJson = this[_Options].stringifyFunction(data)
@@ -204,11 +207,7 @@ class Perj {
         for (const item of items) {
           const type = typeof item
           if (type === 'string') {
-            if (msg) {
-              data.push(item)
-            } else {
-              msg = item
-            }
+            if (msg) { data.push(item) } else { msg = item }
             continue
           }
           if (type === 'undefined') {

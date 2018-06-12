@@ -72,8 +72,10 @@ function envWriter () {
 function writeToConsole (json, obj) {
   const dt = chalk.magenta((new Date(obj.time)).toISOString())
   const nameCol = chalk.magenta(obj.name)
-  let output = `[${dt}][${levelCol(obj.level)}][${nameCol}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
-  output += colorize(JSON.stringify(obj.data, null, 2)) // <=== Remove if you don't want data logged to the console.
+  let output = `[${dt}][${levelCol(obj.level)}][${nameCol}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}`
+  if (obj.data) {
+    output += '\n' + colorize(JSON.stringify(obj.data, null, 2)) // <=== Remove if you don't want data logged to the console.
+  }
   console.log(output)
 
   // Extend by sending 'json' to your API or cloud storage.

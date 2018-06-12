@@ -63,8 +63,10 @@ function envWriter () {
 
 function writeToConsole (json, obj) {
   const dt = new Date(obj.time)
-  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
-  output += JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}`
+  if (obj.data) {
+    output += '\n' + JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
+  }
   console.log(output)
 
   // Extend by sending 'json' to your API or cloud storage.

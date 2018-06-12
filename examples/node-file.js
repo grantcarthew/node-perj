@@ -97,8 +97,10 @@ function envWriter () {
 function writeToConsole (json, obj) {
   stream.write(json)
   const dt = new Date(obj.time)
-  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}\n`
-  output += JSON.stringify(obj.data, null, 2)
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}`
+  if (obj.data) {
+    output += '\n' + JSON.stringify(obj.data, null, 2)
+  }
   console.log(output)
 }
 

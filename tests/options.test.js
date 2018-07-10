@@ -10,6 +10,16 @@ beforeEach(() => {
 })
 
 describe('logger option tests', () => {
+  test('invalid options tests', () => {
+    let log = null // eslint-disable-line
+    expect(() => { log = new Perj('') }).toThrow()
+    expect(() => { log = new Perj(1) }).toThrow()
+    expect(() => { log = new Perj([]) }).toThrow()
+    expect(() => { log = new Perj(true) }).toThrow()
+    expect(() => { log = new Perj(Symbol('')) }).toThrow()
+    expect(() => { log = new Perj(null) }).not.toThrow()
+    expect(() => { log = new Perj(undefined) }).not.toThrow()
+  })
   test('options tests', () => {
     let log = new Perj()
     let custLevels = Object.assign({}, log.levels)
@@ -126,7 +136,7 @@ describe('logger option tests', () => {
     expect(tool.jsonOut.data).toMatchObject(data.serenity)
     expect(data.serenity).toMatchObject(tool.jsonOut.data)
     expect(tool.jsonOut.env).toBe('dev')
-    expect(() => { log.child() }).toThrow('Provide top level arguments to create a child logger.')
+    expect(() => { log.child() }).toThrow('Provide top level arguments object to create a child logger.')
   })
   test('undefined and null values', () => {
     const log = new Perj({ undef: undefined, nul: null, passThrough, write })

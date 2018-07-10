@@ -63,6 +63,9 @@ _SetLevelFunction: <Function>
 
 class Perj {
   constructor (options) {
+    if (options != null && options.constructor !== Object) {
+      throw new Error('Provide options object to create a logger.')
+    }
     this[_Options] = Object.assign({}, defaultOptions)
     this[_TopSnip] = ''
     this[_TopValues] = {}
@@ -247,8 +250,8 @@ class Perj {
   }
 
   child (tops) {
-    if (!tops) {
-      throw new Error('Provide top level arguments to create a child logger.')
+    if (tops == null || tops.constructor !== Object) {
+      throw new Error('Provide top level arguments object to create a child logger.')
     }
     const newChild = Object.create(this)
     if (this[_TopIsPrimitive]) {

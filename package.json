@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "A fast, flexible JSON logger.",
   "main": "dist/perj.min.js",
   "module": "src/perj.js",

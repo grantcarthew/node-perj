@@ -17,6 +17,7 @@
     "benchmark-perj": "node benchmarks/benchmark-perj.js",
     "benchmark-child": "node benchmarks/benchmark-child.js",
     "benchmark-typeof": "node benchmarks/benchmark-typeof.js",
+    "benchmark-copy": "node benchmarks/benchmark-copy.js",
     "benchmark-map": "node benchmarks/benchmark-map.js",
     "profile": "node --prof benchmark.js && node --prof-process *.log && rm *.log",
     "sink": "npm run build && npm run benchmark && npm run profile",
@@ -63,6 +64,7 @@
       "<rootDir>/tests/",
       "<rootDir>/data/"
     ],
+    "collectCoverageFrom" : ["**/src/**/*.js"],
     "testURL": "http://localhost"
   },
   "dependencies": {},
@@ -82,6 +84,7 @@
     "npm-check-updates": "^2.14.2",
     "standard": "^11.0.1",
     "table": "^4.0.3",
+    "test-constructs": "^1.0.0",
     "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0"
   }

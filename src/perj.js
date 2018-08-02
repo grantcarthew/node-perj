@@ -1,4 +1,5 @@
 const defaultOptions = require('./options')
+const notationCopy = require('./notation-copy')
 
 // Symbols for functions and values
 const _SplitOptions = Symbol('SplitOptions')
@@ -154,7 +155,7 @@ class Perj {
       const levelObj = {}
       this[_Options].levelKeyEnabled && (levelObj[this[_Options].levelKey] = level)
       this[_Options].levelNumberKeyEnabled && (levelObj[this[_Options].levelNumberKey] = this[_Options].levels[level])
-      this[_HeaderValues][level] = Object.assign(levelObj, this[_TopValues])
+      this[_HeaderValues][level] = notationCopy(levelObj, this[_TopValues])
     }
   }
 
@@ -237,7 +238,7 @@ class Perj {
           '","' + this[_Options].dataKey + '":' + dataJson + '}\n'
 
       if (this[_Options].passThrough) {
-        const obj = Object.assign(this[_HeaderValues][level], {
+        const obj = notationCopy({}, this[_HeaderValues][level], {
           [this[_Options].dateTimeKey]: time,
           [this[_Options].messageKey]: msg,
           [this[_Options].dataKey]: data
@@ -263,7 +264,7 @@ class Perj {
       }
     } else {
       // Top value is an object. Take the Object.assign hit like a man.
-      newChild[_TopValues] = Object.assign({}, this[_TopValues])
+      newChild[_TopValues] = notationCopy({}, this[_TopValues])
       newChild[_TopIsPrimitive] = false
     }
     for (const key in tops) {

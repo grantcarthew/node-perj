@@ -1,5 +1,4 @@
-const serializeError = require('./serialize-error')
-const stringifyFunction = require('./stringify')
+const notationCopy = require('./notation-copy')
 
 module.exports = {
   levels: {
@@ -21,7 +20,7 @@ module.exports = {
   dataKey: 'data',
   separatorString: ':',
   serializers: false,
-  serializeErrorFunction: serializeError,
+  serializeErrorFunction,
   stringifyFunction,
   passThrough: false,
   write: defaultWriter()
@@ -38,4 +37,15 @@ function defaultWriter () {
     return process.stdout.write.bind(process.stdout)
   }
   return console.log
+}
+
+function stringifyFunction (value) {
+  if (value == null || value.constructor !== Object) {
+    return JSON.stringify(value)
+  }
+  return JSON.stringify(notationCopy({}, value))
+}
+
+function serializeErrorFunction (value) {
+  return notationCopy({}, value)
 }

@@ -37,12 +37,12 @@ _TopValues: <Object>
   'passThrough' is enabled.
 
 _TopIsPrimitive: <Boolean>
-  Object.assign is a real pig to work with in a high
-  performance project. To avoid using Object.assign, this flag
+  Object copy is a real pig to work with in a high
+  performance project. To avoid copying objects, this flag
   is used to indicate if the user has assigned a top level property
-  with values that are only primitives (string, number, boolean).
-  If the user assigned values are all primitive, a simple 'for' loop
-  is faster to duplicate an object than using Object.assign.
+  with values that are only simple primitives (string, number, boolean).
+  If the user assigned values are all simple primitives, a 'for' loop
+  is faster to duplicate an object.
   This flag is also set to false if the user supplies a custom
   stringify function.
 
@@ -263,7 +263,7 @@ class Perj {
         newChild[_TopValues][key] = this[_TopValues][key]
       }
     } else {
-      // Top value is an object. Take the Object.assign hit like a man.
+      // Top value is an object. Take the object copy hit like a man.
       newChild[_TopValues] = notationCopy({}, this[_TopValues])
       newChild[_TopIsPrimitive] = false
     }

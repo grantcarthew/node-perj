@@ -1,3 +1,4 @@
+if (!global.BigInt) { global.BigInt = Number } // Fix Node.js v8 testing.
 const tc = require('test-constructs')
 const notCopy = require('../src/notation-copy')
 

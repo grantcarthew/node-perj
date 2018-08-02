@@ -24,7 +24,7 @@
     "test:watch": "jest --watch",
     "example": "nodemon examples/dev-util-node-console-npm-run-example.js",
     "lint": "standard",
-    "prepublish": "npm build && npm test",
+    "prepublishOnly": "npm build",
     "build": "npm run clean && webpack && npm test",
     "build:watch": "npm run clean && webpack --watch",
     "build:babel": "npm run clean && standard && babel src/perj.js --out-file index.js && npm test",

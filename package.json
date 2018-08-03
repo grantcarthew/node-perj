@@ -64,7 +64,9 @@
       "<rootDir>/tests/",
       "<rootDir>/data/"
     ],
-    "collectCoverageFrom" : ["**/src/**/*.js"],
+    "collectCoverageFrom": [
+      "**/src/**/*.js"
+    ],
     "testURL": "http://localhost"
   },
   "dependencies": {},
@@ -85,7 +87,7 @@
     "standard": "^11.0.1",
     "table": "^4.0.3",
     "test-constructs": "^1.0.0",
-    "webpack": "^4.16.3",
+    "webpack": "^4.16.4",
     "webpack-cli": "^3.1.0"
   }
 }

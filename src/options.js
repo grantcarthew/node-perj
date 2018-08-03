@@ -39,11 +39,11 @@ function defaultWriter () {
   return console.log
 }
 
-function stringifyFunction (value) {
-  if (value == null || value.constructor !== Object) {
-    return JSON.stringify(value)
+function stringifyFunction (obj, replacer, spacer) {
+  if (obj == null || obj.constructor !== Object) {
+    return JSON.stringify(obj, replacer, spacer)
   }
-  return JSON.stringify(notationCopy({}, value))
+  return JSON.stringify(notationCopy({}, obj), replacer, spacer)
 }
 
 function serializeErrorFunction (value) {

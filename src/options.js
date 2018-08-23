@@ -40,8 +40,23 @@ function defaultWriter () {
 }
 
 function stringifyFunction (obj, replacer, spacer) {
-  if (obj == null || obj.constructor !== Object) {
+  if (obj == null) { return null }
+  const type = typeof obj
+  if (type === 'string') {
     return JSON.stringify(obj, replacer, spacer)
+  }
+  if (type === 'number' ||
+      type === 'boolean') {
+    return obj
+  }
+  if (Array.isArray(obj)) {
+    let objJson = '['
+    const last = obj.length - 1
+    for (let i = 0; i < obj.length; i++) {
+      objJson += stringifyFunction(obj[i])
+      if (i < last) { objJson += ',' }
+    }
+    return objJson + ']'
   }
   return JSON.stringify(notationCopy({}, obj), replacer, spacer)
 }

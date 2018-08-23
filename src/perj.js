@@ -169,6 +169,7 @@ class Perj {
       let msg = ''
       let data = null
       let dataJson = 'null'
+      let isError = false
 
       const serialize = (item) => {
         if (!this[_Options].serializers) { return item }
@@ -198,6 +199,7 @@ class Perj {
           data = item
           dataJson = '' + item
         } else if (item instanceof Error) {
+          isError = true
           msg = item.message
           data = this[_Options].serializeErrorFunction(item)
           dataJson = this[_Options].stringifyFunction(data)
@@ -219,6 +221,7 @@ class Perj {
             continue
           }
           if (item instanceof Error) {
+            isError = true
             data.push(this[_Options].serializeErrorFunction(item))
             if (!msg) { msg = item.message }
             continue
@@ -233,9 +236,11 @@ class Perj {
         dataJson = this[_Options].stringifyFunction(data)
       }
 
-      const json = this[_HeaderStrings][level] + time +
+      let json = this[_HeaderStrings][level] + time +
           ',"' + this[_Options].messageKey + '":"' + msg +
-          '","' + this[_Options].dataKey + '":' + dataJson + '}\n'
+          '","' + this[_Options].dataKey + '":' + dataJson
+      if (isError) { json += ',"error":true' }
+      json += '}\n'
 
       if (this[_Options].passThrough) {
         const obj = notationCopy({}, this[_HeaderValues][level], {
@@ -243,6 +248,7 @@ class Perj {
           [this[_Options].messageKey]: msg,
           [this[_Options].dataKey]: data
         })
+        if (isError) { obj.error = true }
         this[_Options].write(json, obj)
       } else {
         this[_Options].write(json)

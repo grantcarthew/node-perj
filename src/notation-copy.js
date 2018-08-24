@@ -37,6 +37,9 @@ function notationCopy (target, ...sources) {
           const result = notationCopyRecursive({}, src[name])
           if (result !== undefined) { tgt[name] = result }
         }
+        if (tgt.message === undefined) {
+          tgt.message = 'The application has encountered an unknown error.'
+        }
         if (tgt.name === undefined) { tgt.name = 'Error' }
         return tgt
       }

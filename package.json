@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "A fast, flexible JSON logger.",
   "main": "dist/perj.min.js",
   "module": "src/perj.js",
@@ -80,14 +80,14 @@
     "compression-webpack-plugin": "^1.1.11",
     "console-probe": "^3.3.0",
     "del-cli": "^1.1.0",
-    "jest": "^23.4.2",
+    "jest": "^23.5.0",
     "json-colorizer": "^1.1.1",
     "nodemon": "^1.18.3",
     "npm-check-updates": "^2.14.2",
     "standard": "^11.0.1",
     "table": "^4.0.3",
     "test-constructs": "^1.0.0",
-    "webpack": "^4.16.4",
+    "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0"
   }
 }

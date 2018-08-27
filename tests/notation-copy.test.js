@@ -146,4 +146,20 @@ describe('notation copy tests', () => {
     expect(result.fruitCircular).toBe('[Circular]')
     expect(result.drinkReference).toBe('[Circular]')
   })
+  test('maximum recursive calls test', () => {
+    const orgWarn = console.warn
+    let warnItem
+    console.warn = (item) => {
+      warnItem = item
+    }
+    const deep = {}
+    let cache = deep
+    for (let i = 0; i < 2000; i++) {
+      cache.child = {}
+      cache = cache.child
+    }
+    notCopy({}, deep)
+    expect(warnItem).toBe('[Perj] Maximum of 2000 recursive calls has been reached.')
+    console.warn = orgWarn
+  })
 })

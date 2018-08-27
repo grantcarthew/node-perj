@@ -1,13 +1,20 @@
 module.exports = notationCopy
 
 function notationCopy (target, ...sources) {
+  const maxCalls = 2000
+  let calls
   const seen = new WeakSet()
   for (const source of sources) {
+    calls = 0
     notationCopyRecursive(target, source)
+    if (calls > maxCalls) {
+      console.warn(`[Perj] Maximum of ${maxCalls} recursive calls has been reached.`)
+    }
   }
   return target
 
   function notationCopyRecursive (tgt, src) {
+    if (calls++ > maxCalls) { return }
     if (src == null) { return src }
     const type = typeof src
     if (type === 'string' ||

@@ -193,7 +193,7 @@ class Perj {
         const type = typeof item
         if (type === 'string') {
           msg = item
-        } else if (item == null) {
+        } else if (item == null || type === 'function') {
           // Undefined or null, keep defaults.
         } else if (type === 'number' || type === 'boolean') {
           data = item
@@ -216,7 +216,7 @@ class Perj {
             if (msg) { data.push(item) } else { msg = item }
             continue
           }
-          if (type === 'undefined') {
+          if (item == null || type === 'function') {
             data.push(null)
             continue
           }

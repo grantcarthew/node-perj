@@ -363,9 +363,9 @@ describe('log argument tests', () => {
       let log = new Perj({ passThrough, write })
       log.info(function () {})
       expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual({})
+      expect(tool.jsonOut.data).toEqual(null)
       expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual({})
+      expect(tool.objOut.data).toEqual(null)
     })
     test(level + ': single circular object test', () => {
       let log = new Perj({ passThrough, write })
@@ -386,11 +386,9 @@ describe('log argument tests', () => {
       circFun.repeat = circFun
       log.info(circFun)
       expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data.key).toBe(2)
-      expect(tool.jsonOut.data.repeat).toBe('[Circular]')
+      expect(tool.jsonOut.data).toEqual(null)
       expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data.key).toBe(2)
-      expect(tool.objOut.data.repeat).toBe('[Circular]')
+      expect(tool.objOut.data).toEqual(null)
     })
   }
 })

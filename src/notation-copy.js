@@ -23,7 +23,7 @@ function notationCopy (target, ...sources) {
       return src
     }
 
-    if (type === 'object' || type === 'function') {
+    if (type === 'object') {
       if (seen.has(src)) { return '[Circular]' }
       seen.add(src)
 

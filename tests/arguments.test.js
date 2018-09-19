@@ -390,5 +390,14 @@ describe('log argument tests', () => {
       expect(tool.objOut.msg).toBe('')
       expect(tool.objOut.data).toEqual(null)
     })
+    test(level + ': object with buffer test', () => {
+      let log = new Perj({ passThrough, write })
+      let obj = { foo: Buffer.from('bar') }
+      log.info(obj)
+      expect(tool.jsonOut.msg).toBe('')
+      expect(tool.jsonOut.data.foo).toEqual('bar')
+      expect(tool.objOut.msg).toBe('')
+      expect(tool.objOut.data.foo).toEqual('bar')
+    })
   }
 })

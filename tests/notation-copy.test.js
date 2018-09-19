@@ -127,6 +127,14 @@ describe('notation copy tests', () => {
     expect(typeof result.WeakMap).toBe('object')
     expect(typeof result.WeakSet).toBe('object')
   })
+  test('buffer object copy test', () => {
+    const bar = Buffer.from('bar')
+    const obj = { foo: bar }
+    let result = notCopy({}, bar)
+    expect(result).toEqual({})
+    result = notCopy({}, obj)
+    expect(result.foo).toEqual('bar')
+  })
   test('object with array copy test', () => {
     const fruit = { name: 'fruit', favourite: 'banana' }
     const drink = { name: 'drink', water: 'often' }

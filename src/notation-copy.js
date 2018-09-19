@@ -1,6 +1,8 @@
 module.exports = notationCopy
 
 function notationCopy (target, ...sources) {
+  let convertBuffer = false
+  if (typeof Buffer !== 'undefined') { convertBuffer = true }
   const maxCalls = 2000
   let calls
   const seen = new WeakSet()
@@ -49,6 +51,10 @@ function notationCopy (target, ...sources) {
         }
         if (tgt.name === undefined) { tgt.name = 'Error' }
         return tgt
+      }
+
+      if (convertBuffer && src instanceof Buffer) {
+        return src.toString()
       }
 
       for (const name in src) {

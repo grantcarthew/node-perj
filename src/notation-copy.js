@@ -54,7 +54,18 @@ function notationCopy (target, ...sources) {
       }
 
       if (convertBuffer && src instanceof Buffer) {
-        return src.toString()
+        const maxBytes = 50 // Same max value as buffer.INSPECT_MAX_BYTES
+        const result = { type: 'Buffer' }
+        result.hex = src.toString('hex', 0, maxBytes)
+        result.utf8 = src.toString('utf8', 0, maxBytes)
+        result.base64 = src.toString('base64', 0, maxBytes)
+        if (src.length > maxBytes) {
+          const suffix = '...'
+          result.hex += suffix
+          result.utf8 += suffix
+          result.base64 += suffix
+        }
+        return result
       }
 
       for (const name in src) {

@@ -395,9 +395,11 @@ describe('log argument tests', () => {
       let obj = { foo: Buffer.from('bar') }
       log.info(obj)
       expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data.foo).toEqual('bar')
+      expect(tool.jsonOut.data.foo.type).toEqual('Buffer')
+      expect(tool.jsonOut.data.foo.utf8).toEqual('bar')
       expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data.foo).toEqual('bar')
+      expect(tool.objOut.data.foo.type).toEqual('Buffer')
+      expect(tool.objOut.data.foo.utf8).toEqual('bar')
     })
   }
 })

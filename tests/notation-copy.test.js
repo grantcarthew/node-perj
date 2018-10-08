@@ -128,12 +128,24 @@ describe('notation copy tests', () => {
     expect(typeof result.WeakSet).toBe('object')
   })
   test('buffer object copy test', () => {
-    const bar = Buffer.from('bar')
-    const obj = { foo: bar }
+    let barStr = 'bar'
+    let bar = Buffer.from(barStr)
+    let obj = { foo: bar }
     let result = notCopy({}, bar)
     expect(result).toEqual({})
     result = notCopy({}, obj)
-    expect(result.foo).toEqual('bar')
+    expect(result.foo.type).toEqual('Buffer')
+    expect(result.foo.hex).toEqual('626172')
+    expect(result.foo.utf8).toEqual('bar')
+    expect(result.foo.base64).toEqual('YmFy')
+    barStr = 'bar'.repeat(100)
+    bar = Buffer.from(barStr)
+    let obj2 = { foo: bar }
+    result = notCopy({}, obj2)
+    expect(result.foo.type).toEqual('Buffer')
+    expect(result.foo.hex).toEqual('6261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261...')
+    expect(result.foo.utf8).toEqual('barbarbarbarbarbarbarbarbarbarbarbarbarbarbarbarba...')
+    expect(result.foo.base64).toEqual('YmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmE=...')
   })
   test('object with array copy test', () => {
     const fruit = { name: 'fruit', favourite: 'banana' }

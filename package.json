@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "A fast, flexible JSON logger.",
   "main": "dist/perj.min.js",
   "module": "src/perj.js",
@@ -72,22 +72,22 @@
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-minify": "^0.4.3",
+    "babel-minify": "^0.5.0",
     "babel-minify-webpack-plugin": "^0.3.1",
     "babel-preset-env": "^1.7.0",
     "benchmark": "^2.1.4",
     "chalk": "^2.4.1",
-    "compression-webpack-plugin": "^1.1.11",
+    "compression-webpack-plugin": "^2.0.0",
     "console-probe": "^3.3.0",
     "del-cli": "^1.1.0",
-    "jest": "^23.5.0",
+    "jest": "^23.6.0",
     "json-colorizer": "^1.1.1",
-    "nodemon": "^1.18.3",
+    "nodemon": "^1.18.4",
     "npm-check-updates": "^2.14.2",
-    "standard": "^11.0.1",
-    "table": "^4.0.3",
+    "standard": "^12.0.1",
+    "table": "^5.1.0",
     "test-constructs": "^1.0.0",
-    "webpack": "^4.17.1",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
   }
 }

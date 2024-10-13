@@ -13,7 +13,7 @@
   "bugs": "https://github.com/grantcarthew/node-perj/issues",
   "scripts": {
     "clean": "del dist",
-    "test": "tape ./tests/tapelevels.test.js | tap-spec",
+    "test": "tape ./tests/*.test.js | tap-spec",
     "benchmark": "npm run build && node benchmarks/benchmark-compare.js",
     "benchmark-perj": "node benchmarks/benchmark-perj.js",
     "benchmark-child": "node benchmarks/benchmark-child.js",

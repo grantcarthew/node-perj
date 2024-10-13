@@ -1,6 +1,8 @@
-require('console-probe').apply()
+import consoleProbe from 'console-probe';
+consoleProbe.apply();
+// require('console-probe').apply()
 
-class Tool {
+export class Tool {
   constructor () {
     this.jsonOut = {}
     this.objOut = {}
@@ -39,5 +41,3 @@ class Tool {
     return Object.prototype.toString.call(value).slice(8).slice(0, -1)
   }
 }
-
-module.exports = Tool

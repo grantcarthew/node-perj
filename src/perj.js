@@ -1,5 +1,7 @@
-const defaultOptions = require('./options')
-const notationCopy = require('./notation-copy')
+// const defaultOptions = require('./options')
+// const notationCopy = require('./notation-copy')
+import { options as defaultOptions } from './options.js';
+import { notationCopy } from './notation-copy.js';
 
 // Symbols for functions and values
 const _SplitOptions = Symbol('SplitOptions')
@@ -62,7 +64,7 @@ _SetLevelFunction: <Function>
   This function is used to generate the level functions.
 */
 
-class Perj {
+export class Perj {
   constructor (options) {
     if (options != null && options.constructor !== Object) {
       throw new Error('Provide options object to create a logger.')
@@ -328,5 +330,3 @@ class Perj {
     console.log(this[_Options].stringifyFunction(data, null, 2))
   }
 }
-
-module.exports = Perj

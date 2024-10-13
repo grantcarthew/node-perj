@@ -1,6 +1,6 @@
-const notationCopy = require('./notation-copy')
+import { notationCopy } from './notation-copy.js'
 
-module.exports = {
+export const options = {
   levels: {
     fatal: 60,
     error: 50,

@@ -1,6 +1,4 @@
-module.exports = notationCopy
-
-function notationCopy (target, ...sources) {
+export function notationCopy (target, ...sources) {
   let convertBuffer = false
   if (typeof Buffer !== 'undefined') { convertBuffer = true }
   const maxCalls = 2000

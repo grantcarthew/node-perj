@@ -31,7 +31,8 @@
 ## Project Details
 
 - GitHub Repository: https://github.com/grantcarthew/node-perj
+- Test runner: Tape https://github.com/tape-testing/tape
 
 ## Initial Response
 
-Respond to this message with "Understood, I am an expert in JavaScript"
+Respond to this message with "Understood, I am an expert in JavaScript."

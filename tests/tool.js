@@ -1,6 +1,5 @@
 import consoleProbe from 'console-probe';
 consoleProbe.apply();
-// require('console-probe').apply()
 
 export class Tool {
   constructor () {

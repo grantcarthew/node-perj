@@ -4,10 +4,10 @@ import { Tool } from "./tool.js";
 
 const tool = new Tool();
 const write = tool.write.bind(tool);
+const title = "log level tests"
 
-test("log level tests", (t) => {
-
-  t.test("level: fatal", (t) => {
+test.only(title, (t) => {
+  t.test(`${title}: fatal`, (t) => {
     tool.reset();
     const log = new Perj({ level: "fatal", write });
     log.fatal("fatal");
@@ -26,7 +26,7 @@ test("log level tests", (t) => {
     t.end();
   });
 
-  t.test("level: error", (t) => {
+  t.test(`${title}: error`, (t) => {
     tool.reset();
     const log = new Perj({ level: "error", write });
     log.fatal("fatal");
@@ -45,7 +45,7 @@ test("log level tests", (t) => {
     t.end();
   });
 
-  t.test("level: warn", (t) => {
+  t.test(`${title}: warn`, (t) => {
     tool.reset();
     const log = new Perj({ level: "warn", write });
     log.fatal("fatal");
@@ -64,7 +64,7 @@ test("log level tests", (t) => {
     t.end();
   });
 
-  t.test("level: info", (t) => {
+  t.test(`${title}: info`, (t) => {
     tool.reset();
     const log = new Perj({ level: "info", write });
     log.fatal("fatal");
@@ -83,7 +83,7 @@ test("log level tests", (t) => {
     t.end();
   });
 
-  t.test("level: debug", (t) => {
+  t.test(`${title}: debug`, (t) => {
     tool.reset();
     const log = new Perj({ level: "debug", write });
     log.fatal("fatal");
@@ -102,7 +102,7 @@ test("log level tests", (t) => {
     t.end();
   });
 
-  t.test("level: trace", (t) => {
+  t.test(`${title}: trace`, (t) => {
     tool.reset();
     const log = new Perj({ level: "trace", write });
     log.fatal("fatal");
@@ -120,7 +120,7 @@ test("log level tests", (t) => {
     t.end();
   });
 
-  t.test("change level", (t) => {
+  t.test(`${title}: change level`, (t) => {
     tool.reset();
     const log = new Perj({ write });
     log.fatal("fatal");

@@ -157,7 +157,7 @@ const deathStar = {
     ]
   }
 }
-module.exports = {
+export const data = {
   msg: [
     'I’m sorry, Dave. I’m afraid I can’t do that.',
     'Where we’re going, we don’t need roads.',

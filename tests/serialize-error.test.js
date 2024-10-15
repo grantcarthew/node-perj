@@ -30,7 +30,7 @@ const defaultName = "Error";
 const defaultMessage = "The application has encountered an unknown error.";
 
 test("serialize error tests", (t) => {
-  t.test("default serialize empty error test", (t) => {
+  t.test(`${t.name}: default serialize empty error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     log.error(new Error());
@@ -54,7 +54,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.getType(tool.objOut.data.stack), "String");
     t.end();
   });
-  t.test("default serialize standard error test", (t) => {
+  t.test(`${t.name}: default serialize standard error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     log.error(stdError);
@@ -78,7 +78,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.getType(tool.objOut.data.stack), "String");
     t.end();
   });
-  t.test("default serialize standard circular error test", (t) => {
+  t.test(`${t.name}: default serialize standard circular error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     let err = new Error("circular");
@@ -113,7 +113,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.objOut.data.cirObj.foo, "[Circular]");
     t.end();
   });
-  t.test("default serialize multiple standard error test", (t) => {
+  t.test(`${t.name}: default serialize multiple standard error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     let err = new Error("standard2");
@@ -148,7 +148,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.getType(tool.objOut.data[1].stack), "String");
     t.end();
   });
-  t.test("default serialize extended error test", (t) => {
+  t.test(`${t.name}: default serialize extended error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     const extraError = new Error("extra");
@@ -191,7 +191,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.objOut.data.innerException.widget.foo.bar.baz, true);
     t.end();
   });
-  t.test("default serialize app error test", (t) => {
+  t.test(`${t.name}: default serialize app error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     log.error(appError);
@@ -217,7 +217,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.objOut.data.status, 42);
     t.end();
   });
-  t.test("default serialize comms error test", (t) => {
+  t.test(`${t.name}: default serialize comms error test`, (t) => {
     tool.reset();
     let log = new Perj({ passThrough, write });
     log.error(commsError);
@@ -245,7 +245,7 @@ test("serialize error tests", (t) => {
     t.equal(tool.objOut.data.ip, "1.2.3.4");
     t.end();
   });
-  t.test("simple serialize standard error test", (t) => {
+  t.test(`${t.name}: simple serialize standard error test`, (t) => {
     tool.reset();
     let log = new Perj({ serializeErrorFunction: simpleSerializer, passThrough, write });
     log.error(stdError);

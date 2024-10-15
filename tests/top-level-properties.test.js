@@ -1,16 +1,16 @@
-const Perj = require("../src/perj");
-const Tool = require("./tool");
+import test from "tape";
+import { Perj } from "../src/perj.js";
+import { Tool } from "./tool.js";
+import { data } from "../data/index.js";
+import { assertObjectSubsetMatch } from "./asserts.js";
+
 const tool = new Tool();
-const data = require("../data");
 const write = tool.write.bind(tool);
 const passThrough = true;
 
-beforeEach(() => {
-  tool.reset();
-});
-
-describe("top level properties tests", () => {
-  test("parent top level properties", () => {
+test("top level properties tests", (t) => {
+  t.test(`${t.name}: parent top level properties`, (t) => {
+    tool.reset();
     let log = new Perj({ write, passThrough, foo: "bar", bop: 22, bee: true, baz: undefined, boo: null });
     log.info(data.msg[0], data.tardis);
     t.equal(Object.keys(tool.jsonOut).length, 10);
@@ -30,12 +30,14 @@ describe("top level properties tests", () => {
     t.equal(tool.objOut.baz, null);
     t.equal(tool.jsonOut.boo, null);
     t.equal(tool.objOut.boo, null);
-    t.equal(tool.jsonOut.data).toMatchObject(data.tardis);
-    t.equal(data.tardis).toMatchObject(tool.jsonOut.data);
-    t.equal(tool.objOut.data).toMatchObject(data.tardis);
-    t.equal(data.tardis).toMatchObject(tool.objOut.data);
+    assertObjectSubsetMatch(t, tool.jsonOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
+    assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.end();
   });
-  test("child top level properties", () => {
+  t.test(`${t.name}: child top level properties`, (t) => {
+    tool.reset();
     let log = new Perj({ write, passThrough });
     let child = log.child({ foo: "bar", bop: 22, bee: true, baz: undefined, boo: null });
     child.info(data.msg[0], data.tardis);
@@ -56,9 +58,11 @@ describe("top level properties tests", () => {
     t.equal(tool.objOut.baz, null);
     t.equal(tool.jsonOut.boo, null);
     t.equal(tool.objOut.boo, null);
-    t.equal(tool.jsonOut.data).toMatchObject(data.tardis);
-    t.equal(data.tardis).toMatchObject(tool.jsonOut.data);
-    t.equal(tool.objOut.data).toMatchObject(data.tardis);
-    t.equal(data.tardis).toMatchObject(tool.objOut.data);
+    assertObjectSubsetMatch(t, tool.jsonOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
+    assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.end();
   });
+  t.end();
 });

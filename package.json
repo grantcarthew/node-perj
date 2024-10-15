@@ -50,7 +50,8 @@
     ]
   },
   "prettier": {
-    "printWidth": 120
+    "printWidth": 120,
+    "endOfLine": "lf"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -74,6 +75,5 @@
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

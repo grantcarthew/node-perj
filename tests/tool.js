@@ -1,42 +1,42 @@
-import consoleProbe from 'console-probe';
+import consoleProbe from "console-probe";
 consoleProbe.apply();
 
 export class Tool {
-  constructor () {
-    this.jsonOut = {}
-    this.objOut = {}
+  constructor() {
+    this.jsonOut = {};
+    this.objOut = {};
   }
 
-  write (json, obj) {
+  write(json, obj) {
     try {
-      this.jsonOut = JSON.parse(json)
+      this.jsonOut = JSON.parse(json);
     } catch (error) {
-      console.log(error.message)
-      console.log(json)
+      console.log(error.message);
+      console.log(json);
     }
-    this.objOut = obj
+    this.objOut = obj;
   }
 
-  reset () {
-    this.jsonOut = {}
-    this.objOut = {}
+  reset() {
+    this.jsonOut = {};
+    this.objOut = {};
   }
 
-  dir () {
-    console.dir(this.jsonOut)
-    console.dir(this.objOut)
+  dir() {
+    console.dir(this.jsonOut);
+    console.dir(this.objOut);
   }
 
-  json () {
-    console.log(JSON.stringify(this.jsonOut, null, 2))
-    console.log(JSON.stringify(this.objOut, null, 2))
+  json() {
+    console.log(JSON.stringify(this.jsonOut, null, 2));
+    console.log(JSON.stringify(this.objOut, null, 2));
   }
 
-  probe () {
-    console.probe(this.jsonOut)
+  probe() {
+    console.probe(this.jsonOut);
   }
 
-  getType (value) {
-    return Object.prototype.toString.call(value).slice(8).slice(0, -1)
+  getType(value) {
+    return Object.prototype.toString.call(value).slice(8).slice(0, -1);
   }
 }

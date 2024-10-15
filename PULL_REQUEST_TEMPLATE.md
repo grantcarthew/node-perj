@@ -7,9 +7,9 @@ A few sentences describing the overall goals of the pull request's commits.
 List related PRs against other branches:
 
 ## Todos
+
 - [ ] Tests
 - [ ] Documentation
-
 
 ## Deploy Notes
 
@@ -25,7 +25,7 @@ git checkout <feature_branch>
 bundle; script/server
 ```
 
-1. 
+1.
 
 ## Benchmark Results
 
@@ -35,4 +35,4 @@ Paste the benchmark results here.
 
 List general components of the application that this PR will affect:
 
-* 
+-

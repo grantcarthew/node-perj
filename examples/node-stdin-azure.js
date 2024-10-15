@@ -47,20 +47,20 @@ Performance:
 
 */
 
-const azure = require('azure-storage')
-const split = require('split2')
-const tableService = azure.createTableService()
-const entGen = azure.TableUtilities.entityGenerator
-const tableName = process.env.AZURE_STORAGE_TABLE_NAME
-const partitionName = process.env.AZURE_STORAGE_PARTITION_NAME
+const azure = require("azure-storage");
+const split = require("split2");
+const tableService = azure.createTableService();
+const entGen = azure.TableUtilities.entityGenerator;
+const tableName = process.env.AZURE_STORAGE_TABLE_NAME;
+const partitionName = process.env.AZURE_STORAGE_PARTITION_NAME;
 
-process.stdin.setEncoding('utf8')
-const writable = process.stdin.pipe(split(JSON.parse))
-writable.on('data', onData)
-writable.on('finish', onFinish)
-writable.on('error', onError)
+process.stdin.setEncoding("utf8");
+const writable = process.stdin.pipe(split(JSON.parse));
+writable.on("data", onData);
+writable.on("finish", onFinish);
+writable.on("error", onError);
 
-function onData (chunk) {
+function onData(chunk) {
   // Match the below properties to your log output <======= CHANGE MAPPING
   const logEntity = {
     PartitionKey: entGen.String(partitionName),
@@ -72,17 +72,19 @@ function onData (chunk) {
     file: entGen.String(chunk.file),
     name: entGen.String(chunk.name),
     msg: entGen.String(chunk.msg),
-    data: entGen.String(JSON.stringify(chunk.data))
-  }
+    data: entGen.String(JSON.stringify(chunk.data)),
+  };
   tableService.insertEntity(tableName, logEntity, function (err, result, response) {
-    if (err) { console.error(err) }
-  })
+    if (err) {
+      console.error(err);
+    }
+  });
 }
 
-function onFinish () {
-  console.log('Data stream terminated.')
+function onFinish() {
+  console.log("Data stream terminated.");
 }
 
-function onError (err) {
-  console.log(err)
+function onError(err) {
+  console.log(err);
 }

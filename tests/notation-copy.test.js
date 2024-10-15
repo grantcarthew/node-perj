@@ -154,7 +154,7 @@ test("notation copy tests", (t) => {
     t.equal(result.foo.type, "Buffer");
     t.equal(
       result.foo.hex,
-      "6261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261..."
+      "6261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261...",
     );
     t.equal(result.foo.utf8, "barbarbarbarbarbarbarbarbarbarbarbarbarbarbarbarba...");
     t.equal(result.foo.base64, "YmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmE=...");

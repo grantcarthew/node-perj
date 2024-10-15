@@ -1,1 +1,1 @@
-module.exports = require('./dist/perj')
+module.exports = require("./dist/perj");

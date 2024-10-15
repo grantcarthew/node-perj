@@ -20,8 +20,8 @@ A fast, flexible JSON logger.
 
 The [package.json](https://github.com/grantcarthew/node-perj/blob/master/package.json) has two configurations related to Node.js installations:
 
-* `main`: points to the minified version compiled for v6.0.0 and above.
-* `module`: points to the [src][perj-src] files. [Module field details](https://github.com/nodejs/node-eps/blob/4217dca299d89c8c18ac44c878b5fe9581974ef3/002-es6-modules.md#51-determining-if-source-is-an-es-module).
+- `main`: points to the minified version compiled for v6.0.0 and above.
+- `module`: points to the [src][perj-src] files. [Module field details](https://github.com/nodejs/node-eps/blob/4217dca299d89c8c18ac44c878b5fe9581974ef3/002-es6-modules.md#51-determining-if-source-is-an-es-module).
 
 The [index.js](https://github.com/grantcarthew/node-perj/blob/master/index.js) points to the minified version compiled for v6.0.0 and above.
 
@@ -35,33 +35,33 @@ npm install --save perj
 
 Use the [dist][perj-dist] files or bundle from [src][perj-src].
 
-| Type | Size | CDN |
-|-|-|-|
-| gzipped | [![File Size][size-gzip-badge]][size-gzip-url] | https://unpkg.com/perj/dist/perj.min.js.gz |
-| minified | [![File Size][size-min-badge]][size-min-url] | https://unpkg.com/perj/dist/perj.min.js |
-| full (source map) | [![File Size][size-full-badge]][size-full-url] | https://unpkg.com/perj/dist/perj.js |
+| Type              | Size                                           | CDN                                        |
+| ----------------- | ---------------------------------------------- | ------------------------------------------ |
+| gzipped           | [![File Size][size-gzip-badge]][size-gzip-url] | https://unpkg.com/perj/dist/perj.min.js.gz |
+| minified          | [![File Size][size-min-badge]][size-min-url]   | https://unpkg.com/perj/dist/perj.min.js    |
+| full (source map) | [![File Size][size-full-badge]][size-full-url] | https://unpkg.com/perj/dist/perj.js        |
 
 See [Unpkg](https://unpkg.com/) for fixed version options.
 
 ## Goals
 
-* Designed to be integrated (DIY) ✔️
-* Cross platform (Node.js and Browser) ✔️
-* Flexible log and additional property options ✔️
-* Fast ✔️
+- Designed to be integrated (DIY) ✔️
+- Cross platform (Node.js and Browser) ✔️
+- Flexible log and additional property options ✔️
+- Fast ✔️
 
 ## Features
 
-* No dependencies.
-* Flexible API ([change almost everything][perj-options]).
-* Flexible log methods:
-  * Log items can be any number in any order of any type.
-* The first string is nested under the 'msg' key:
-  * First string includes a string argument or an Error message.
-  * Additional string arguments are nested under the data key.
-* Objects are nested under the 'data' key as an object or array of objects.
-* Repeated string top level properties become [hierarchical][perj-separatorString].
-* [Examples][perj-examples] to get you started.
+- No dependencies.
+- Flexible API ([change almost everything][perj-options]).
+- Flexible log methods:
+  - Log items can be any number in any order of any type.
+- The first string is nested under the 'msg' key:
+  - First string includes a string argument or an Error message.
+  - Additional string arguments are nested under the data key.
+- Objects are nested under the 'data' key as an object or array of objects.
+- Repeated string top level properties become [hierarchical][perj-separatorString].
+- [Examples][perj-examples] to get you started.
 
 ## Quick Start
 
@@ -70,19 +70,18 @@ See [Unpkg](https://unpkg.com/) for fixed version options.
 The following example adds `ver`, `name`, `host`, `pid` and `file` top level property to the log output:
 
 ```js
-
-const Perj = require('perj')
+const Perj = require("perj");
 
 // Customize the variables below as needed. They are not required.
-const ver = 1
-const name = 'QuickStart'
-const host = require('os').hostname()
-const pid = process.pid
-const file = require('path').basename(module.filename, '.js')
+const ver = 1;
+const name = "QuickStart";
+const host = require("os").hostname();
+const pid = process.pid;
+const file = require("path").basename(module.filename, ".js");
 
-const log = new Perj({ver, name, host, pid, file})
+const log = new Perj({ ver, name, host, pid, file });
 
-log.info('the quick brown fox jumps over the lazy dog')
+log.info("the quick brown fox jumps over the lazy dog");
 
 /*
 
@@ -91,7 +90,6 @@ The following string is sent to standard out:
 {"level":"info","lvl":30,"ver":1,"name":"QuickStart","host":"Dev","pid":233241,"file":"quick-start","time":1526102959677,"msg":"the quick brown fox jumps over the lazy dog","data":""}
 
 */
-
 ```
 
 ### Browser Usage
@@ -99,17 +97,16 @@ The following string is sent to standard out:
 The following example adds `ver`, `name`, and `host` top level property to the log entries:
 
 ```js
-
-const Perj = require('perj')
+const Perj = require("perj");
 
 // Customize the variables below as needed. They are not required.
-const ver = 1
-const name = 'QuickStart'
-const host = location.hostname
+const ver = 1;
+const name = "QuickStart";
+const host = location.hostname;
 
-const log = new Perj({ver, name, host})
+const log = new Perj({ ver, name, host });
 
-log.info('the quick brown fox jumps over the lazy dog')
+log.info("the quick brown fox jumps over the lazy dog");
 
 /*
 
@@ -118,7 +115,6 @@ The following string is sent to the console:
 {"level":"info","lvl":30,"ver":1,"name":"QuickStart","host":"http://Dev","time":1526103303019,"msg":"the quick brown fox jumps over the lazy dog","data":""}
 
 */
-
 ```
 
 ## Documentation
@@ -145,9 +141,9 @@ This project only exists because it is standing on the shoulders of [GIANTS][pin
 
 Special thanks to the [guys](https://github.com/pinojs/pino/graphs/contributors) working on [pino][pino-url] being:
 
-* [David Mark Clements](https://github.com/davidmarkclements)
-* [Matteo Collina](https://github.com/mcollina)
-* [James Sumners](https://github.com/jsumners)
+- [David Mark Clements](https://github.com/davidmarkclements)
+- [Matteo Collina](https://github.com/mcollina)
+- [James Sumners](https://github.com/jsumners)
 
 A lot of the inspiration for `perj` came from the [pino][pino-url] package.
 

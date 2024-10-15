@@ -47,61 +47,63 @@ Performance:
 
 */
 
-const Perj = require('perj')
-const rfs = require('rotating-file-stream')
-const isProd = process.env.NODE_ENV === 'production'
-const logFileRootPath = process.env.LOGFILEROOTPATH // <======= CHANGE THIS ENV NAME
-const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME // <======= CHANGE THIS ENV NAME
-const ver = 1
-const host = require('os').hostname()
-const pid = process.pid
-const file = require('path').basename(module.filename)
-const name = 'Your App Name' // <======= CHANGE THIS NAME
-const passThrough = !isProd
-const write = envWriter()
+const Perj = require("perj");
+const rfs = require("rotating-file-stream");
+const isProd = process.env.NODE_ENV === "production";
+const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
+const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
+const ver = 1;
+const host = require("os").hostname();
+const pid = process.pid;
+const file = require("path").basename(module.filename);
+const name = "Your App Name"; // <======= CHANGE THIS NAME
+const passThrough = !isProd;
+const write = envWriter();
 
 // Rotate file every day or > 1MB.
 const stream = rfs(fileNameGenerator, {
-  size: '1M',
-  interval: '1d',
+  size: "1M",
+  interval: "1d",
   rotationTime: true,
-  path: logFileRootPath
-})
-stream.on('error', (err) => console.error(err))
-stream.on('warning', (err) => console.warn(err))
+  path: logFileRootPath,
+});
+stream.on("error", (err) => console.error(err));
+stream.on("warning", (err) => console.warn(err));
 
-function fileNameGenerator (time, index) {
-  const fileId = logFilePrimaryName
-  if (!time) { return fileId }
-
-  function pad (num) {
-    return (num > 9 ? '' : '0') + num
+function fileNameGenerator(time, index) {
+  const fileId = logFilePrimaryName;
+  if (!time) {
+    return fileId;
   }
-  const ym = time.getFullYear() + '-' + pad(time.getMonth() + 1)
-  const d = pad(time.getDate())
-  const h = pad(time.getHours())
-  const m = pad(time.getMinutes())
 
-  return `${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`
+  function pad(num) {
+    return (num > 9 ? "" : "0") + num;
+  }
+  const ym = time.getFullYear() + "-" + pad(time.getMonth() + 1);
+  const d = pad(time.getDate());
+  const h = pad(time.getHours());
+  const m = pad(time.getMinutes());
+
+  return `${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`;
 }
 
-module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })
+module.exports = new Perj({ ver, name, host, pid, file, passThrough, write });
 
-function envWriter () {
+function envWriter() {
   if (isProd) {
-    return process.stdout.write.bind(process.stdout)
+    return process.stdout.write.bind(process.stdout);
   }
-  return writeToConsole
+  return writeToConsole;
 }
 
-function writeToConsole (json, obj) {
-  stream.write(json)
-  const dt = new Date(obj.time)
-  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}`
+function writeToConsole(json, obj) {
+  stream.write(json);
+  const dt = new Date(obj.time);
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}`;
   if (obj.data) {
-    output += '\n' + JSON.stringify(obj.data, null, 2)
+    output += "\n" + JSON.stringify(obj.data, null, 2);
   }
-  console.log(output)
+  console.log(output);
 }
 
 /*

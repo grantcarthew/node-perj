@@ -10,7 +10,7 @@ const serializerTardis = { tardis: tardisSerializer };
 const serializerSerenity = { serenity: serenitySerializer };
 const serializerBoth = { tardis: tardisSerializer, serenity: serenitySerializer };
 
-test.only("object serialize tests", (t) => {
+test("object serialize tests", (t) => {
   t.test(`${t.name}: first serializer test`, (t) => {
     tool.reset();
     let log = new Perj({ serializers: serializerTardis, passThrough, write });

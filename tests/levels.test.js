@@ -1,147 +1,167 @@
-const Perj = require('../src/perj')
-const Tool = require('./tool')
-const tool = new Tool()
-const write = tool.write.bind(tool)
+import test from "tape";
+import { Perj } from "../src/perj.js";
+import { Tool } from "./tool.js";
 
-beforeEach(() => {
-  tool.reset()
-})
+const tool = new Tool();
+const write = tool.write.bind(tool);
 
-describe('log level tests', () => {
-  test('level: fatal', () => {
-    const log = new Perj({level: 'fatal', write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    tool.reset()
-    log.error('error')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.info('info')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBeUndefined()
-  })
-  test('level: error', () => {
-    const log = new Perj({level: 'error', write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    tool.reset()
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.info('info')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBeUndefined()
-  })
-  test('level: warn', () => {
-    const log = new Perj({level: 'warn', write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBe('warn')
-    tool.reset()
-    log.info('info')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBeUndefined()
-  })
-  test('level: info', () => {
-    const log = new Perj({level: 'info', write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBe('warn')
-    log.info('info')
-    expect(tool.jsonOut.msg).toBe('info')
-    tool.reset()
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBeUndefined()
-  })
-  test('level: debug', () => {
-    const log = new Perj({level: 'debug', write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBe('warn')
-    log.info('info')
-    expect(tool.jsonOut.msg).toBe('info')
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBe('debug')
-    tool.reset()
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBeUndefined()
-  })
-  test('level: trace', () => {
-    const log = new Perj({level: 'trace', write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBe('warn')
-    log.info('info')
-    expect(tool.jsonOut.msg).toBe('info')
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBe('debug')
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBe('trace')
-  })
-  test('change level', () => {
-    const log = new Perj({write})
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBe('warn')
-    log.info('info')
-    expect(tool.jsonOut.msg).toBe('info')
-    tool.reset()
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBeUndefined()
-    log.level = 'trace'
-    log.fatal('fatal')
-    expect(tool.jsonOut.msg).toBe('fatal')
-    log.error('error')
-    expect(tool.jsonOut.msg).toBe('error')
-    log.warn('warn')
-    expect(tool.jsonOut.msg).toBe('warn')
-    log.info('info')
-    expect(tool.jsonOut.msg).toBe('info')
-    log.debug('debug')
-    expect(tool.jsonOut.msg).toBe('debug')
-    log.trace('trace')
-    expect(tool.jsonOut.msg).toBe('trace')
-    log.addLevel({ spiderman: 600, batman: 500 })
-    expect(Object.keys(log).length).toBe(8)
-    log.addLevel({ spiderman: 3 })
-    expect(Object.keys(log).length).toBe(8)
-    log.spiderman('spiderman')
-    expect(tool.jsonOut.level).toBe('spiderman')
-    expect(tool.jsonOut.lvl).toBe(600)
-    expect(tool.jsonOut.msg).toBe('spiderman')
-    log.batman('batman')
-    expect(tool.jsonOut.level).toBe('batman')
-    expect(tool.jsonOut.lvl).toBe(500)
-    expect(tool.jsonOut.msg).toBe('batman')
-  })
-})
+test("log level tests", (t) => {
+  t.test(`${t.name}: fatal`, (t) => {
+    tool.reset();
+    const log = new Perj({ level: "fatal", write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    tool.reset();
+    log.error("error");
+    t.notOk(tool.jsonOut.msg, "error message should not be logged");
+    log.warn("warn");
+    t.notOk(tool.jsonOut.msg, "warn message should not be logged");
+    log.info("info");
+    t.notOk(tool.jsonOut.msg, "info message should not be logged");
+    log.debug("debug");
+    t.notOk(tool.jsonOut.msg, "debug message should not be logged");
+    log.trace("trace");
+    t.notOk(tool.jsonOut.msg, "trace message should not be logged");
+    t.end();
+  });
+
+  t.test(`${t.name}: error`, (t) => {
+    tool.reset();
+    const log = new Perj({ level: "error", write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged");
+    tool.reset();
+    log.warn("warn");
+    t.notOk(tool.jsonOut.msg, "warn message should not be logged");
+    log.info("info");
+    t.notOk(tool.jsonOut.msg, "info message should not be logged");
+    log.debug("debug");
+    t.notOk(tool.jsonOut.msg, "debug message should not be logged");
+    log.trace("trace");
+    t.notOk(tool.jsonOut.msg, "trace message should not be logged");
+    t.end();
+  });
+
+  t.test(`${t.name}: warn`, (t) => {
+    tool.reset();
+    const log = new Perj({ level: "warn", write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged");
+    log.warn("warn");
+    t.equal(tool.jsonOut.msg, "warn", "warn message should be logged");
+    tool.reset();
+    log.info("info");
+    t.notOk(tool.jsonOut.msg, "info message should not be logged");
+    log.debug("debug");
+    t.notOk(tool.jsonOut.msg, "debug message should not be logged");
+    log.trace("trace");
+    t.notOk(tool.jsonOut.msg, "trace message should not be logged");
+    t.end();
+  });
+
+  t.test(`${t.name}: info`, (t) => {
+    tool.reset();
+    const log = new Perj({ level: "info", write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged");
+    log.warn("warn");
+    t.equal(tool.jsonOut.msg, "warn", "warn message should be logged");
+    log.info("info");
+    t.equal(tool.jsonOut.msg, "info", "info message should be logged");
+    tool.reset();
+    log.debug("debug");
+    t.notOk(tool.jsonOut.msg, "debug message should not be logged");
+    log.trace("trace");
+    t.notOk(tool.jsonOut.msg, "trace message should not be logged");
+    t.end();
+  });
+
+  t.test(`${t.name}: debug`, (t) => {
+    tool.reset();
+    const log = new Perj({ level: "debug", write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged");
+    log.warn("warn");
+    t.equal(tool.jsonOut.msg, "warn", "warn message should be logged");
+    log.info("info");
+    t.equal(tool.jsonOut.msg, "info", "info message should be logged");
+    log.debug("debug");
+    t.equal(tool.jsonOut.msg, "debug", "debug message should be logged");
+    tool.reset();
+    log.trace("trace");
+    t.notOk(tool.jsonOut.msg, "trace message should not be logged");
+    t.end();
+  });
+
+  t.test(`${t.name}: trace`, (t) => {
+    tool.reset();
+    const log = new Perj({ level: "trace", write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged");
+    log.warn("warn");
+    t.equal(tool.jsonOut.msg, "warn", "warn message should be logged");
+    log.info("info");
+    t.equal(tool.jsonOut.msg, "info", "info message should be logged");
+    log.debug("debug");
+    t.equal(tool.jsonOut.msg, "debug", "debug message should be logged");
+    log.trace("trace");
+    t.equal(tool.jsonOut.msg, "trace", "trace message should be logged");
+    t.end();
+  });
+
+  t.test(`${t.name}: change level`, (t) => {
+    tool.reset();
+    const log = new Perj({ write });
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged");
+    log.warn("warn");
+    t.equal(tool.jsonOut.msg, "warn", "warn message should be logged");
+    log.info("info");
+    t.equal(tool.jsonOut.msg, "info", "info message should be logged");
+    tool.reset();
+    log.debug("debug");
+    t.notOk(tool.jsonOut.msg, "debug message should not be logged");
+    log.trace("trace");
+    t.notOk(tool.jsonOut.msg, "trace message should not be logged");
+    log.level = "trace";
+    log.fatal("fatal");
+    t.equal(tool.jsonOut.msg, "fatal", "fatal message should be logged after level change");
+    log.error("error");
+    t.equal(tool.jsonOut.msg, "error", "error message should be logged after level change");
+    log.warn("warn");
+    t.equal(tool.jsonOut.msg, "warn", "warn message should be logged after level change");
+    log.info("info");
+    t.equal(tool.jsonOut.msg, "info", "info message should be logged after level change");
+    log.debug("debug");
+    t.equal(tool.jsonOut.msg, "debug", "debug message should be logged after level change");
+    log.trace("trace");
+    t.equal(tool.jsonOut.msg, "trace", "trace message should be logged after level change");
+    log.addLevel({ spiderman: 600, batman: 500 });
+    t.equal(Object.keys(log).length, 8, "custom levels added correctly");
+    log.addLevel({ spiderman: 3 });
+    t.equal(Object.keys(log).length, 8, "duplicate level addition handled correctly");
+    log.spiderman("spiderman");
+    t.equal(tool.jsonOut.level, "spiderman", "spiderman level logged correctly");
+    t.equal(tool.jsonOut.lvl, 600, "spiderman level value correct");
+    t.equal(tool.jsonOut.msg, "spiderman", "spiderman message logged correctly");
+    log.batman("batman");
+    t.equal(tool.jsonOut.level, "batman", "batman level logged correctly");
+    t.equal(tool.jsonOut.lvl, 500, "batman level value correct");
+    t.equal(tool.jsonOut.msg, "batman", "batman message logged correctly");
+    t.end();
+  });
+
+  t.end();
+});

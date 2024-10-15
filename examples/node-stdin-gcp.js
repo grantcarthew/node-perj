@@ -57,57 +57,59 @@ Performance:
 
 */
 
-const rfs = require('rotating-file-stream')
-const Storage = require('@google-cloud/storage')
-const logFileRootPath = process.env.LOGFILEROOTPATH // <======= CHANGE THIS ENV NAME
-const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME // <======= CHANGE THIS ENV NAME
-const projectId = 'Your Project Id' // <======= CHANGE GCP PROJECT ID
-const bucketName = 'Your Bucket Name' // <======= CHANGE GCP BUCKET NAME
-const storage = new Storage({ projectId: projectId })
+const rfs = require("rotating-file-stream");
+const Storage = require("@google-cloud/storage");
+const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
+const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
+const projectId = "Your Project Id"; // <======= CHANGE GCP PROJECT ID
+const bucketName = "Your Bucket Name"; // <======= CHANGE GCP BUCKET NAME
+const storage = new Storage({ projectId: projectId });
 
 // Rotate file every day or > 1MB.
 const stream = rfs(fileNameGenerator, {
-  size: '1M',
-  interval: '1d',
+  size: "1M",
+  interval: "1d",
   rotationTime: true,
-  path: logFileRootPath
-})
-process.stdin.pipe(stream)
-stream.on('error', onError)
-stream.on('warning', onWarning)
-stream.on('rotated', onRotated)
+  path: logFileRootPath,
+});
+process.stdin.pipe(stream);
+stream.on("error", onError);
+stream.on("warning", onWarning);
+stream.on("rotated", onRotated);
 
-function fileNameGenerator (time, index) {
-  const fileId = logFilePrimaryName
-  if (!time) { return fileId }
+function fileNameGenerator(time, index) {
+  const fileId = logFilePrimaryName;
+  if (!time) {
+    return fileId;
+  }
 
-  const ym = time.getFullYear() + '-' + (time.getMonth() + 1).toString().padStart(2, '0')
-  const d = time.getDate().toString().padStart(2, '0')
-  const h = time.getHours().toString().padStart(2, '0')
-  const m = time.getMinutes().toString().padStart(2, '0')
-  const s = time.getSeconds().toString().padStart(2, '0')
-  const ms = time.getMilliseconds().toString().padStart(3, '0')
+  const ym = time.getFullYear() + "-" + (time.getMonth() + 1).toString().padStart(2, "0");
+  const d = time.getDate().toString().padStart(2, "0");
+  const h = time.getHours().toString().padStart(2, "0");
+  const m = time.getMinutes().toString().padStart(2, "0");
+  const s = time.getSeconds().toString().padStart(2, "0");
+  const ms = time.getMilliseconds().toString().padStart(3, "0");
 
-  return `${ym}/${ym}-${d}-${h}-${m}-${s}.${ms}-${fileId}`
+  return `${ym}/${ym}-${d}-${h}-${m}-${s}.${ms}-${fileId}`;
 }
 
 // Upload log file to Google Cloud Storage
-function onRotated (fileName) {
+function onRotated(fileName) {
   return storage
     .bucket(bucketName)
     .upload(fileName)
     .then(() => {
-      console.log(`GCP: ${fileName} uploaded to ${bucketName}.`)
+      console.log(`GCP: ${fileName} uploaded to ${bucketName}.`);
     })
-    .catch(err => {
-      console.error(err)
-    })
+    .catch((err) => {
+      console.error(err);
+    });
 }
 
-function onWarning (err) {
-  console.warn(err)
+function onWarning(err) {
+  console.warn(err);
 }
 
-function onError (err) {
-  console.log(err)
+function onError(err) {
+  console.log(err);
 }

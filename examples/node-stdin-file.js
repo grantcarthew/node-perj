@@ -34,32 +34,34 @@ Performance:
 
 */
 
-const rfs = require('rotating-file-stream')
-const logFileRootPath = process.env.LOGFILEROOTPATH // <======= CHANGE THIS ENV NAME
-const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME // <======= CHANGE THIS ENV NAME
+const rfs = require("rotating-file-stream");
+const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
+const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
 
 // Rotate file every day or > 1MB.
 const stream = rfs(fileNameGenerator, {
-  size: '1M',
-  interval: '1d',
+  size: "1M",
+  interval: "1d",
   rotationTime: true,
-  path: logFileRootPath
-})
-stream.on('error', (err) => console.error(err))
-stream.on('warning', (err) => console.warn(err))
+  path: logFileRootPath,
+});
+stream.on("error", (err) => console.error(err));
+stream.on("warning", (err) => console.warn(err));
 
-function fileNameGenerator (time, index) {
-  const fileId = logFilePrimaryName
-  if (!time) { return fileId }
+function fileNameGenerator(time, index) {
+  const fileId = logFilePrimaryName;
+  if (!time) {
+    return fileId;
+  }
 
-  const ym = time.getFullYear() + '-' + (time.getMonth() + 1).toString().padStart(2, '0')
-  const d = time.getDate().toString().padStart(2, '0')
-  const h = time.getHours().toString().padStart(2, '0')
-  const m = time.getMinutes().toString().padStart(2, '0')
-  const s = time.getSeconds().toString().padStart(2, '0')
-  const ms = time.getMilliseconds().toString().padStart(3, '0')
+  const ym = time.getFullYear() + "-" + (time.getMonth() + 1).toString().padStart(2, "0");
+  const d = time.getDate().toString().padStart(2, "0");
+  const h = time.getHours().toString().padStart(2, "0");
+  const m = time.getMinutes().toString().padStart(2, "0");
+  const s = time.getSeconds().toString().padStart(2, "0");
+  const ms = time.getMilliseconds().toString().padStart(3, "0");
 
-  return `${ym}/${ym}-${d}-${h}-${m}-${s}.${ms}-${index}-${fileId}`
+  return `${ym}/${ym}-${d}-${h}-${m}-${s}.${ms}-${index}-${fileId}`;
 }
 
-process.stdin.pipe(stream)
+process.stdin.pipe(stream);

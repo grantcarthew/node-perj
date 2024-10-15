@@ -1,7 +1,7 @@
-const path = require('path')
-const webpack = require('webpack')
-const MinifyPlugin = require('babel-minify-webpack-plugin')
-const CompressionPlugin = require('compression-webpack-plugin')
+const path = require("path");
+const webpack = require("webpack");
+const MinifyPlugin = require("babel-minify-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 /*
 WebPack Configuration Notes:
@@ -30,48 +30,43 @@ stats.excludeModules:
 */
 
 const config = {
-  entry: './src/perj.js',
+  entry: "./src/perj.js",
   stats: {
-    excludeModules: false
-  }
-}
+    excludeModules: false,
+  },
+};
 
 // Unminified, uncompressed, inline source map.
 const stdConfig = Object.assign({}, config, {
-  mode: 'development',
-  devtool: 'inline-source-map',
+  mode: "development",
+  devtool: "inline-source-map",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'perj.js',
-    library: 'Perj',
-    libraryTarget: 'umd',
-    globalObject: `typeof self !== 'undefined' ? self : this`
+    path: path.resolve(__dirname, "dist"),
+    filename: "perj.js",
+    library: "Perj",
+    libraryTarget: "umd",
+    globalObject: `typeof self !== 'undefined' ? self : this`,
   },
-  plugins: [
-    new webpack.IgnorePlugin(/node_modules/),
-    new webpack.DefinePlugin({ process: 'process' })
-  ]
-})
+  plugins: [new webpack.IgnorePlugin(/node_modules/), new webpack.DefinePlugin({ process: "process" })],
+});
 
 // Minify and compress producing a min and min.gz file.
 const minConfig = Object.assign({}, config, {
-  mode: 'production',
+  mode: "production",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'perj.min.js',
-    library: 'Perj',
-    libraryTarget: 'umd',
-    globalObject: `typeof self !== 'undefined' ? self : this`
+    path: path.resolve(__dirname, "dist"),
+    filename: "perj.min.js",
+    library: "Perj",
+    libraryTarget: "umd",
+    globalObject: `typeof self !== 'undefined' ? self : this`,
   },
   plugins: [
     new webpack.IgnorePlugin(/node_modules/),
-    new webpack.DefinePlugin({ process: 'process' }),
+    new webpack.DefinePlugin({ process: "process" }),
     new MinifyPlugin({ mangle: true }),
-    new CompressionPlugin()
-  ]
-})
+    new CompressionPlugin(),
+  ],
+});
 
 // Return Array of Configurations
-module.exports = [
-  stdConfig, minConfig
-]
+module.exports = [stdConfig, minConfig];

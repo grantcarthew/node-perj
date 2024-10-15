@@ -1,185 +1,205 @@
-if (!global.BigInt) { global.BigInt = Number } // Fix Node.js v8 testing.
-const tc = require('test-constructs')
-const notCopy = require('../src/notation-copy')
+if (!global.BigInt) {
+  global.BigInt = Number;
+} // Fix Node.js v8 testing.
+import test from "tape";
+import tc from "test-constructs";
+import { notationCopy } from "../src/notation-copy.js";
+import { assertObjectSubsetMatch } from "./asserts.js";
 
-beforeEach(() => {
-})
-
-describe('notation copy tests', () => {
-  test('simple value copy test', () => {
-    let target = {}
-    let result = notCopy({}, 'str')
-    expect(result).toEqual({})
-    target = {}
-    result = notCopy(target, 1)
-    expect(result).toEqual({})
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy(target, true)
-    expect(result).toEqual({})
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy(target, false)
-    expect(result).toEqual({})
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy(target, [])
-    expect(result).toEqual({})
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy(target, new Date())
-    expect(result).toEqual({})
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy(target, new Error())
-    expect(typeof result.stack).toBe('string')
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy(target, () => {})
-    expect(result).toEqual({})
-    expect(result).toBe(target)
-    target = {}
-    result = notCopy({}, { foo: 'bar' })
-    expect(result).toEqual({ foo: 'bar' })
-  })
-  test('simple object copy test', () => {
-    const result = notCopy({}, tc.objects.bySize.small)
-    expect(result).toMatchObject(tc.objects.bySize.small)
-  })
-  test('two simple object merge test', () => {
-    const result = notCopy({}, tc.objects.bySize.small, tc.objects.bySize.tiny)
-    expect(result).toMatchObject(tc.objects.bySize.small)
-    expect(result).toMatchObject(tc.objects.bySize.tiny)
-  })
-  test('multiple simple object merge test', () => {
-    const result = notCopy({a: 1}, {b: 2}, {c: 3}, {d: 4})
-    expect(result).toMatchObject({a: 1})
-    expect(result).toMatchObject({b: 2})
-    expect(result).toMatchObject({c: 3})
-    expect(result).toMatchObject({d: 4})
-  })
-  test('two simple object overwrite test', () => {
-    const result = notCopy({}, tc.objects.bySize.small, tc.objects.bySize.medium)
-    expect(result).toMatchObject(tc.objects.bySize.medium)
-    expect(result.name).toBe(tc.objects.bySize.small.name)
-    expect(result.class).toBe(tc.objects.bySize.medium.class)
-  })
-  test('deep object copy test', () => {
-    const result = notCopy({}, tc.objects.special.deep)
-    expect(result).toMatchObject(tc.objects.special.deep)
-  })
-  test('cicular object copy test', () => {
-    const tag = '[Circular]'
-    const obj = { name: 'obj', foo: 'bar' }
-    obj.circ = obj
-    obj.arr = [1, 'two', obj, 4, 'five', obj, 'seven', [11, 22, obj]]
-    obj.child = obj
-    obj.objCirc = { name: 'bar', bar: obj }
-    const result = notCopy({}, obj)
-    expect(result.foo).toBe('bar')
-    expect(result.circ).toBe(tag)
-    expect(result.arr[0]).toBe(1)
-    expect(result.arr[1]).toBe('two')
-    expect(result.arr[2]).toBe(tag)
-    expect(result.arr[3]).toBe(4)
-    expect(result.arr[4]).toBe('five')
-    expect(result.arr[5]).toBe(tag)
-    expect(result.arr[6]).toBe('seven')
-    expect(result.arr[7][0]).toBe(11)
-    expect(result.arr[7][1]).toBe(22)
-    expect(result.arr[7][2]).toBe(tag)
-    expect(result.child).toBe(tag)
-    expect(result.objCirc.bar).toBe(tag)
-  })
-  test('types object copy test', () => {
-    const result = notCopy({}, tc.objects.special.types)
-    expect(result.name).toBe('JavaScript Types')
-    expect(typeof result.Atomics).toBe('object')
-    expect(Array.isArray(result.Array)).toBe(true)
-    expect(typeof result.ArrayBuffer).toBe('object')
-    expect(result.BooleanTrue).toBe(true)
-    expect(result.BooleanFalse).toBe(false)
-    expect(typeof result.DataView).toBe('object')
-    expect(new Date(result.Date)).toBeInstanceOf(Date)
-    expect(typeof result.Error.stack).toBe('string')
-    expect(typeof result.Error.message).toBe('string')
-    expect(typeof result.Float32Array).toBe('object')
-    expect(typeof result.Float64Array).toBe('object')
-    expect(typeof result.Generator).toBe('object')
-    expect(result.Infinity).toBe(Infinity)
-    expect(typeof result.Int16Array).toBe('object')
-    expect(typeof result.Int32Array).toBe('object')
-    expect(typeof result.Int8Array).toBe('object')
-    expect(typeof result.Map).toBe('object')
-    expect(result.NaN).toBe(NaN)
-    expect(result.null).toBe(null)
-    expect(result.Number).toBe(42)
-    expect(result.Object.is).toBe(true)
-    expect(typeof result.Promise).toBe('object')
-    expect(typeof result.RegEx).toBe('object')
-    expect(typeof result.Set).toBe('object')
-    expect(typeof result.SharedArrayBuffer).toBe('object')
-    expect(typeof result.String).toBe('string')
-    expect(typeof result.Uint16Array).toBe('object')
-    expect(typeof result.Uint32Array).toBe('object')
-    expect(typeof result.Uint8Array).toBe('object')
-    expect(typeof result.Uint8ClampedArray).toBe('object')
-    expect(typeof result.WeakMap).toBe('object')
-    expect(typeof result.WeakSet).toBe('object')
-  })
-  test('buffer object copy test', () => {
-    let barStr = 'bar'
-    let bar = Buffer.from(barStr)
-    let obj = { foo: bar }
-    let result = notCopy({}, bar)
-    expect(result).toEqual({})
-    result = notCopy({}, obj)
-    expect(result.foo.type).toEqual('Buffer')
-    expect(result.foo.hex).toEqual('626172')
-    expect(result.foo.utf8).toEqual('bar')
-    expect(result.foo.base64).toEqual('YmFy')
-    barStr = 'bar'.repeat(100)
-    bar = Buffer.from(barStr)
-    let obj2 = { foo: bar }
-    result = notCopy({}, obj2)
-    expect(result.foo.type).toEqual('Buffer')
-    expect(result.foo.hex).toEqual('6261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261...')
-    expect(result.foo.utf8).toEqual('barbarbarbarbarbarbarbarbarbarbarbarbarbarbarbarba...')
-    expect(result.foo.base64).toEqual('YmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmE=...')
-  })
-  test('object with array copy test', () => {
-    const fruit = { name: 'fruit', favourite: 'banana' }
-    const drink = { name: 'drink', water: 'often' }
-    fruit.array = [1, 2, fruit, fruit, drink, [11, 22, fruit]]
-    fruit.array.push(fruit.array)
-    fruit.fruitCircular = fruit
-    fruit.drinkReference = drink
-    drink.drinkCircular = drink
-    const result = notCopy({}, fruit)
-    expect(result).toBeDefined()
-    expect(result.name).toBe('fruit')
-    expect(result.favourite).toBe('banana')
-    expect(result.array).toEqual([
-      1, 2, '[Circular]', '[Circular]',
-      { name: 'drink', water: 'often', drinkCircular: '[Circular]' },
-      [11, 22, '[Circular]'], '[Circular]'])
-    expect(result.fruitCircular).toBe('[Circular]')
-    expect(result.drinkReference).toBe('[Circular]')
-  })
-  test('maximum recursive calls test', () => {
-    const orgWarn = console.warn
-    let warnItem
+test("notation copy tests", (t) => {
+  t.test("simple value copy test", (t) => {
+    let target = {};
+    let result = notationCopy({}, "str");
+    t.deepEqual(result, {});
+    target = {};
+    result = notationCopy(target, 1);
+    t.deepEqual(result, {});
+    t.equal(result, target);
+    target = {};
+    result = notationCopy(target, true);
+    t.deepEqual(result, {});
+    t.equal(result, target);
+    target = {};
+    result = notationCopy(target, false);
+    t.deepEqual(result, {});
+    t.equal(result, target);
+    target = {};
+    result = notationCopy(target, []);
+    t.deepEqual(result, {});
+    t.equal(result, target);
+    target = {};
+    result = notationCopy(target, new Date());
+    t.deepEqual(result, {});
+    t.equal(result, target);
+    target = {};
+    result = notationCopy(target, new Error());
+    t.equal(typeof result.stack, "string");
+    t.equal(result, target);
+    target = {};
+    result = notationCopy(target, () => {});
+    t.deepEqual(result, {});
+    t.equal(result, target);
+    target = {};
+    result = notationCopy({}, { foo: "bar" });
+    t.deepEqual(result, { foo: "bar" });
+    t.end();
+  });
+  t.test("simple object copy test", (t) => {
+    const result = notationCopy({}, tc.objects.bySize.small);
+    t.deepEqual(result, tc.objects.bySize.small);
+    t.end();
+  });
+  t.test("two simple object merge test", (t) => {
+    const result = notationCopy({}, tc.objects.bySize.small, tc.objects.bySize.tiny);
+    assertObjectSubsetMatch(t, result, tc.objects.bySize.small);
+    assertObjectSubsetMatch(t, result, tc.objects.bySize.tiny);
+    t.end();
+  });
+  t.test("multiple simple object merge test", (t) => {
+    const result = notationCopy({ a: 1 }, { b: 2 }, { c: 3 }, { d: 4 });
+    assertObjectSubsetMatch(t, result, { a: 1 });
+    assertObjectSubsetMatch(t, result, { b: 2 });
+    assertObjectSubsetMatch(t, result, { c: 3 });
+    assertObjectSubsetMatch(t, result, { d: 4 });
+    t.end();
+  });
+  t.test("two simple object overwrite test", (t) => {
+    const result = notationCopy({}, tc.objects.bySize.small, tc.objects.bySize.medium);
+    assertObjectSubsetMatch(t, result, tc.objects.bySize.medium);
+    t.equal(result.name, tc.objects.bySize.small.name);
+    t.equal(result.class, tc.objects.bySize.medium.class);
+    t.end();
+  });
+  t.test("deep object copy test", (t) => {
+    const result = notationCopy({}, tc.objects.special.deep);
+    t.deepEqual(result, tc.objects.special.deep);
+    t.end();
+  });
+  t.test("cicular object copy test", (t) => {
+    const tag = "[Circular]";
+    const obj = { name: "obj", foo: "bar" };
+    obj.circ = obj;
+    obj.arr = [1, "two", obj, 4, "five", obj, "seven", [11, 22, obj]];
+    obj.child = obj;
+    obj.objCirc = { name: "bar", bar: obj };
+    const result = notationCopy({}, obj);
+    t.equal(result.foo, "bar");
+    t.equal(result.circ, tag);
+    t.equal(result.arr[0], 1);
+    t.equal(result.arr[1], "two");
+    t.equal(result.arr[2], tag);
+    t.equal(result.arr[3], 4);
+    t.equal(result.arr[4], "five");
+    t.equal(result.arr[5], tag);
+    t.equal(result.arr[6], "seven");
+    t.equal(result.arr[7][0], 11);
+    t.equal(result.arr[7][1], 22);
+    t.equal(result.arr[7][2], tag);
+    t.equal(result.child, tag);
+    t.equal(result.objCirc.bar, tag);
+    t.end();
+  });
+  t.test("types object copy test", (t) => {
+    const result = notationCopy({}, tc.objects.special.types);
+    t.equal(result.name, "JavaScript Types");
+    t.equal(typeof result.Atomics, "object");
+    t.equal(Array.isArray(result.Array), true);
+    t.equal(typeof result.ArrayBuffer, "object");
+    t.equal(result.BooleanTrue, true);
+    t.equal(result.BooleanFalse, false);
+    t.equal(typeof result.DataView, "object");
+    t.equal(new Date(result.Date) instanceof Date, true);
+    t.equal(typeof result.Error.stack, "string");
+    t.equal(typeof result.Error.message, "string");
+    t.equal(typeof result.Float32Array, "object");
+    t.equal(typeof result.Float64Array, "object");
+    t.equal(typeof result.Generator, "object");
+    t.equal(result.Infinity, Infinity);
+    t.equal(typeof result.Int16Array, "object");
+    t.equal(typeof result.Int32Array, "object");
+    t.equal(typeof result.Int8Array, "object");
+    t.equal(typeof result.Map, "object");
+    t.equal(result.NaN, NaN);
+    t.equal(result.null, null);
+    t.equal(result.Number, 42);
+    t.equal(result.Object.is, true);
+    t.equal(typeof result.Promise, "object");
+    t.equal(typeof result.RegEx, "object");
+    t.equal(typeof result.Set, "object");
+    t.equal(typeof result.SharedArrayBuffer, "object");
+    t.equal(typeof result.String, "string");
+    t.equal(typeof result.Uint16Array, "object");
+    t.equal(typeof result.Uint32Array, "object");
+    t.equal(typeof result.Uint8Array, "object");
+    t.equal(typeof result.Uint8ClampedArray, "object");
+    t.equal(typeof result.WeakMap, "object");
+    t.equal(typeof result.WeakSet, "object");
+    t.end();
+  });
+  t.test("buffer object copy test", (t) => {
+    let barStr = "bar";
+    let bar = Buffer.from(barStr);
+    let obj = { foo: bar };
+    let result = notationCopy({}, bar);
+    t.deepEqual(result, {});
+    result = notationCopy({}, obj);
+    t.equal(result.foo.type, "Buffer");
+    t.equal(result.foo.hex, "626172");
+    t.equal(result.foo.utf8, "bar");
+    t.equal(result.foo.base64, "YmFy");
+    barStr = "bar".repeat(100);
+    bar = Buffer.from(barStr);
+    let obj2 = { foo: bar };
+    result = notationCopy({}, obj2);
+    t.equal(result.foo.type, "Buffer");
+    t.equal(
+      result.foo.hex,
+      "6261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261726261...",
+    );
+    t.equal(result.foo.utf8, "barbarbarbarbarbarbarbarbarbarbarbarbarbarbarbarba...");
+    t.equal(result.foo.base64, "YmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmFyYmE=...");
+    t.end();
+  });
+  t.test("object with array copy test", (t) => {
+    const fruit = { name: "fruit", favourite: "banana" };
+    const drink = { name: "drink", water: "often" };
+    fruit.array = [1, 2, fruit, fruit, drink, [11, 22, fruit]];
+    fruit.array.push(fruit.array);
+    fruit.fruitCircular = fruit;
+    fruit.drinkReference = drink;
+    drink.drinkCircular = drink;
+    const result = notationCopy({}, fruit);
+    t.ok(result);
+    t.equal(result.name, "fruit");
+    t.equal(result.favourite, "banana");
+    t.deepEqual(result.array, [
+      1,
+      2,
+      "[Circular]",
+      "[Circular]",
+      { name: "drink", water: "often", drinkCircular: "[Circular]" },
+      [11, 22, "[Circular]"],
+      "[Circular]",
+    ]);
+    t.equal(result.fruitCircular, "[Circular]");
+    t.equal(result.drinkReference, "[Circular]");
+    t.end();
+  });
+  t.test("maximum recursive calls test", (t) => {
+    const orgWarn = console.warn;
+    let warnItem;
     console.warn = (item) => {
-      warnItem = item
-    }
-    const deep = {}
-    let cache = deep
+      warnItem = item;
+    };
+    const deep = {};
+    let cache = deep;
     for (let i = 0; i < 2000; i++) {
-      cache.child = {}
-      cache = cache.child
+      cache.child = {};
+      cache = cache.child;
     }
-    notCopy({}, deep)
-    expect(warnItem).toBe('[Perj] Maximum of 2000 recursive calls has been reached.')
-    console.warn = orgWarn
-  })
-})
+    notationCopy({}, deep);
+    t.equal(warnItem, "[Perj] Maximum of 2000 recursive calls has been reached.");
+    console.warn = orgWarn;
+    t.end();
+  });
+});

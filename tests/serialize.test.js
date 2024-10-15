@@ -1,19 +1,18 @@
-const Perj = require("../src/perj");
-const Tool = require("./tool");
+import test from "tape";
+import { Perj } from "../src/perj.js";
+import { Tool } from "./tool.js";
+import { data } from "../data/index.js";
+
 const tool = new Tool();
-const data = require("../data");
 const write = tool.write.bind(tool);
 const passThrough = true;
 const serializerTardis = { tardis: tardisSerializer };
 const serializerSerenity = { serenity: serenitySerializer };
 const serializerBoth = { tardis: tardisSerializer, serenity: serenitySerializer };
 
-beforeEach(() => {
-  tool.reset();
-});
-
-describe("object serialize tests", () => {
-  test("first serializer test", () => {
+test.only("object serialize tests", (t) => {
+  t.test(`${t.name}: first serializer test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerTardis, passThrough, write });
     log.info("tardis", { tardis: data.tardis });
     t.equal(Object.keys(tool.jsonOut.data).length, 1);
@@ -22,14 +21,16 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data.tardis), "Object");
     t.equal(tool.jsonOut.data.tardis.name, data.tardis.name);
     t.equal(tool.objOut.data.tardis.name, data.tardis.name);
-    t.equal(tool.jsonOut.data.tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.objOut.data.tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.jsonOut.data.tardis.exterior).toEqual(data.tardis.exterior);
-    t.equal(tool.objOut.data.tardis.exterior).toEqual(data.tardis.exterior);
+    t.deepEqual(tool.jsonOut.data.tardis.features, data.tardis.features);
+    t.deepEqual(tool.objOut.data.tardis.features, data.tardis.features);
+    t.deepEqual(tool.jsonOut.data.tardis.exterior, data.tardis.exterior);
+    t.deepEqual(tool.objOut.data.tardis.exterior, data.tardis.exterior);
     t.ok(tool.jsonOut.data.tardis.manufacturer === undefined);
     t.ok(tool.objOut.data.tardis.manufacturer === undefined);
+    t.end();
   });
-  test("second serializer test", () => {
+  t.test(`${t.name}: second serializer test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerSerenity, passThrough, write });
     log.info("serenity", { serenity: data.serenity });
     t.equal(Object.keys(tool.jsonOut.data).length, 1);
@@ -38,14 +39,16 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data.serenity), "Object");
     t.equal(tool.jsonOut.data.serenity.classCode, data.serenity.classCode);
     t.equal(tool.objOut.data.serenity.classCode, data.serenity.classCode);
-    t.equal(tool.jsonOut.data.serenity.engine).toEqual(data.serenity.engine);
-    t.equal(tool.objOut.data.serenity.engine).toEqual(data.serenity.engine);
-    t.equal(tool.jsonOut.data.serenity.upper).toEqual(data.serenity.interior.upperDeck);
-    t.equal(tool.objOut.data.serenity.upper).toEqual(data.serenity.interior.upperDeck);
+    t.equal(tool.jsonOut.data.serenity.engine, data.serenity.engine);
+    t.equal(tool.objOut.data.serenity.engine, data.serenity.engine);
+    t.deepEqual(tool.jsonOut.data.serenity.upper, data.serenity.interior.upperDeck);
+    t.deepEqual(tool.objOut.data.serenity.upper, data.serenity.interior.upperDeck);
     t.ok(tool.jsonOut.data.serenity.url === undefined);
     t.ok(tool.objOut.data.serenity.url === undefined);
+    t.end();
   });
-  test("two serializers test", () => {
+  t.test(`${t.name}: two serializers test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerBoth, passThrough, write });
     log.info("tardis", { tardis: data.tardis });
     t.equal(Object.keys(tool.jsonOut.data).length, 1);
@@ -54,10 +57,10 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data.tardis), "Object");
     t.equal(tool.jsonOut.data.tardis.name, data.tardis.name);
     t.equal(tool.objOut.data.tardis.name, data.tardis.name);
-    t.equal(tool.jsonOut.data.tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.objOut.data.tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.jsonOut.data.tardis.exterior).toEqual(data.tardis.exterior);
-    t.equal(tool.objOut.data.tardis.exterior).toEqual(data.tardis.exterior);
+    t.deepEqual(tool.jsonOut.data.tardis.features, data.tardis.features);
+    t.deepEqual(tool.objOut.data.tardis.features, data.tardis.features);
+    t.deepEqual(tool.jsonOut.data.tardis.exterior, data.tardis.exterior);
+    t.deepEqual(tool.objOut.data.tardis.exterior, data.tardis.exterior);
     t.ok(tool.jsonOut.data.tardis.manufacturer === undefined);
     t.ok(tool.objOut.data.tardis.manufacturer === undefined);
     log.info("serenity", { serenity: data.serenity });
@@ -67,14 +70,16 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data.serenity), "Object");
     t.equal(tool.jsonOut.data.serenity.classCode, data.serenity.classCode);
     t.equal(tool.objOut.data.serenity.classCode, data.serenity.classCode);
-    t.equal(tool.jsonOut.data.serenity.engine).toEqual(data.serenity.engine);
-    t.equal(tool.objOut.data.serenity.engine).toEqual(data.serenity.engine);
-    t.equal(tool.jsonOut.data.serenity.upper).toEqual(data.serenity.interior.upperDeck);
-    t.equal(tool.objOut.data.serenity.upper).toEqual(data.serenity.interior.upperDeck);
+    t.equal(tool.jsonOut.data.serenity.engine, data.serenity.engine);
+    t.equal(tool.objOut.data.serenity.engine, data.serenity.engine);
+    t.deepEqual(tool.jsonOut.data.serenity.upper, data.serenity.interior.upperDeck);
+    t.deepEqual(tool.objOut.data.serenity.upper, data.serenity.interior.upperDeck);
     t.ok(tool.jsonOut.data.serenity.url === undefined);
     t.ok(tool.objOut.data.serenity.url === undefined);
+    t.end();
   });
-  test("serializer with other objects test", () => {
+  t.test(`${t.name}: serializer with other objects test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerTardis, passThrough, write });
     log.info("death star", data.deathStar);
     t.equal(Object.keys(tool.jsonOut.data).length, 5);
@@ -82,16 +87,18 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data), "Object");
     t.equal(tool.jsonOut.data.url, data.deathStar.url);
     t.equal(tool.objOut.data.url, data.deathStar.url);
-    t.equal(tool.jsonOut.data.production).toEqual(data.deathStar.production);
-    t.equal(tool.objOut.data.production).toEqual(data.deathStar.production);
-    t.equal(tool.jsonOut.data.specifications).toEqual(data.deathStar.specifications);
-    t.equal(tool.objOut.data.specifications).toEqual(data.deathStar.specifications);
-    t.equal(tool.jsonOut.data.locationInformation).toEqual(data.deathStar.locationInformation);
-    t.equal(tool.objOut.data.locationInformation).toEqual(data.deathStar.locationInformation);
-    t.equal(tool.jsonOut.data.usage).toEqual(data.deathStar.usage);
-    t.equal(tool.objOut.data.usage).toEqual(data.deathStar.usage);
+    t.deepEqual(tool.jsonOut.data.production, data.deathStar.production);
+    t.deepEqual(tool.objOut.data.production, data.deathStar.production);
+    t.deepEqual(tool.jsonOut.data.specifications, data.deathStar.specifications);
+    t.deepEqual(tool.objOut.data.specifications, data.deathStar.specifications);
+    t.deepEqual(tool.jsonOut.data.locationInformation, data.deathStar.locationInformation);
+    t.deepEqual(tool.objOut.data.locationInformation, data.deathStar.locationInformation);
+    t.deepEqual(tool.jsonOut.data.usage, data.deathStar.usage);
+    t.deepEqual(tool.objOut.data.usage, data.deathStar.usage);
+    t.end();
   });
-  test("serializer with two objects test", () => {
+  t.test(`${t.name}: serializer with two objects test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerTardis, passThrough, write });
     log.info("tardis", { tardis: data.tardis }, data.deathStar);
     t.equal(tool.jsonOut.data.length, 2);
@@ -101,10 +108,10 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data[0].tardis), "Object");
     t.equal(tool.jsonOut.data[0].tardis.name, data.tardis.name);
     t.equal(tool.objOut.data[0].tardis.name, data.tardis.name);
-    t.equal(tool.jsonOut.data[0].tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.objOut.data[0].tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.jsonOut.data[0].tardis.exterior).toEqual(data.tardis.exterior);
-    t.equal(tool.objOut.data[0].tardis.exterior).toEqual(data.tardis.exterior);
+    t.deepEqual(tool.jsonOut.data[0].tardis.features, data.tardis.features);
+    t.deepEqual(tool.objOut.data[0].tardis.features, data.tardis.features);
+    t.deepEqual(tool.jsonOut.data[0].tardis.exterior, data.tardis.exterior);
+    t.deepEqual(tool.objOut.data[0].tardis.exterior, data.tardis.exterior);
     t.ok(tool.jsonOut.data[0].tardis.manufacturer === undefined);
     t.ok(tool.objOut.data[0].tardis.manufacturer === undefined);
     t.equal(Object.keys(tool.jsonOut.data[1]).length, 5);
@@ -112,16 +119,18 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data[1]), "Object");
     t.equal(tool.jsonOut.data[1].url, data.deathStar.url);
     t.equal(tool.objOut.data[1].url, data.deathStar.url);
-    t.equal(tool.jsonOut.data[1].production).toEqual(data.deathStar.production);
-    t.equal(tool.objOut.data[1].production).toEqual(data.deathStar.production);
-    t.equal(tool.jsonOut.data[1].specifications).toEqual(data.deathStar.specifications);
-    t.equal(tool.objOut.data[1].specifications).toEqual(data.deathStar.specifications);
-    t.equal(tool.jsonOut.data[1].locationInformation).toEqual(data.deathStar.locationInformation);
-    t.equal(tool.objOut.data[1].locationInformation).toEqual(data.deathStar.locationInformation);
-    t.equal(tool.jsonOut.data[1].usage).toEqual(data.deathStar.usage);
-    t.equal(tool.objOut.data[1].usage).toEqual(data.deathStar.usage);
+    t.deepEqual(tool.jsonOut.data[1].production, data.deathStar.production);
+    t.deepEqual(tool.objOut.data[1].production, data.deathStar.production);
+    t.deepEqual(tool.jsonOut.data[1].specifications, data.deathStar.specifications);
+    t.deepEqual(tool.objOut.data[1].specifications, data.deathStar.specifications);
+    t.deepEqual(tool.jsonOut.data[1].locationInformation, data.deathStar.locationInformation);
+    t.deepEqual(tool.objOut.data[1].locationInformation, data.deathStar.locationInformation);
+    t.deepEqual(tool.jsonOut.data[1].usage, data.deathStar.usage);
+    t.deepEqual(tool.objOut.data[1].usage, data.deathStar.usage);
+    t.end();
   });
-  test("serializer with child test", () => {
+  t.test(`${t.name}: serializer with child test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerTardis, passThrough, write });
     let child = log.child({ foo: "bar" });
     child.info("tardis", { tardis: data.tardis });
@@ -131,14 +140,16 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data.tardis), "Object");
     t.equal(tool.jsonOut.data.tardis.name, data.tardis.name);
     t.equal(tool.objOut.data.tardis.name, data.tardis.name);
-    t.equal(tool.jsonOut.data.tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.objOut.data.tardis.features).toEqual(data.tardis.features);
-    t.equal(tool.jsonOut.data.tardis.exterior).toEqual(data.tardis.exterior);
-    t.equal(tool.objOut.data.tardis.exterior).toEqual(data.tardis.exterior);
+    t.deepEqual(tool.jsonOut.data.tardis.features, data.tardis.features);
+    t.deepEqual(tool.objOut.data.tardis.features, data.tardis.features);
+    t.deepEqual(tool.jsonOut.data.tardis.exterior, data.tardis.exterior);
+    t.deepEqual(tool.objOut.data.tardis.exterior, data.tardis.exterior);
     t.ok(tool.jsonOut.data.tardis.manufacturer === undefined);
     t.ok(tool.objOut.data.tardis.manufacturer === undefined);
+    t.end();
   });
-  test("serializer type test", () => {
+  t.test(`${t.name}: serializer type test`, (t) => {
+    tool.reset();
     let log = new Perj({ serializers: serializerTardis, passThrough, write });
     log.info(null);
     t.equal(tool.getType(tool.jsonOut.data), "Null");
@@ -156,7 +167,9 @@ describe("object serialize tests", () => {
     t.equal(tool.getType(tool.objOut.data[0]), "Null");
     t.equal(tool.getType(tool.jsonOut.data[1]), "Null");
     t.equal(tool.getType(tool.objOut.data[1]), "Null");
+    t.end();
   });
+  t.end();
 });
 
 function tardisSerializer(value) {

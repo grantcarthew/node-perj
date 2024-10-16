@@ -1,1 +1,1 @@
-module.exports = require("./dist/perj");
+export { Perj } from "./dist/perj.js";

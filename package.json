@@ -26,12 +26,13 @@
     "profile": "node --prof benchmark.js && node --prof-process *.log && rm *.log",
     "sink": "npm run build && npm run benchmark && npm run profile",
     "example": "node examples/node-simple.js",
-    "lint": "",
+    "lint": "eslint ./src",
     "prepublishOnly": "npm build",
     "build": "pnpm run clean && pnpm build:js && pnpm build:minify && pnpm build:gzip",
     "build:js": "esbuild ./src/perj --format=esm --bundle --outfile=./dist/perj.js --allow-overwrite",
     "build:minify": "esbuild ./src/perj --format=esm --bundle --outfile=./dist/perj.min.js --allow-overwrite --minify",
     "build:gzip": "gzip -k -9 ./dist/perj.min.js",
+    "update": "upgrade",
     "upgrade": "pnpm run upgrade:rm && pnpm update --latest && pnpm install",
     "upgrade:rm": "rm node_modules -Rf"
   },
@@ -45,9 +46,12 @@
     "endOfLine": "lf"
   },
   "devDependencies": {
+    "@eslint/js": "^9.12.0",
     "benchmark": "^2.1.4",
     "console-probe": "^3.3.2",
     "esbuild": "^0.24.0",
+    "eslint": "^9.12.0",
+    "globals": "^15.11.0",
     "tap-dot": "^2.0.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.9.0",

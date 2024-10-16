@@ -86,10 +86,10 @@ export class Perj {
   }
 
   set level(level) {
-    if (!this[_Options].levels.hasOwnProperty(level)) {
+    if (!Object.hasOwn(this[_Options].levels, level)) {
       throw new Error("The level option must be a valid key in the levels object.");
     }
-    if (!this.hasOwnProperty(_Options)) {
+    if (!Object.hasOwn(this, _Options)) {
       // Attaching the options object to this instance
       this[_Options] = Object.assign({}, this[_Options]);
     }
@@ -120,7 +120,7 @@ export class Perj {
       return;
     }
     for (const key in options) {
-      if (defaultOptions.hasOwnProperty(key)) {
+      if (Object.hasOwn(defaultOptions, key)) {
         if (key === "level") {
           this.level = options[key];
           continue;
@@ -187,7 +187,7 @@ export class Perj {
         const graded = {};
         for (const key in item) {
           let value = item[key];
-          if (item.hasOwnProperty && item.hasOwnProperty(key) && this[_Options].serializers[key]) {
+          if (Object.hasOwn && Object.hasOwn(item, key) && this[_Options].serializers[key]) {
             value = this[_Options].serializers[key](value);
           }
           if (value !== undefined) {
@@ -304,7 +304,7 @@ export class Perj {
     for (const key in tops) {
       // Options and key names are not valid, skipping.
       if (
-        defaultOptions.hasOwnProperty(key) ||
+        Object.hasOwn(defaultOptions, key) ||
         this[_Options].levelKey === key ||
         this[_Options].levelNumberKey === key ||
         this[_Options].dateTimeKey === key ||
@@ -314,7 +314,7 @@ export class Perj {
         continue;
       }
       const type = typeof tops[key];
-      if (type === "string" && this[_TopValues].hasOwnProperty(key) && typeof this[_TopValues][key] === "string") {
+      if (type === "string" && Object.hasOwn(this[_TopValues], key) && typeof this[_TopValues][key] === "string") {
         // New top key is the same as parent and is a string. Appending separator string and new value.
         newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key];
       } else if (type === "undefined") {

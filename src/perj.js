@@ -63,7 +63,6 @@ _SetLevelHeader: <Function>
 _SetLevelFunction: <Function>
   This function is used to generate the level functions.
 */
-
 export class Perj {
   constructor(options) {
     if (options != null && options.constructor !== Object) {
@@ -359,3 +358,5 @@ export class Perj {
     console.log(this[_Options].stringifyFunction(data, null, 2));
   }
 }
+
+export default Perj;

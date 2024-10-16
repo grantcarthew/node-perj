@@ -25,55 +25,32 @@
     "benchmark-map": "node benchmarks/benchmark-map.js",
     "profile": "node --prof benchmark.js && node --prof-process *.log && rm *.log",
     "sink": "npm run build && npm run benchmark && npm run profile",
-    "example": "nodemon examples/dev-util-node-console-npm-run-example.js",
+    "example": "node examples/node-simple.js",
     "lint": "",
     "prepublishOnly": "npm build",
-    "build": "npm run clean && webpack && npm test",
-    "build:watch": "npm run clean && webpack --watch",
-    "build:babel": "npm run clean && standard && babel src/perj.js --out-file index.js && npm test",
-    "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",
-    "upgrade:rm": "rm node_modules -Rf",
-    "upgrade:ncu": "npm-check-updates --upgradeAll",
-    "upgrade:npm-install": "npm install"
+    "build": "pnpm run clean && pnpm build:js && pnpm build:minify && pnpm build:gzip",
+    "build:js": "esbuild ./src/perj --format=esm --bundle --outfile=./dist/perj.js --allow-overwrite",
+    "build:minify": "esbuild ./src/perj --format=esm --bundle --outfile=./dist/perj.min.js --allow-overwrite --minify",
+    "build:gzip": "gzip -k -9 ./dist/perj.min.js",
+    "upgrade": "pnpm run upgrade:rm && pnpm update --latest && pnpm install",
+    "upgrade:rm": "rm node_modules -Rf"
   },
   "keywords": [
     "logger,log,json,fast,simple"
   ],
   "author": "Grant Carthew",
   "license": "MIT",
-  "standard": {
-    "globals": [
-      "SharedArrayBuffer",
-      "Atomics"
-    ],
-    "ignore": [
-      "index.js"
-    ]
-  },
   "prettier": {
     "printWidth": 120,
     "endOfLine": "lf"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-minify": "^0.5.2",
-    "babel-minify-webpack-plugin": "^0.3.1",
-    "babel-preset-env": "^1.7.0",
     "benchmark": "^2.1.4",
-    "chalk": "^5.3.0",
-    "compression-webpack-plugin": "^11.1.0",
     "console-probe": "^3.3.2",
-    "json-colorizer": "^3.0.1",
-    "nodemon": "^3.1.7",
-    "npm-check-updates": "^17.1.3",
-    "standard": "^17.1.2",
-    "table": "^6.8.2",
+    "esbuild": "^0.24.0",
     "tap-dot": "^2.0.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.9.0",
-    "test-constructs": "^1.0.0",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {}
+    "test-constructs": "^1.0.0"
+  }
 }

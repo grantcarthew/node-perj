@@ -1,22 +1,17 @@
-// Note:
-// The pino logger is not a dependency of this package.
-// Install pino prior to running.
-// npm install pino --no-save
+import consoleProbe from 'console-probe';
+import { table } from 'table';
+import chalk from 'chalk';
+import Benchmark from 'benchmark';
+import Perj from '../index.js';
+import pino from 'pino';
+import fs from 'fs';
+import { hostname } from 'os';
+import { data } from '../data/index.js';
 
-require("console-probe").apply();
-const { table } = require("table");
-const chalk = require("chalk");
-const Benchmark = require("benchmark");
-const Perj = require("../index");
-const pino = require("pino");
-const fs = require("fs");
-const hostname = require("os").hostname();
+consoleProbe.apply();
 const pid = process.pid;
 const v = 1;
 const dest = fs.createWriteStream("/dev/null");
-
-// Data
-const data = require("../data");
 
 // Adding hostname and pid to match pino log string
 const perjLog = new Perj({ v, hostname, pid, write: dest.write.bind(dest) });

@@ -1,18 +1,16 @@
-// Note:
-// The pino logger is not a dependency of this package.
-// Install pino prior to running.
-// npm install pino --no-save
+import consoleProbe from 'console-probe';
+import { table } from 'table';
+import chalk from 'chalk';
+import Benchmark from 'benchmark';
+import Perj from '../index.js';
+import pino from 'pino';
+import fs from 'fs';
+import { hostname } from 'os';
+import { data } from '../data/index.js';
 
-require("console-probe").apply();
-const { table } = require("table");
-const chalk = require("chalk");
-const Benchmark = require("benchmark");
-const Perj = require("../src/perj");
-const pino = require("pino");
-const fs = require("fs");
+consoleProbe.apply();
 const levelKeyEnabled = false;
 const levelNumberKey = "level";
-const hostname = require("os").hostname();
 const pid = process.pid;
 const v = 1;
 const dest = fs.createWriteStream("/dev/null");
@@ -20,8 +18,6 @@ const csvPath = "benchmarks/compare.csv";
 const csvHeader = `'perj Common Log Operations', 'pino Common Log Operations', 'perj Single String Message', 'pino Single String Message', 'perj Single Long String', 'pino Single Long String', 'perj Flat Object Data', 'pino Flat Object Data', 'perj Simple Object Data', 'pino Simple Object Data', 'perj Complex Object Data', 'pino Complex Object Data', 'perj Deep Object Data', 'pino Deep Object Data', 'perj Single String And Object Data', 'pino Single String And Object Data', 'perj Logging Error Objects', 'pino Logging Error Objects', 'perj Create Single Child', 'pino Create Single Child', 'perj Create Two Children', 'pino Create Two Children', 'perj Create Three Children', 'pino Create Three Children'\n`;
 fs.writeFileSync(csvPath, csvHeader);
 
-// Data
-const data = require("../data");
 const flat = { foo: "bar", baz: null, plubus: true };
 const err = [];
 for (let i = 0; i < 5; i++) {

@@ -1,11 +1,16 @@
-require("console-probe").apply();
-const assert = require("assert");
-const { table } = require("table");
-const chalk = require("chalk");
-const Benchmark = require("benchmark");
-const suite = new Benchmark.Suite();
-const data = require("../data");
+import consoleProbe from 'console-probe';
+import assert from 'assert';
+import { table } from 'table';
+import chalk from 'chalk';
+import Benchmark from 'benchmark';
+import Perj from '../index.js';
+import pino from 'pino';
+import fs from 'fs';
+import { hostname } from 'os';
+import { data } from '../data/index.js';
 
+consoleProbe.apply();
+const suite = new Benchmark.Suite();
 const obj = data.deathStar;
 const map = new Map();
 for (const key in obj) {

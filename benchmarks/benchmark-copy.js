@@ -1,18 +1,18 @@
-import consoleProbe from 'console-probe';
-import { table } from 'table';
-import chalk from 'chalk';
-import Benchmark from 'benchmark';
-import Perj from '../index.js';
-import pino from 'pino';
-import fs from 'fs';
-import { hostname } from 'os';
-import { data } from '../data/index.js';
-import tc from 'test-constructs';
-import { notationCopy as pc } from '../src/notation-copy.js';
+import consoleProbe from "console-probe";
+import { table } from "table";
+import chalk from "chalk";
+import Benchmark from "benchmark";
+import Perj from "../index.js";
+import pino from "pino";
+import fs from "fs";
+import { hostname } from "os";
+import { data } from "../data/index.js";
+import tc from "test-constructs";
+import { notationCopy as pc } from "../src/notation-copy.js";
 
 // You will need to install fast-safe-stringify to test.
 // npm install --no-save fast-safe-stringify
-import stringify from 'fast-safe-stringify';
+import stringify from "fast-safe-stringify";
 
 consoleProbe.apply();
 const suite = new Benchmark.Suite();

@@ -1,12 +1,12 @@
-import consoleProbe from 'console-probe';
-import { table } from 'table';
-import chalk from 'chalk';
-import Benchmark from 'benchmark';
-import Perj from '../index.js';
-import pino from 'pino';
-import fs from 'fs';
-import { hostname } from 'os';
-import { data } from '../data/index.js';
+import consoleProbe from "console-probe";
+import { table } from "table";
+import chalk from "chalk";
+import Benchmark from "benchmark";
+import Perj from "../index.js";
+import pino from "pino";
+import fs from "fs";
+import { hostname } from "os";
+import { data } from "../data/index.js";
 
 consoleProbe.apply();
 const pid = process.pid;

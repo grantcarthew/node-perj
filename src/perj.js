@@ -1,16 +1,16 @@
-const defaultOptions = require('./options')
-const notationCopy = require('./notation-copy')
+import { options as defaultOptions } from "./options.js";
+import { notationCopy } from "./notation-copy.js";
 
 // Symbols for functions and values
-const _SplitOptions = Symbol('SplitOptions')
-const _Options = Symbol('Options')
-const _TopSnip = Symbol('TopSnip')
-const _TopValues = Symbol('TopValues')
-const _TopIsPrimitive = Symbol('TopIsPrimitive')
-const _HeaderStrings = Symbol('HeaderStrings')
-const _HeaderValues = Symbol('HeaderValues')
-const _SetLevelHeader = Symbol('SetLevelHeader')
-const _SetLevelFunction = Symbol('SetLevelFunction')
+const _SplitOptions = Symbol("SplitOptions");
+const _Options = Symbol("Options");
+const _TopSnip = Symbol("TopSnip");
+const _TopValues = Symbol("TopValues");
+const _TopIsPrimitive = Symbol("TopIsPrimitive");
+const _HeaderStrings = Symbol("HeaderStrings");
+const _HeaderValues = Symbol("HeaderValues");
+const _SetLevelHeader = Symbol("SetLevelHeader");
+const _SetLevelFunction = Symbol("SetLevelFunction");
 
 /*
 Code Summary:
@@ -61,272 +61,300 @@ _SetLevelHeader: <Function>
 _SetLevelFunction: <Function>
   This function is used to generate the level functions.
 */
-
-class Perj {
-  constructor (options) {
+export class Perj {
+  constructor(options) {
     if (options != null && options.constructor !== Object) {
-      throw new Error('Provide options object to create a logger.')
+      throw new Error("Provide options object to create a logger.");
     }
-    this[_Options] = Object.assign({}, defaultOptions)
-    this[_TopSnip] = ''
-    this[_TopValues] = {}
-    this[_TopIsPrimitive] = true
-    this[_SplitOptions](options)
-    this[_HeaderStrings] = {}
-    this[_HeaderValues] = {}
+    this[_Options] = Object.assign({}, defaultOptions);
+    this[_TopSnip] = "";
+    this[_TopValues] = {};
+    this[_TopIsPrimitive] = true;
+    this[_SplitOptions](options);
+    this[_HeaderStrings] = {};
+    this[_HeaderValues] = {};
     for (const level in this[_Options].levels) {
-      this[_SetLevelHeader](level)
-      this[_SetLevelFunction](level)
+      this[_SetLevelHeader](level);
+      this[_SetLevelFunction](level);
     }
   }
 
-  get level () {
-    return this[_Options].level
+  get level() {
+    return this[_Options].level;
   }
 
-  set level (level) {
-    if (!(this[_Options].levels.hasOwnProperty(level))) {
-      throw new Error('The level option must be a valid key in the levels object.')
+  set level(level) {
+    if (!Object.hasOwn(this[_Options].levels, level)) {
+      throw new Error("The level option must be a valid key in the levels object.");
     }
-    if (!this.hasOwnProperty(_Options)) {
+    if (!Object.hasOwn(this, _Options)) {
       // Attaching the options object to this instance
-      this[_Options] = Object.assign({}, this[_Options])
+      this[_Options] = Object.assign({}, this[_Options]);
     }
-    this[_Options].level = level
+    this[_Options].level = level;
   }
 
-  get levels () {
-    return this[_Options].levels
+  get levels() {
+    return this[_Options].levels;
   }
 
-  addLevel (newLevels) {
+  addLevel(newLevels) {
     for (const level in newLevels) {
-      if (this[level]) { continue }
-      this[_Options].levels[level] = newLevels[level]
-      this[_SetLevelHeader](level)
-      this[_SetLevelFunction](level)
+      if (this[level]) {
+        continue;
+      }
+      this[_Options].levels[level] = newLevels[level];
+      this[_SetLevelHeader](level);
+      this[_SetLevelFunction](level);
     }
   }
 
-  get write () {
-    return this[_Options].write
+  get write() {
+    return this[_Options].write;
   }
 
-  [_SplitOptions] (options) {
-    if (!options) { return }
+  [_SplitOptions](options) {
+    if (!options) {
+      return;
+    }
     for (const key in options) {
-      if (defaultOptions.hasOwnProperty(key)) {
-        if (key === 'level') {
-          this.level = options[key]
-          continue
+      if (Object.hasOwn(defaultOptions, key)) {
+        if (key === "level") {
+          this.level = options[key];
+          continue;
         }
-        if (key === 'stringifyFunction') {
-          this[_TopIsPrimitive] = false
+        if (key === "stringifyFunction") {
+          this[_TopIsPrimitive] = false;
         }
-        this[_Options][key] = options[key]
+        this[_Options][key] = options[key];
       } else {
-        const type = typeof options[key]
-        if (type === 'string') {
-          this[_TopSnip] += '"' + key + '":"' + options[key] + '",'
-          this[_TopValues][key] = options[key]
-        } else if (type === 'number' || type === 'boolean') {
-          this[_TopSnip] += '"' + key + '":' + options[key] + ','
-          this[_TopValues][key] = options[key]
-        } else if (type === 'undefined') {
-          this[_TopSnip] += '"' + key + '":null,'
-          this[_TopValues][key] = null
+        const type = typeof options[key];
+        if (type === "string") {
+          this[_TopSnip] += '"' + key + '":"' + options[key] + '",';
+          this[_TopValues][key] = options[key];
+        } else if (type === "number" || type === "boolean") {
+          this[_TopSnip] += '"' + key + '":' + options[key] + ",";
+          this[_TopValues][key] = options[key];
+        } else if (type === "undefined") {
+          this[_TopSnip] += '"' + key + '":null,';
+          this[_TopValues][key] = null;
         } else {
-          this[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(options[key]) + ','
-          this[_TopValues][key] = options[key]
-          this[_TopIsPrimitive] = false
+          this[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(options[key]) + ",";
+          this[_TopValues][key] = options[key];
+          this[_TopIsPrimitive] = false;
         }
       }
     }
   }
 
-  [_SetLevelHeader] (level) {
-    this[_HeaderStrings][level] = '{'
-    this[_Options].levelKeyEnabled && (this[_HeaderStrings][level] += '"' + this[_Options].levelKey + '":"' + level + '",')
-    this[_Options].levelNumberKeyEnabled && (this[_HeaderStrings][level] += '"' + this[_Options].levelNumberKey + '":' + this[_Options].levels[level] + ',')
-    this[_TopSnip] !== '' && (this[_HeaderStrings][level] += this[_TopSnip])
-    this[_HeaderStrings][level] += '"' + this[_Options].dateTimeKey + '":'
+  [_SetLevelHeader](level) {
+    this[_HeaderStrings][level] = "{";
+    this[_Options].levelKeyEnabled &&
+      (this[_HeaderStrings][level] += '"' + this[_Options].levelKey + '":"' + level + '",');
+    this[_Options].levelNumberKeyEnabled &&
+      (this[_HeaderStrings][level] += '"' + this[_Options].levelNumberKey + '":' + this[_Options].levels[level] + ",");
+    this[_TopSnip] !== "" && (this[_HeaderStrings][level] += this[_TopSnip]);
+    this[_HeaderStrings][level] += '"' + this[_Options].dateTimeKey + '":';
 
     if (this[_Options].passThrough) {
-      const levelObj = {}
-      this[_Options].levelKeyEnabled && (levelObj[this[_Options].levelKey] = level)
-      this[_Options].levelNumberKeyEnabled && (levelObj[this[_Options].levelNumberKey] = this[_Options].levels[level])
-      this[_HeaderValues][level] = notationCopy(levelObj, this[_TopValues])
+      const levelObj = {};
+      this[_Options].levelKeyEnabled && (levelObj[this[_Options].levelKey] = level);
+      this[_Options].levelNumberKeyEnabled && (levelObj[this[_Options].levelNumberKey] = this[_Options].levels[level]);
+      this[_HeaderValues][level] = notationCopy(levelObj, this[_TopValues]);
     }
   }
 
-  [_SetLevelFunction] (level) {
+  [_SetLevelFunction](level) {
     this[level] = function (...items) {
-      if (this[_Options].levels[this[_Options].level] >
-        this[_Options].levels[level]) {
-        return
+      if (this[_Options].levels[this[_Options].level] > this[_Options].levels[level]) {
+        return;
       }
-      const time = this[_Options].dateTimeFunction()
-      let msg = ''
-      let data = null
-      let dataJson = 'null'
-      let isError = false
+      const time = this[_Options].dateTimeFunction();
+      let msg = "";
+      let data = null;
+      let dataJson = "null";
+      let isError = false;
 
       const serialize = (item) => {
-        if (!this[_Options].serializers) { return item }
-        if (item == null) { return null }
-        const graded = {}
+        if (!this[_Options].serializers) {
+          return item;
+        }
+        if (item == null) {
+          return null;
+        }
+        const graded = {};
         for (const key in item) {
-          let value = item[key]
-          if (item.hasOwnProperty && item.hasOwnProperty(key) && this[_Options].serializers[key]) {
-            value = this[_Options].serializers[key](value)
+          let value = item[key];
+          if (Object.hasOwn && Object.hasOwn(item, key) && this[_Options].serializers[key]) {
+            value = this[_Options].serializers[key](value);
           }
           if (value !== undefined) {
-            graded[key] = value
+            graded[key] = value;
           }
         }
-        return graded
-      }
+        return graded;
+      };
 
       if (items.length === 1) {
         // Single item processing
-        const item = items[0]
-        const type = typeof item
-        if (type === 'string') {
-          msg = item
-        } else if (item == null || type === 'function') {
+        const item = items[0];
+        const type = typeof item;
+        if (type === "string") {
+          msg = item;
+        } else if (item == null || type === "function") {
           // Undefined or null, keep defaults.
-        } else if (type === 'number' || type === 'boolean') {
-          data = item
-          dataJson = '' + item
+        } else if (type === "number" || type === "boolean") {
+          data = item;
+          dataJson = "" + item;
         } else if (item instanceof Error) {
-          isError = true
-          msg = item.message
-          data = this[_Options].serializeErrorFunction(item)
-          dataJson = this[_Options].stringifyFunction(data)
+          isError = true;
+          msg = item.message;
+          data = this[_Options].serializeErrorFunction(item);
+          dataJson = this[_Options].stringifyFunction(data);
         } else {
-          data = serialize(item)
-          dataJson = this[_Options].stringifyFunction(data)
+          data = serialize(item);
+          dataJson = this[_Options].stringifyFunction(data);
         }
       } else if (items.length > 1) {
         // Multiple item processing
-        data = []
+        data = [];
         for (const item of items) {
-          const type = typeof item
-          if (type === 'string') {
-            if (msg) { data.push(item) } else { msg = item }
-            continue
+          const type = typeof item;
+          if (type === "string") {
+            if (msg) {
+              data.push(item);
+            } else {
+              msg = item;
+            }
+            continue;
           }
-          if (item == null || type === 'function') {
-            data.push(null)
-            continue
+          if (item == null || type === "function") {
+            data.push(null);
+            continue;
           }
           if (item instanceof Error) {
-            isError = true
-            data.push(this[_Options].serializeErrorFunction(item))
-            if (!msg) { msg = item.message }
-            continue
+            isError = true;
+            data.push(this[_Options].serializeErrorFunction(item));
+            if (!msg) {
+              msg = item.message;
+            }
+            continue;
           }
 
-          data.push(serialize(item))
+          data.push(serialize(item));
         }
 
         if (data.length === 1) {
-          data = data[0]
+          data = data[0];
         }
-        dataJson = this[_Options].stringifyFunction(data)
+        dataJson = this[_Options].stringifyFunction(data);
       }
 
-      let json = this[_HeaderStrings][level] + time +
-          ',"' + this[_Options].messageKey + '":"' + msg +
-          '","' + this[_Options].dataKey + '":' + dataJson
-      if (isError) { json += ',"error":true' }
-      json += '}\n'
+      let json =
+        this[_HeaderStrings][level] +
+        time +
+        ',"' +
+        this[_Options].messageKey +
+        '":"' +
+        msg +
+        '","' +
+        this[_Options].dataKey +
+        '":' +
+        dataJson;
+      if (isError) {
+        json += ',"error":true';
+      }
+      json += "}\n";
 
       if (this[_Options].passThrough) {
         const obj = notationCopy({}, this[_HeaderValues][level], {
           [this[_Options].dateTimeKey]: time,
           [this[_Options].messageKey]: msg,
-          [this[_Options].dataKey]: data
-        })
-        if (isError) { obj.error = true }
-        this[_Options].write(json, obj)
+          [this[_Options].dataKey]: data,
+        });
+        if (isError) {
+          obj.error = true;
+        }
+        this[_Options].write(json, obj);
       } else {
-        this[_Options].write(json)
+        this[_Options].write(json);
       }
-    }
+    };
   }
 
-  child (tops) {
+  child(tops) {
     if (tops == null || tops.constructor !== Object) {
-      throw new Error('Provide top level arguments object to create a child logger.')
+      throw new Error("Provide top level arguments object to create a child logger.");
     }
-    const newChild = Object.create(this)
+    const newChild = Object.create(this);
     if (this[_TopIsPrimitive]) {
       // Avoiding Object.assign which is not needed
-      newChild[_TopValues] = {}
-      newChild[_TopIsPrimitive] = true
+      newChild[_TopValues] = {};
+      newChild[_TopIsPrimitive] = true;
       for (const key in this[_TopValues]) {
-        newChild[_TopValues][key] = this[_TopValues][key]
+        newChild[_TopValues][key] = this[_TopValues][key];
       }
     } else {
       // Top value is an object. Take the object copy hit like a man.
-      newChild[_TopValues] = notationCopy({}, this[_TopValues])
-      newChild[_TopIsPrimitive] = false
+      newChild[_TopValues] = notationCopy({}, this[_TopValues]);
+      newChild[_TopIsPrimitive] = false;
     }
     for (const key in tops) {
       // Options and key names are not valid, skipping.
-      if (defaultOptions.hasOwnProperty(key) ||
-          this[_Options].levelKey === key ||
-          this[_Options].levelNumberKey === key ||
-          this[_Options].dateTimeKey === key ||
-          this[_Options].messageKey === key ||
-          this[_Options].dataKey === key) { continue }
-      const type = typeof tops[key]
-      if (type === 'string' &&
-          this[_TopValues].hasOwnProperty(key) &&
-          typeof this[_TopValues][key] === 'string') {
+      if (
+        Object.hasOwn(defaultOptions, key) ||
+        this[_Options].levelKey === key ||
+        this[_Options].levelNumberKey === key ||
+        this[_Options].dateTimeKey === key ||
+        this[_Options].messageKey === key ||
+        this[_Options].dataKey === key
+      ) {
+        continue;
+      }
+      const type = typeof tops[key];
+      if (type === "string" && Object.hasOwn(this[_TopValues], key) && typeof this[_TopValues][key] === "string") {
         // New top key is the same as parent and is a string. Appending separator string and new value.
-        newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key]
-      } else if (type === 'undefined') {
-        newChild[_TopValues][key] = null
+        newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key];
+      } else if (type === "undefined") {
+        newChild[_TopValues][key] = null;
       } else {
-        newChild[_TopValues][key] = tops[key]
+        newChild[_TopValues][key] = tops[key];
         // Not using && so we can exit early
-        if (!(type === 'string' || type === 'number' || type === 'boolean')) {
-          this[_TopIsPrimitive] = false
+        if (!(type === "string" || type === "number" || type === "boolean")) {
+          this[_TopIsPrimitive] = false;
         }
       }
     }
-    newChild[_TopSnip] = ''
+    newChild[_TopSnip] = "";
     for (const key in newChild[_TopValues]) {
       if (newChild[_TopIsPrimitive]) {
         // Privitive JSON.stringify. Cheap.
-        const type = typeof newChild[_TopValues][key]
-        if (type === 'string') {
-          newChild[_TopSnip] += '"' + key + '":"' + newChild[_TopValues][key] + '",'
+        const type = typeof newChild[_TopValues][key];
+        if (type === "string") {
+          newChild[_TopSnip] += '"' + key + '":"' + newChild[_TopValues][key] + '",';
         } else {
-          newChild[_TopSnip] += '"' + key + '":' + newChild[_TopValues][key] + ','
+          newChild[_TopSnip] += '"' + key + '":' + newChild[_TopValues][key] + ",";
         }
-        continue
+        continue;
       }
-      newChild[_TopSnip] += '"' + key + '":' + (this[_Options].stringifyFunction(newChild[_TopValues][key])) + ','
+      newChild[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(newChild[_TopValues][key]) + ",";
     }
-    newChild.parent = this
-    newChild[_HeaderStrings] = {}
-    newChild[_HeaderValues] = {}
+    newChild.parent = this;
+    newChild[_HeaderStrings] = {};
+    newChild[_HeaderValues] = {};
     for (const level in this[_Options].levels) {
-      newChild[_SetLevelHeader](level)
+      newChild[_SetLevelHeader](level);
     }
-    return newChild
+    return newChild;
   }
 
-  stringify (obj, replacer, spacer) {
-    return this[_Options].stringifyFunction(obj, replacer, spacer)
+  stringify(obj, replacer, spacer) {
+    return this[_Options].stringifyFunction(obj, replacer, spacer);
   }
 
-  json (data) {
-    console.log(this[_Options].stringifyFunction(data, null, 2))
+  json(data) {
+    console.log(this[_Options].stringifyFunction(data, null, 2));
   }
 }
 
-module.exports = Perj
+export default Perj;

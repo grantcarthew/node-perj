@@ -1,117 +1,125 @@
-const Perj = require('../src/perj')
-const Tool = require('./tool')
-const tool = new Tool()
-const data = require('../data')
-const write = tool.write.bind(tool)
-const passThrough = true
+import test from "tape";
+import { Perj } from "../src/perj.js";
+import { Tool } from "./tool.js";
+import { data } from "../data/index.js";
+import { assertObjectSubsetMatch } from "./asserts.js";
 
-beforeEach(() => {
-  tool.reset()
-})
+const tool = new Tool();
+const write = tool.write.bind(tool);
+const passThrough = true;
 
-describe('logger options key tests', () => {
-  test('key options tests', () => {
+test("logger options key tests", (t) => {
+  t.test("key options tests", (t) => {
+    tool.reset();
     let log = new Perj({
       levels: { foo: 100, bar: 200 },
-      level: 'foo',
-      levelKey: 'lk',
+      level: "foo",
+      levelKey: "lk",
       levelKeyEnabled: true,
-      levelNumberKey: 'lnk',
+      levelNumberKey: "lnk",
       levelNumberKeyEnabled: true,
-      dateTimeKey: 'dt',
+      dateTimeKey: "dt",
       dateTimeFunction: () => '"baz"',
-      messageKey: 'mk',
-      dataKey: 'dk',
+      messageKey: "mk",
+      dataKey: "dk",
       passThrough,
       write,
-      project: 'elephant',
+      project: "elephant",
       session: 12345,
       platform: {
-        name: 'node',
-        pid: 1234
+        name: "node",
+        pid: 1234,
       },
       undef: undefined,
       nul: null,
-      empty: ''
-    })
-    log.bar(data.msg[0], data.tardis)
-    expect(log.levels.foo).toBe(100)
-    expect(log.levels.bar).toBe(200)
-    expect(log.level).toBe('foo')
-    expect(tool.getType(log.write)).toBe('Function')
-    expect(tool.jsonOut.lk).toBe('bar')
-    expect(tool.objOut.lk).toBe('bar')
-    expect(tool.jsonOut.lnk).toBe(200)
-    expect(tool.objOut.lnk).toBe(200)
-    expect(tool.jsonOut.dt).toBe('baz')
-    expect(tool.objOut.dt).toBe('"baz"') // TODO: <==============================
-    expect(tool.jsonOut.mk).toBe(data.msg[0])
-    expect(tool.objOut.mk).toBe(data.msg[0])
-    expect(tool.jsonOut.dk).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.jsonOut.dk)
-    expect(tool.objOut.dk).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.objOut.dk)
-    expect(tool.jsonOut.project).toBe('elephant')
-    expect(tool.objOut.project).toBe('elephant')
-    expect(tool.jsonOut.session).toBe(12345)
-    expect(tool.objOut.session).toBe(12345)
-    expect(tool.jsonOut.platform.name).toBe('node')
-    expect(tool.objOut.platform.name).toBe('node')
-    expect(tool.jsonOut.platform.pid).toBe(1234)
-    expect(tool.objOut.platform.pid).toBe(1234)
-    expect(tool.jsonOut.undef).toBe(null)
-    expect(tool.objOut.undef).toBe(null)
-    expect(tool.jsonOut.nul).toBe(null)
-    expect(tool.objOut.nul).toBe(null)
-    expect(tool.jsonOut.empty).toBe('')
-    expect(tool.objOut.empty).toBe('')
-  })
-  test('level key not enabled tests', () => {
-    let log = new Perj({ levelKeyEnabled: false, passThrough, write })
-    log.info(data.msg[0], data.tardis)
-    expect(tool.jsonOut.level).toBeUndefined()
-    expect(tool.objOut.level).toBeUndefined()
-    expect(tool.jsonOut.lvl).toBe(30)
-    expect(tool.objOut.lvl).toBe(30)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe(data.msg[0])
-    expect(tool.objOut.msg).toBe(data.msg[0])
-    expect(tool.jsonOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.jsonOut.data)
-    expect(tool.objOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.objOut.data)
-  })
-  test('level number key not enabled tests', () => {
-    let log = new Perj({ levelNumberKeyEnabled: false, passThrough, write })
-    log.info(data.msg[0], data.tardis)
-    expect(tool.jsonOut.level).toBe('info')
-    expect(tool.objOut.level).toBe('info')
-    expect(tool.jsonOut.lvl).toBeUndefined()
-    expect(tool.objOut.lvl).toBeUndefined()
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe(data.msg[0])
-    expect(tool.objOut.msg).toBe(data.msg[0])
-    expect(tool.jsonOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.jsonOut.data)
-    expect(tool.objOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.objOut.data)
-  })
-  test('level key and level number key not enabled tests', () => {
-    let log = new Perj({ levelKeyEnabled: false, levelNumberKeyEnabled: false, passThrough, write })
-    log.info(data.msg[0], data.tardis)
-    expect(tool.jsonOut.level).toBeUndefined()
-    expect(tool.objOut.level).toBeUndefined()
-    expect(tool.jsonOut.lvl).toBeUndefined()
-    expect(tool.objOut.lvl).toBeUndefined()
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe(data.msg[0])
-    expect(tool.objOut.msg).toBe(data.msg[0])
-    expect(tool.jsonOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.jsonOut.data)
-    expect(tool.objOut.data).toMatchObject(data.tardis)
-    expect(data.tardis).toMatchObject(tool.objOut.data)
-  })
-})
+      empty: "",
+    });
+    log.bar(data.msg[0], data.tardis);
+    t.equal(log.levels.foo, 100);
+    t.equal(log.levels.bar, 200);
+    t.equal(log.level, "foo");
+    t.equal(tool.getType(log.write), "Function");
+    t.equal(tool.jsonOut.lk, "bar");
+    t.equal(tool.objOut.lk, "bar");
+    t.equal(tool.jsonOut.lnk, 200);
+    t.equal(tool.objOut.lnk, 200);
+    t.equal(tool.jsonOut.dt, "baz");
+    t.equal(tool.objOut.dt, '"baz"'); // TODO: <==============================
+    t.equal(tool.jsonOut.mk, data.msg[0]);
+    t.equal(tool.objOut.mk, data.msg[0]);
+    assertObjectSubsetMatch(t, tool.jsonOut.dk, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.dk);
+    assertObjectSubsetMatch(t, tool.objOut.dk, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.objOut.dk);
+    t.equal(tool.jsonOut.project, "elephant");
+    t.equal(tool.objOut.project, "elephant");
+    t.equal(tool.jsonOut.session, 12345);
+    t.equal(tool.objOut.session, 12345);
+    t.equal(tool.jsonOut.platform.name, "node");
+    t.equal(tool.objOut.platform.name, "node");
+    t.equal(tool.jsonOut.platform.pid, 1234);
+    t.equal(tool.objOut.platform.pid, 1234);
+    t.equal(tool.jsonOut.undef, null);
+    t.equal(tool.objOut.undef, null);
+    t.equal(tool.jsonOut.nul, null);
+    t.equal(tool.objOut.nul, null);
+    t.equal(tool.jsonOut.empty, "");
+    t.equal(tool.objOut.empty, "");
+    t.end();
+  });
+  t.test("level key not enabled tests", (t) => {
+    tool.reset();
+    let log = new Perj({ levelKeyEnabled: false, passThrough, write });
+    log.info(data.msg[0], data.tardis);
+    t.ok(tool.jsonOut.level === undefined);
+    t.ok(tool.objOut.level === undefined);
+    t.equal(tool.jsonOut.lvl, 30);
+    t.equal(tool.objOut.lvl, 30);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, data.msg[0]);
+    t.equal(tool.objOut.msg, data.msg[0]);
+    assertObjectSubsetMatch(t, tool.jsonOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
+    assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.end();
+  });
+  t.test("level number key not enabled tests", (t) => {
+    tool.reset();
+    let log = new Perj({ levelNumberKeyEnabled: false, passThrough, write });
+    log.info(data.msg[0], data.tardis);
+    t.equal(tool.jsonOut.level, "info");
+    t.equal(tool.objOut.level, "info");
+    t.ok(tool.jsonOut.lvl === undefined);
+    t.ok(tool.objOut.lvl === undefined);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, data.msg[0]);
+    t.equal(tool.objOut.msg, data.msg[0]);
+    assertObjectSubsetMatch(t, tool.jsonOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
+    assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.end();
+  });
+  t.test("level key and level number key not enabled tests", (t) => {
+    tool.reset();
+    let log = new Perj({ levelKeyEnabled: false, levelNumberKeyEnabled: false, passThrough, write });
+    log.info(data.msg[0], data.tardis);
+    t.ok(tool.jsonOut.level === undefined);
+    t.ok(tool.objOut.level === undefined);
+    t.ok(tool.jsonOut.lvl === undefined);
+    t.ok(tool.objOut.lvl === undefined);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, data.msg[0]);
+    t.equal(tool.objOut.msg, data.msg[0]);
+    assertObjectSubsetMatch(t, tool.jsonOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
+    assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
+    assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.end();
+  });
+  t.end();
+});

@@ -1,7 +1,8 @@
 {
   "name": "perj",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "A fast, flexible JSON logger.",
+  "type": "module",
   "main": "dist/perj.min.js",
   "module": "src/perj.js",
   "homepage": "https://github.com/grantcarthew/node-perj",
@@ -11,8 +12,11 @@
   },
   "bugs": "https://github.com/grantcarthew/node-perj/issues",
   "scripts": {
-    "clean": "del dist",
-    "test": "jest",
+    "clean": "rm ./dist -rf",
+    "time": "reset && echo \"-- $(date +%T) --\"",
+    "test": "tape ./tests/*.test.js | tap-spec",
+    "test:dot": "pnpm run time && tape ./tests/*.test.js | tap-dot",
+    "test:watch": "fd | entr pnpm run test:dot",
     "benchmark": "npm run build && node benchmarks/benchmark-compare.js",
     "benchmark-perj": "node benchmarks/benchmark-perj.js",
     "benchmark-child": "node benchmarks/benchmark-child.js",
@@ -21,73 +25,42 @@
     "benchmark-map": "node benchmarks/benchmark-map.js",
     "profile": "node --prof benchmark.js && node --prof-process *.log && rm *.log",
     "sink": "npm run build && npm run benchmark && npm run profile",
-    "test:watch": "jest --watch",
-    "example": "nodemon examples/dev-util-node-console-npm-run-example.js",
-    "lint": "standard",
+    "example": "node examples/node-simple.js",
+    "lint": "eslint ./src",
     "prepublishOnly": "npm build",
-    "build": "npm run clean && webpack && npm test",
-    "build:watch": "npm run clean && webpack --watch",
-    "build:babel": "npm run clean && standard && babel src/perj.js --out-file index.js && npm test",
-    "upgrade": "npm run upgrade:rm && npm run upgrade:ncu && npm run upgrade:npm-install",
-    "upgrade:rm": "rm node_modules -Rf",
-    "upgrade:ncu": "npm-check-updates --upgradeAll",
-    "upgrade:npm-install": "npm install"
+    "build": "pnpm run clean && pnpm build:js && pnpm build:minify && pnpm build:gzip",
+    "build:js": "esbuild ./src/perj --format=esm --bundle --outfile=./dist/perj.js --allow-overwrite",
+    "build:minify": "esbuild ./src/perj --format=esm --bundle --outfile=./dist/perj.min.js --allow-overwrite --minify",
+    "build:gzip": "gzip -k -9 ./dist/perj.min.js",
+    "update": "upgrade",
+    "upgrade": "pnpm run upgrade:rm && pnpm update --latest && pnpm install",
+    "upgrade:rm": "rm node_modules -Rf"
   },
   "keywords": [
     "logger,log,json,fast,simple"
   ],
   "author": "Grant Carthew",
   "license": "MIT",
-  "standard": {
-    "globals": [
-      "test",
-      "expect",
-      "jest",
-      "beforeEach",
-      "afterEach",
-      "beforeAll",
-      "afterAll",
-      "describe",
-      "location",
-      "SharedArrayBuffer",
-      "Atomics"
-    ],
-    "ignore": [
-      "index.js"
-    ]
+  "prettier": {
+    "printWidth": 120,
+    "endOfLine": "lf"
   },
-  "jest": {
-    "verbose": true,
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/tests/",
-      "<rootDir>/data/"
-    ],
-    "collectCoverageFrom": [
-      "**/src/**/*.js"
-    ],
-    "testURL": "http://localhost"
-  },
-  "dependencies": {},
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-minify": "^0.5.0",
-    "babel-minify-webpack-plugin": "^0.3.1",
-    "babel-preset-env": "^1.7.0",
+    "@eslint/js": "^9.12.0",
     "benchmark": "^2.1.4",
-    "chalk": "^2.4.1",
-    "compression-webpack-plugin": "^2.0.0",
-    "console-probe": "^3.3.0",
-    "del-cli": "^1.1.0",
-    "jest": "^23.6.0",
-    "json-colorizer": "^1.1.1",
-    "nodemon": "^1.18.4",
-    "npm-check-updates": "^2.14.2",
-    "standard": "^12.0.1",
-    "table": "^5.1.0",
-    "test-constructs": "^1.0.0",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+    "chalk": "^5.3.0",
+    "console-probe": "^3.3.2",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.12.0",
+    "fast-safe-stringify": "^2.1.1",
+    "globals": "^15.11.0",
+    "pino": "^9.5.0",
+    "table": "^6.8.2",
+    "tap-dot": "^2.0.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.9.0",
+    "test-constructs": "^1.0.0"
+  },
+  "dependencies": {
   }
 }

@@ -4,12 +4,11 @@ Find examples here that can get you started using the [perj](https://github.com/
 
 ## Important Notes
 
-* These are not best practise. Use them as suggestions on how to get started.
-* Documentation for each example is in the header of the `js` files.
-* Files titled `stdin` do not use `perj` and expect you to pipe logs into the process.
-* The `app` directory expects you to pipe `stdout` into a `stdin` module.
-* Customize these in your project.
-
+- These are not best practise. Use them as suggestions on how to get started.
+- Documentation for each example is in the header of the `js` files.
+- Files titled `stdin` do not use `perj` and expect you to pipe logs into the process.
+- The `app` directory expects you to pipe `stdout` into a `stdin` module.
+- Customize these in your project.
 
 ## File List
 
@@ -56,6 +55,3 @@ A simple example to show how serializers work.
 ### [util-log-generator.js](/examples/util-log-generator.js)
 
 This is a utility module to generate log data.
-
-
-

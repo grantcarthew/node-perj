@@ -1,265 +1,280 @@
-const Perj = require('../src/perj')
-const Tool = require('./tool')
-const tool = new Tool()
-const write = tool.write.bind(tool)
-const passThrough = true
+import test from "tape";
+import { Perj } from "../src/perj.js";
+import { Tool } from "./tool.js";
+
+const tool = new Tool();
+const write = tool.write.bind(tool);
+const passThrough = true;
 
 class AppError extends Error {
-  constructor (message, status) {
-    super(message)
-    this.name = this.constructor.name
-    Error.captureStackTrace(this, this.constructor)
-    this.status = status || 500
+  constructor(message, status) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+    this.status = status || 500;
   }
 }
 class CommsError extends AppError {
-  constructor (message, ip) {
-    super(message)
-    this.name = this.constructor.name
-    Error.captureStackTrace(this, this.constructor)
-    this.ip = ip || '0.0.0.0'
+  constructor(message, ip) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+    this.ip = ip || "0.0.0.0";
   }
 }
-const stdError = new Error('standard')
-const extError = new Error('extended error')
-const appError = new AppError('app error', 42)
-const commsError = new CommsError('comms error', '1.2.3.4')
-const defaultName = 'Error'
-const defaultMessage = 'The application has encountered an unknown error.'
+const stdError = new Error("standard");
+const extError = new Error("extended error");
+const appError = new AppError("app error", 42);
+const commsError = new CommsError("comms error", "1.2.3.4");
+const defaultName = "Error";
+const defaultMessage = "The application has encountered an unknown error.";
 
-beforeEach(() => {
-  tool.reset()
-})
+test("serialize error tests", (t) => {
+  t.test(`${t.name}: default serialize empty error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    log.error(new Error());
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "");
+    t.equal(tool.objOut.msg, "");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 3);
+    t.equal(Object.keys(tool.objOut.data).length, 3);
+    t.equal(tool.jsonOut.data.name, defaultName);
+    t.equal(tool.objOut.data.name, defaultName);
+    t.equal(tool.jsonOut.data.message, defaultMessage);
+    t.equal(tool.objOut.data.message, defaultMessage);
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.end();
+  });
+  t.test(`${t.name}: default serialize standard error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    log.error(stdError);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "standard");
+    t.equal(tool.objOut.msg, "standard");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 3);
+    t.equal(Object.keys(tool.objOut.data).length, 3);
+    t.equal(tool.jsonOut.data.name, defaultName);
+    t.equal(tool.objOut.data.name, defaultName);
+    t.equal(tool.jsonOut.data.message, "standard");
+    t.equal(tool.objOut.data.message, "standard");
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.end();
+  });
+  t.test(`${t.name}: default serialize standard circular error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    let err = new Error("circular");
+    let foo = { bar: "bar" };
+    foo.foo = foo;
+    err.cir = err;
+    err.cirObj = foo;
+    log.error(err);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "circular");
+    t.equal(tool.objOut.msg, "circular");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 5);
+    t.equal(Object.keys(tool.objOut.data).length, 5);
+    t.equal(tool.jsonOut.data.name, defaultName);
+    t.equal(tool.objOut.data.name, defaultName);
+    t.equal(tool.jsonOut.data.message, "circular");
+    t.equal(tool.objOut.data.message, "circular");
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.equal(tool.jsonOut.data.cir, "[Circular]");
+    t.equal(tool.objOut.data.cir, "[Circular]");
+    t.equal(tool.jsonOut.data.cirObj.bar, "bar");
+    t.equal(tool.objOut.data.cirObj.bar, "bar");
+    t.equal(tool.jsonOut.data.cirObj.foo, "[Circular]");
+    t.equal(tool.objOut.data.cirObj.foo, "[Circular]");
+    t.end();
+  });
+  t.test(`${t.name}: default serialize multiple standard error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    let err = new Error("standard2");
+    log.error(stdError, err);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "standard");
+    t.equal(tool.objOut.msg, "standard");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(tool.jsonOut.data.length, 2);
+    t.equal(tool.objOut.data.length, 2);
+    t.equal(Object.keys(tool.jsonOut.data[0]).length, 3);
+    t.equal(Object.keys(tool.objOut.data[0]).length, 3);
+    t.equal(tool.jsonOut.data[0].name, defaultName);
+    t.equal(tool.objOut.data[0].name, defaultName);
+    t.equal(tool.jsonOut.data[0].message, "standard");
+    t.equal(tool.objOut.data[0].message, "standard");
+    t.equal(tool.getType(tool.jsonOut.data[0].stack), "String");
+    t.equal(tool.getType(tool.objOut.data[0].stack), "String");
+    t.equal(Object.keys(tool.jsonOut.data[1]).length, 3);
+    t.equal(Object.keys(tool.objOut.data[1]).length, 3);
+    t.equal(tool.jsonOut.data[1].name, defaultName);
+    t.equal(tool.objOut.data[1].name, defaultName);
+    t.equal(tool.jsonOut.data[1].message, "standard2");
+    t.equal(tool.objOut.data[1].message, "standard2");
+    t.equal(tool.getType(tool.jsonOut.data[1].stack), "String");
+    t.equal(tool.getType(tool.objOut.data[1].stack), "String");
+    t.end();
+  });
+  t.test(`${t.name}: default serialize extended error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    const extraError = new Error("extra");
+    extraError.widget = { foo: { bar: { baz: true } } };
+    extError.innerException = extraError;
+    extError.plumbus = [1, 2, 3];
+    log.error(extError);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "extended error");
+    t.equal(tool.objOut.msg, "extended error");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 5);
+    t.equal(Object.keys(tool.objOut.data).length, 5);
+    t.equal(tool.jsonOut.data.name, defaultName);
+    t.equal(tool.objOut.data.name, defaultName);
+    t.equal(tool.jsonOut.data.message, "extended error");
+    t.equal(tool.objOut.data.message, "extended error");
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.equal(Array.isArray(tool.jsonOut.data.plumbus), true);
+    t.equal(Array.isArray(tool.objOut.data.plumbus), true);
+    t.equal(tool.jsonOut.data.plumbus.length, 3);
+    t.equal(tool.objOut.data.plumbus.length, 3);
+    t.equal(tool.jsonOut.data.plumbus[1], 2);
+    t.equal(tool.objOut.data.plumbus[1], 2);
+    t.equal(Object.keys(tool.jsonOut.data.innerException).length, 4);
+    t.equal(Object.keys(tool.objOut.data.innerException).length, 4);
+    t.equal(tool.jsonOut.data.innerException.name, defaultName);
+    t.equal(tool.objOut.data.innerException.name, defaultName);
+    t.equal(tool.jsonOut.data.innerException.message, "extra");
+    t.equal(tool.objOut.data.innerException.message, "extra");
+    t.equal(tool.getType(tool.jsonOut.data.innerException.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.innerException.stack), "String");
+    t.equal(tool.objOut.data.innerException.widget.foo.bar.baz, true);
+    t.end();
+  });
+  t.test(`${t.name}: default serialize app error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    log.error(appError);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "app error");
+    t.equal(tool.objOut.msg, "app error");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 4);
+    t.equal(Object.keys(tool.objOut.data).length, 4);
+    t.equal(tool.jsonOut.data.name, "AppError");
+    t.equal(tool.objOut.data.name, "AppError");
+    t.equal(tool.jsonOut.data.message, "app error");
+    t.equal(tool.objOut.data.message, "app error");
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.equal(tool.jsonOut.data.status, 42);
+    t.equal(tool.objOut.data.status, 42);
+    t.end();
+  });
+  t.test(`${t.name}: default serialize comms error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ passThrough, write });
+    log.error(commsError);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "comms error");
+    t.equal(tool.objOut.msg, "comms error");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 5);
+    t.equal(Object.keys(tool.objOut.data).length, 5);
+    t.equal(tool.jsonOut.data.name, "CommsError");
+    t.equal(tool.objOut.data.name, "CommsError");
+    t.equal(tool.jsonOut.data.message, "comms error");
+    t.equal(tool.objOut.data.message, "comms error");
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.equal(tool.jsonOut.data.status, 500);
+    t.equal(tool.objOut.data.status, 500);
+    t.equal(tool.jsonOut.data.ip, "1.2.3.4");
+    t.equal(tool.objOut.data.ip, "1.2.3.4");
+    t.end();
+  });
+  t.test(`${t.name}: simple serialize standard error test`, (t) => {
+    tool.reset();
+    let log = new Perj({ serializeErrorFunction: simpleSerializer, passThrough, write });
+    log.error(stdError);
+    t.equal(tool.jsonOut.level, "error");
+    t.equal(tool.objOut.level, "error");
+    t.equal(tool.jsonOut.lvl, 50);
+    t.equal(tool.objOut.lvl, 50);
+    t.equal(tool.getType(tool.jsonOut.time), "Number");
+    t.equal(tool.getType(tool.objOut.time), "Number");
+    t.equal(tool.jsonOut.msg, "standard");
+    t.equal(tool.objOut.msg, "standard");
+    t.equal(tool.jsonOut.error, true);
+    t.equal(tool.objOut.error, true);
+    t.equal(Object.keys(tool.jsonOut.data).length, 3);
+    t.equal(Object.keys(tool.objOut.data).length, 3);
+    t.equal(tool.getType(tool.jsonOut.data.constructor), "Function");
+    t.equal(tool.getType(tool.objOut.data.constructor), "Function");
+    t.equal(tool.jsonOut.data.name, "Error");
+    t.equal(tool.objOut.data.name, "Error");
+    t.equal(tool.jsonOut.data.message, "standard");
+    t.equal(tool.objOut.data.message, "standard");
+    t.equal(tool.getType(tool.jsonOut.data.stack), "String");
+    t.equal(tool.getType(tool.objOut.data.stack), "String");
+    t.end();
+  });
+  t.end();
+});
 
-describe('serialize error tests', () => {
-  test('default serialize empty error test', () => {
-    let log = new Perj({ passThrough, write })
-    log.error(new Error())
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('')
-    expect(tool.objOut.msg).toBe('')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(3)
-    expect(Object.keys(tool.objOut.data).length).toBe(3)
-    expect(tool.jsonOut.data.name).toBe(defaultName)
-    expect(tool.objOut.data.name).toBe(defaultName)
-    expect(tool.jsonOut.data.message).toBe(defaultMessage)
-    expect(tool.objOut.data.message).toBe(defaultMessage)
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-  })
-  test('default serialize standard error test', () => {
-    let log = new Perj({ passThrough, write })
-    log.error(stdError)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('standard')
-    expect(tool.objOut.msg).toBe('standard')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(3)
-    expect(Object.keys(tool.objOut.data).length).toBe(3)
-    expect(tool.jsonOut.data.name).toBe(defaultName)
-    expect(tool.objOut.data.name).toBe(defaultName)
-    expect(tool.jsonOut.data.message).toBe('standard')
-    expect(tool.objOut.data.message).toBe('standard')
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-  })
-  test('default serialize standard circular error test', () => {
-    let log = new Perj({ passThrough, write })
-    let err = new Error('circular')
-    let foo = { bar: 'bar' }
-    foo.foo = foo
-    err.cir = err
-    err.cirObj = foo
-    log.error(err)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('circular')
-    expect(tool.objOut.msg).toBe('circular')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(5)
-    expect(Object.keys(tool.objOut.data).length).toBe(5)
-    expect(tool.jsonOut.data.name).toBe(defaultName)
-    expect(tool.objOut.data.name).toBe(defaultName)
-    expect(tool.jsonOut.data.message).toBe('circular')
-    expect(tool.objOut.data.message).toBe('circular')
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-    expect(tool.jsonOut.data.cir).toBe('[Circular]')
-    expect(tool.objOut.data.cir).toBe('[Circular]')
-    expect(tool.jsonOut.data.cirObj.bar).toBe('bar')
-    expect(tool.objOut.data.cirObj.bar).toBe('bar')
-    expect(tool.jsonOut.data.cirObj.foo).toBe('[Circular]')
-    expect(tool.objOut.data.cirObj.foo).toBe('[Circular]')
-  })
-  test('default serialize multiple standard error test', () => {
-    let log = new Perj({ passThrough, write })
-    let err = new Error('standard2')
-    log.error(stdError, err)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('standard')
-    expect(tool.objOut.msg).toBe('standard')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(tool.jsonOut.data.length).toBe(2)
-    expect(tool.objOut.data.length).toBe(2)
-    expect(Object.keys(tool.jsonOut.data[0]).length).toBe(3)
-    expect(Object.keys(tool.objOut.data[0]).length).toBe(3)
-    expect(tool.jsonOut.data[0].name).toBe(defaultName)
-    expect(tool.objOut.data[0].name).toBe(defaultName)
-    expect(tool.jsonOut.data[0].message).toBe('standard')
-    expect(tool.objOut.data[0].message).toBe('standard')
-    expect(tool.getType(tool.jsonOut.data[0].stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data[0].stack)).toBe('String')
-    expect(Object.keys(tool.jsonOut.data[1]).length).toBe(3)
-    expect(Object.keys(tool.objOut.data[1]).length).toBe(3)
-    expect(tool.jsonOut.data[1].name).toBe(defaultName)
-    expect(tool.objOut.data[1].name).toBe(defaultName)
-    expect(tool.jsonOut.data[1].message).toBe('standard2')
-    expect(tool.objOut.data[1].message).toBe('standard2')
-    expect(tool.getType(tool.jsonOut.data[1].stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data[1].stack)).toBe('String')
-  })
-  test('default serialize extended error test', () => {
-    let log = new Perj({ passThrough, write })
-    const extraError = new Error('extra')
-    extraError.widget = { foo: { bar: { baz: true } } }
-    extError.innerException = extraError
-    extError.plumbus = [1, 2, 3]
-    log.error(extError)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('extended error')
-    expect(tool.objOut.msg).toBe('extended error')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(5)
-    expect(Object.keys(tool.objOut.data).length).toBe(5)
-    expect(tool.jsonOut.data.name).toBe(defaultName)
-    expect(tool.objOut.data.name).toBe(defaultName)
-    expect(tool.jsonOut.data.message).toBe('extended error')
-    expect(tool.objOut.data.message).toBe('extended error')
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-    expect(Array.isArray(tool.jsonOut.data.plumbus)).toBe(true)
-    expect(Array.isArray(tool.objOut.data.plumbus)).toBe(true)
-    expect(tool.jsonOut.data.plumbus.length).toBe(3)
-    expect(tool.objOut.data.plumbus.length).toBe(3)
-    expect(tool.jsonOut.data.plumbus[1]).toBe(2)
-    expect(tool.objOut.data.plumbus[1]).toBe(2)
-    expect(Object.keys(tool.jsonOut.data.innerException).length).toBe(4)
-    expect(Object.keys(tool.objOut.data.innerException).length).toBe(4)
-    expect(tool.jsonOut.data.innerException.name).toBe(defaultName)
-    expect(tool.objOut.data.innerException.name).toBe(defaultName)
-    expect(tool.jsonOut.data.innerException.message).toBe('extra')
-    expect(tool.objOut.data.innerException.message).toBe('extra')
-    expect(tool.getType(tool.jsonOut.data.innerException.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.innerException.stack)).toBe('String')
-    expect(tool.objOut.data.innerException.widget.foo.bar.baz).toBe(true)
-  })
-  test('default serialize app error test', () => {
-    let log = new Perj({ passThrough, write })
-    log.error(appError)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('app error')
-    expect(tool.objOut.msg).toBe('app error')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(4)
-    expect(Object.keys(tool.objOut.data).length).toBe(4)
-    expect(tool.jsonOut.data.name).toBe('AppError')
-    expect(tool.objOut.data.name).toBe('AppError')
-    expect(tool.jsonOut.data.message).toBe('app error')
-    expect(tool.objOut.data.message).toBe('app error')
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-    expect(tool.jsonOut.data.status).toBe(42)
-    expect(tool.objOut.data.status).toBe(42)
-  })
-  test('default serialize comms error test', () => {
-    let log = new Perj({ passThrough, write })
-    log.error(commsError)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('comms error')
-    expect(tool.objOut.msg).toBe('comms error')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(5)
-    expect(Object.keys(tool.objOut.data).length).toBe(5)
-    expect(tool.jsonOut.data.name).toBe('CommsError')
-    expect(tool.objOut.data.name).toBe('CommsError')
-    expect(tool.jsonOut.data.message).toBe('comms error')
-    expect(tool.objOut.data.message).toBe('comms error')
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-    expect(tool.jsonOut.data.status).toBe(500)
-    expect(tool.objOut.data.status).toBe(500)
-    expect(tool.jsonOut.data.ip).toBe('1.2.3.4')
-    expect(tool.objOut.data.ip).toBe('1.2.3.4')
-  })
-  test('simple serialize standard error test', () => {
-    let log = new Perj({ serializeErrorFunction: simpleSerializer, passThrough, write })
-    log.error(stdError)
-    expect(tool.jsonOut.level).toBe('error')
-    expect(tool.objOut.level).toBe('error')
-    expect(tool.jsonOut.lvl).toBe(50)
-    expect(tool.objOut.lvl).toBe(50)
-    expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-    expect(tool.getType(tool.objOut.time)).toBe('Number')
-    expect(tool.jsonOut.msg).toBe('standard')
-    expect(tool.objOut.msg).toBe('standard')
-    expect(tool.jsonOut.error).toBe(true)
-    expect(tool.objOut.error).toBe(true)
-    expect(Object.keys(tool.jsonOut.data).length).toBe(3)
-    expect(Object.keys(tool.objOut.data).length).toBe(3)
-    expect(tool.getType(tool.jsonOut.data.constructor)).toBe('Function')
-    expect(tool.getType(tool.objOut.data.constructor)).toBe('Function')
-    expect(tool.jsonOut.data.name).toBe('Error')
-    expect(tool.objOut.data.name).toBe('Error')
-    expect(tool.jsonOut.data.message).toBe('standard')
-    expect(tool.objOut.data.message).toBe('standard')
-    expect(tool.getType(tool.jsonOut.data.stack)).toBe('String')
-    expect(tool.getType(tool.objOut.data.stack)).toBe('String')
-  })
-})
-
-function simpleSerializer (value) {
-  const { name, message, stack } = value
-  return { name, message, stack }
+function simpleSerializer(value) {
+  const { name, message, stack } = value;
+  return { name, message, stack };
 }

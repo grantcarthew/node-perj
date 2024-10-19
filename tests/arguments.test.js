@@ -1,405 +1,477 @@
-const Perj = require('../src/perj')
-const Tool = require('./tool')
-const tool = new Tool()
-const data = require('../data')
-const write = tool.write.bind(tool)
-const passThrough = true
+import test from "tape";
+import { Perj } from "../src/perj.js";
+import { Tool } from "./tool.js";
+import { data } from "../data/index.js";
 
-let log = new Perj({ write, passThrough })
+const tool = new Tool();
+const write = tool.write.bind(tool);
+const passThrough = true;
 
-beforeEach(() => {
-  tool.reset()
-})
+let log = new Perj({ write, passThrough });
 
-describe('log argument tests', () => {
+test("log argument tests", (t) => {
   for (const level of Object.keys(log.levels)) {
-    log = new Perj({ level: level, write, passThrough })
+    const titlePrefix = `${t.name} | ${level}`;
+    const log = new Perj({ level, write, passThrough });
 
-    test(level + ': empty', () => {
-      log[level]()
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': one undefined', () => {
-      log[level](undefined)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': two undefined', () => {
-      log[level](undefined, undefined)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data[0]).toBe(null)
-      expect(tool.jsonOut.data[1]).toBe(null)
-      expect(tool.objOut.data[0]).toBe(null)
-      expect(tool.objOut.data[1]).toBe(null)
-    })
-    test(level + ': one null primitive', () => {
-      log[level](null)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': two null primitives', () => {
-      log[level](null, null)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data[0]).toBe(null)
-      expect(tool.objOut.data[0]).toBe(null)
-      expect(tool.jsonOut.data[1]).toBe(null)
-      expect(tool.objOut.data[1]).toBe(null)
-    })
-    test(level + ': one number primitive', () => {
-      log[level](42)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(42)
-      expect(tool.objOut.data).toBe(42)
-    })
-    test(level + ': two number primitives', () => {
-      log[level](42, 43)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data[0]).toBe(42)
-      expect(tool.objOut.data[0]).toBe(42)
-      expect(tool.jsonOut.data[1]).toBe(43)
-      expect(tool.objOut.data[1]).toBe(43)
-    })
-    test(level + ': one boolean primitive', () => {
-      log[level](true)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(true)
-      expect(tool.objOut.data).toBe(true)
-    })
-    test(level + ': two boolean primitives', () => {
-      log[level](true, false)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data[0]).toBe(true)
-      expect(tool.objOut.data[0]).toBe(true)
-      expect(tool.jsonOut.data[1]).toBe(false)
-      expect(tool.objOut.data[1]).toBe(false)
-    })
-    test(level + ': one message', () => {
-      log[level](data.msg[0])
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe(data.msg[0])
-      expect(tool.objOut.msg).toBe(data.msg[0])
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': two messages', () => {
-      log[level](data.msg[0], data.msg[1])
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.getType(tool.jsonOut.msg)).toBe('String')
-      expect(tool.getType(tool.objOut.msg)).toBe('String')
-      expect(tool.jsonOut.msg).toBe(data.msg[0])
-      expect(tool.objOut.msg).toBe(data.msg[0])
-      expect(tool.getType(tool.jsonOut.data)).toBe('String')
-      expect(tool.getType(tool.objOut.data)).toBe('String')
-      expect(tool.jsonOut.data).toBe(data.msg[1])
-      expect(tool.objOut.data).toBe(data.msg[1])
-    })
-    test(level + ': one object', () => {
-      log[level](data.tardis)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.jsonOut.data)
-      expect(tool.objOut.data).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.objOut.data)
-    })
-    test(level + ': two objects', () => {
-      log[level](data.tardis, data.serenity)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.jsonOut.data[0]).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.jsonOut.data[0])
-      expect(tool.objOut.data[0]).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.objOut.data[0])
-      expect(tool.jsonOut.data[1]).toMatchObject(data.serenity)
-      expect(data.serenity).toMatchObject(tool.jsonOut.data[1])
-      expect(tool.objOut.data[1]).toMatchObject(data.serenity)
-      expect(data.serenity).toMatchObject(tool.objOut.data[1])
-    })
-    test(level + ': two messages one data', () => {
-      log[level](data.msg[0], data.msg[1], data.tardis)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.getType(tool.jsonOut.msg)).toBe('String')
-      expect(tool.getType(tool.objOut.msg)).toBe('String')
-      expect(tool.jsonOut.msg).toBe(data.msg[0])
-      expect(tool.objOut.msg).toBe(data.msg[0])
-      expect(tool.getType(tool.jsonOut.data)).toBe('Array')
-      expect(tool.getType(tool.objOut.data)).toBe('Array')
-      expect(tool.jsonOut.data[0]).toBe(data.msg[1])
-      expect(tool.objOut.data[0]).toBe(data.msg[1])
-      expect(tool.jsonOut.data[1]).toMatchObject(data.tardis)
-      expect(tool.objOut.data[1]).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.jsonOut.data[1])
-      expect(data.tardis).toMatchObject(tool.objOut.data[1])
-    })
-    test(level + ': two messages two data', () => {
-      log[level](data.msg[0], data.msg[1], data.tardis, data.serenity)
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.getType(tool.jsonOut.msg)).toBe('String')
-      expect(tool.getType(tool.objOut.msg)).toBe('String')
-      expect(tool.jsonOut.msg).toBe(data.msg[0])
-      expect(tool.objOut.msg).toBe(data.msg[0])
-      expect(tool.getType(tool.jsonOut.data)).toBe('Array')
-      expect(tool.getType(tool.objOut.data)).toBe('Array')
-      expect(tool.jsonOut.data.length).toBe(3)
-      expect(tool.objOut.data.length).toBe(3)
-      expect(tool.jsonOut.data[0]).toBe(data.msg[1])
-      expect(tool.objOut.data[0]).toBe(data.msg[1])
-      expect(tool.jsonOut.data[1]).toMatchObject(data.tardis)
-      expect(tool.objOut.data[1]).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.jsonOut.data[1])
-      expect(data.tardis).toMatchObject(tool.objOut.data[1])
-      expect(tool.jsonOut.data[2]).toMatchObject(data.serenity)
-      expect(tool.objOut.data[2]).toMatchObject(data.serenity)
-      expect(data.serenity).toMatchObject(tool.jsonOut.data[2])
-      expect(data.serenity).toMatchObject(tool.objOut.data[2])
-    })
-    test(level + ': two messages two data mixed order', () => {
-      log[level](data.tardis, data.msg[1], data.serenity, data.msg[0])
-      expect(Object.keys(tool.jsonOut).length).toBe(5)
-      expect(Object.keys(tool.objOut).length).toBe(5)
-      expect(tool.getType(tool.jsonOut.time)).toBe('Number')
-      expect(tool.getType(tool.objOut.time)).toBe('Number')
-      expect(tool.jsonOut.level).toBe(level)
-      expect(tool.objOut.level).toBe(level)
-      expect(tool.getType(tool.jsonOut.msg)).toBe('String')
-      expect(tool.getType(tool.objOut.msg)).toBe('String')
-      expect(tool.jsonOut.msg).toBe(data.msg[1])
-      expect(tool.objOut.msg).toBe(data.msg[1])
-      expect(tool.getType(tool.jsonOut.data)).toBe('Array')
-      expect(tool.getType(tool.objOut.data)).toBe('Array')
-      expect(tool.jsonOut.data.length).toBe(3)
-      expect(tool.objOut.data.length).toBe(3)
-      expect(tool.jsonOut.data[0]).toMatchObject(data.tardis)
-      expect(tool.objOut.data[0]).toMatchObject(data.tardis)
-      expect(data.tardis).toMatchObject(tool.jsonOut.data[0])
-      expect(data.tardis).toMatchObject(tool.objOut.data[0])
-      expect(tool.jsonOut.data[1]).toMatchObject(data.serenity)
-      expect(tool.objOut.data[1]).toMatchObject(data.serenity)
-      expect(data.serenity).toMatchObject(tool.jsonOut.data[1])
-      expect(data.serenity).toMatchObject(tool.objOut.data[1])
-      expect(tool.jsonOut.data[2]).toBe(data.msg[0])
-      expect(tool.objOut.data[2]).toBe(data.msg[0])
-    })
-    test(level + ': single string test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info('string')
-      expect(tool.jsonOut.msg).toBe('string')
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.msg).toBe('string')
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': single number test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(123)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(123)
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toBe(123)
-    })
-    test(level + ': single empty array test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info([])
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual([])
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual([])
-    })
-    test(level + ': single array test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info([1, 2, 3])
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual([1, 2, 3])
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual([1, 2, 3])
-    })
-    test(level + ': single object test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info({ key: 'value' })
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual({ key: 'value' })
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual({ key: 'value' })
-    })
-    test(level + ': single boolean test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(true)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual(true)
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual(true)
-    })
-    test(level + ': single date test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(new Date())
-      expect(tool.jsonOut.msg).toBe('')
-      expect(typeof Date.parse(tool.jsonOut.data)).toBe('number')
-      expect(tool.objOut.msg).toBe('')
-      expect(typeof Date.parse(tool.objOut.data)).toBe('number')
-    })
-    test(level + ': single error test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(new Error())
-      expect(tool.jsonOut.msg).toBe('')
-      expect(typeof tool.jsonOut.data).toBe('object')
-      expect(tool.objOut.msg).toBe('')
-      expect(typeof tool.objOut.data).toBe('object')
-    })
-    test(level + ': single null test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(null)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': single undefined test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(undefined)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toBe(null)
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toBe(null)
-    })
-    test(level + ': single empty object test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info({})
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual({})
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual({})
-    })
-    test(level + ': single function test', () => {
-      let log = new Perj({ passThrough, write })
-      log.info(function () {})
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual(null)
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual(null)
-    })
-    test(level + ': single circular object test', () => {
-      let log = new Perj({ passThrough, write })
-      let circ = { key: 1 }
-      circ.inner = circ
-      log.info(circ)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data.key).toBe(1)
-      expect(tool.jsonOut.data.inner).toBe('[Circular]')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data.key).toBe(1)
-      expect(tool.objOut.data.inner).toBe('[Circular]')
-    })
-    test(level + ': single circular function test', () => {
-      let log = new Perj({ passThrough, write })
-      let circFun = function () { }
-      circFun.key = 2
-      circFun.repeat = circFun
-      log.info(circFun)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data).toEqual(null)
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data).toEqual(null)
-    })
-    test(level + ': object with buffer test', () => {
-      let log = new Perj({ passThrough, write })
-      let obj = { foo: Buffer.from('bar') }
-      log.info(obj)
-      expect(tool.jsonOut.msg).toBe('')
-      expect(tool.jsonOut.data.foo.type).toEqual('Buffer')
-      expect(tool.jsonOut.data.foo.utf8).toEqual('bar')
-      expect(tool.objOut.msg).toBe('')
-      expect(tool.objOut.data.foo.type).toEqual('Buffer')
-      expect(tool.objOut.data.foo.utf8).toEqual('bar')
-    })
+    t.test(`${titlePrefix}: empty`, (t) => {
+      tool.reset();
+      log[level]();
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: one undefined`, (t) => {
+      tool.reset();
+      log[level](undefined);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two undefined`, (t) => {
+      tool.reset();
+      log[level](undefined, undefined);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, [null, null]);
+      t.deepEqual(tool.objOut.data, [null, null]);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: one null primitive`, (t) => {
+      tool.reset();
+      log[level](null);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two null primitives`, (t) => {
+      tool.reset();
+      log[level](null, null);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, [null, null]);
+      t.deepEqual(tool.objOut.data, [null, null]);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: one number primitive`, (t) => {
+      tool.reset();
+      log[level](42);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.jsonOut.data, 42);
+      t.equal(tool.objOut.data, 42);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two number primitives`, (t) => {
+      tool.reset();
+      log[level](42, 43);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, [42, 43]);
+      t.deepEqual(tool.objOut.data, [42, 43]);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: one boolean primitive`, (t) => {
+      tool.reset();
+      log[level](true);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.jsonOut.data, true);
+      t.equal(tool.objOut.data, true);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two boolean primitives`, (t) => {
+      tool.reset();
+      log[level](true, false);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, [true, false]);
+      t.deepEqual(tool.objOut.data, [true, false]);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: one message`, (t) => {
+      tool.reset();
+      log[level](data.msg[0]);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, data.msg[0]);
+      t.equal(tool.objOut.msg, data.msg[0]);
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two messages`, (t) => {
+      tool.reset();
+      log[level](data.msg[0], data.msg[1]);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.getType(tool.jsonOut.msg), "String");
+      t.equal(tool.getType(tool.objOut.msg), "String");
+      t.equal(tool.jsonOut.msg, data.msg[0]);
+      t.equal(tool.objOut.msg, data.msg[0]);
+      t.equal(tool.getType(tool.jsonOut.data), "String");
+      t.equal(tool.getType(tool.objOut.data), "String");
+      t.equal(tool.jsonOut.data, data.msg[1]);
+      t.equal(tool.objOut.data, data.msg[1]);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: one object`, (t) => {
+      tool.reset();
+      log[level](data.tardis);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, data.tardis);
+      t.deepEqual(tool.objOut.data, data.tardis);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two objects`, (t) => {
+      tool.reset();
+      log[level](data.tardis, data.serenity);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.jsonOut.data[0], data.tardis);
+      t.deepEqual(tool.objOut.data[0], data.tardis);
+      t.deepEqual(tool.jsonOut.data[1], data.serenity);
+      t.deepEqual(tool.objOut.data[1], data.serenity);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two messages one data`, (t) => {
+      tool.reset();
+      log[level](data.msg[0], data.msg[1], data.tardis);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.getType(tool.jsonOut.msg), "String");
+      t.equal(tool.getType(tool.objOut.msg), "String");
+      t.equal(tool.jsonOut.msg, data.msg[0]);
+      t.equal(tool.objOut.msg, data.msg[0]);
+      t.equal(tool.getType(tool.jsonOut.data), "Array");
+      t.equal(tool.getType(tool.objOut.data), "Array");
+      t.equal(tool.jsonOut.data[0], data.msg[1]);
+      t.equal(tool.objOut.data[0], data.msg[1]);
+      t.deepEqual(tool.jsonOut.data[1], data.tardis);
+      t.deepEqual(tool.objOut.data[1], data.tardis);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two messages two data`, (t) => {
+      tool.reset();
+      log[level](data.msg[0], data.msg[1], data.tardis, data.serenity);
+      t.equal(Object.keys(tool.jsonOut).length, 5);
+      t.equal(Object.keys(tool.objOut).length, 5);
+      t.equal(tool.getType(tool.jsonOut.time), "Number");
+      t.equal(tool.getType(tool.objOut.time), "Number");
+      t.equal(tool.jsonOut.level, level);
+      t.equal(tool.objOut.level, level);
+      t.equal(tool.getType(tool.jsonOut.msg), "String");
+      t.equal(tool.getType(tool.objOut.msg), "String");
+      t.equal(tool.jsonOut.msg, data.msg[0]);
+      t.equal(tool.objOut.msg, data.msg[0]);
+      t.equal(tool.getType(tool.jsonOut.data), "Array");
+      t.equal(tool.getType(tool.objOut.data), "Array");
+      t.equal(tool.jsonOut.data.length, 3);
+      t.equal(tool.objOut.data.length, 3);
+      t.equal(tool.jsonOut.data[0], data.msg[1]);
+      t.equal(tool.objOut.data[0], data.msg[1]);
+      t.deepEqual(tool.jsonOut.data[1], data.tardis);
+      t.deepEqual(tool.objOut.data[1], data.tardis);
+      t.deepEqual(tool.jsonOut.data[2], data.serenity);
+      t.deepEqual(tool.objOut.data[2], data.serenity);
+      t.end();
+    });
+
+    t.test(`${titlePrefix}: two messages two data mixed order`, (t) => {
+      log[level](data.tardis, data.msg[1], data.serenity, data.msg[0]);
+      t.equal(Object.keys(tool.jsonOut).length, 5, "jsonOut should have 5 keys");
+      t.equal(Object.keys(tool.objOut).length, 5, "objOut should have 5 keys");
+      t.equal(tool.getType(tool.jsonOut.time), "Number", "jsonOut time should be a number");
+      t.equal(tool.getType(tool.objOut.time), "Number", "objOut time should be a number");
+      t.equal(tool.jsonOut.level, level, "jsonOut level should match");
+      t.equal(tool.objOut.level, level, "objOut level should match");
+      t.equal(tool.getType(tool.jsonOut.msg), "String", "jsonOut msg should be a string");
+      t.equal(tool.getType(tool.objOut.msg), "String", "objOut msg should be a string");
+      t.equal(tool.jsonOut.msg, data.msg[1], "jsonOut msg should match");
+      t.equal(tool.objOut.msg, data.msg[1], "objOut msg should match");
+      t.equal(tool.getType(tool.jsonOut.data), "Array", "jsonOut data should be an array");
+      t.equal(tool.getType(tool.objOut.data), "Array", "objOut data should be an array");
+      t.equal(tool.jsonOut.data.length, 3, "jsonOut data array length should be 3");
+      t.equal(tool.objOut.data.length, 3, "objOut data array length should be 3");
+      t.deepEqual(tool.jsonOut.data[0], data.tardis, "jsonOut data[0] should match tardis");
+      t.deepEqual(tool.objOut.data[0], data.tardis, "objOut data[0] should match tardis");
+      t.deepEqual(data.tardis, tool.jsonOut.data[0], "tardis should match jsonOut data[0]");
+      t.deepEqual(data.tardis, tool.objOut.data[0], "tardis should match objOut data[0]");
+      t.deepEqual(tool.jsonOut.data[1], data.serenity, "jsonOut data[1] should match serenity");
+      t.deepEqual(tool.objOut.data[1], data.serenity, "objOut data[1] should match serenity");
+      t.deepEqual(data.serenity, tool.jsonOut.data[1], "serenity should match jsonOut data[1]");
+      t.deepEqual(data.serenity, tool.objOut.data[1], "serenity should match objOut data[1]");
+      t.equal(tool.jsonOut.data[2], data.msg[0], "jsonOut data[2] should match msg[0]");
+      t.equal(tool.objOut.data[2], data.msg[0], "objOut data[2] should match msg[0]");
+      t.end();
+    });
+
+    // Test with a single string
+    t.test(`${titlePrefix}: single string test`, (t) => {
+      tool.reset();
+      log[level]("string");
+      t.equal(tool.jsonOut.msg, "string");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.msg, "string");
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    // Test with a single number
+    t.test(`${titlePrefix}: single number test`, (t) => {
+      tool.reset();
+      log[level](123);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data, 123);
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data, 123);
+      t.end();
+    });
+
+    // Test with an empty array
+    t.test(`${titlePrefix}: single empty array test`, (t) => {
+      tool.reset();
+      log[level]([]);
+      t.equal(tool.jsonOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, []);
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.objOut.data, []);
+      t.end();
+    });
+
+    // Test with an array
+    t.test(`${titlePrefix}: single array test`, (t) => {
+      tool.reset();
+      log[level]([1, 2, 3]);
+      t.equal(tool.jsonOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, [1, 2, 3]);
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.objOut.data, [1, 2, 3]);
+      t.end();
+    });
+
+    // Test with an object
+    t.test(`${titlePrefix}: single object test`, (t) => {
+      tool.reset();
+      log[level]({ key: "value" });
+      t.equal(tool.jsonOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, { key: "value" });
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.objOut.data, { key: "value" });
+      t.end();
+    });
+
+    // Test with a boolean
+    t.test(`${titlePrefix}: single boolean test`, (t) => {
+      tool.reset();
+      log[level](true);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data, true);
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data, true);
+      t.end();
+    });
+
+    // Test with a Date object
+    t.test(`${titlePrefix}: single date test`, (t) => {
+      tool.reset();
+      const date = new Date();
+      log[level](date);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(typeof Date.parse(tool.jsonOut.data), "number");
+      t.equal(tool.objOut.msg, "");
+      t.equal(typeof Date.parse(tool.objOut.data), "number");
+      t.end();
+    });
+
+    // Test with an Error object
+    t.test(`${titlePrefix}: single error test`, (t) => {
+      tool.reset();
+      log[level](new Error());
+      t.equal(tool.jsonOut.msg, "");
+      t.ok(typeof tool.jsonOut.data === "object");
+      t.equal(tool.objOut.msg, "");
+      t.ok(typeof tool.objOut.data === "object");
+      t.end();
+    });
+
+    // Test with null
+    t.test(`${titlePrefix}: single null test`, (t) => {
+      tool.reset();
+      log[level](null);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    // Test with undefined
+    t.test(`${titlePrefix}: single undefined test`, (t) => {
+      tool.reset();
+      log[level](undefined);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    // Test with an empty object
+    t.test(`${titlePrefix}: single empty object test`, (t) => {
+      tool.reset();
+      log[level]({});
+      t.equal(tool.jsonOut.msg, "");
+      t.deepEqual(tool.jsonOut.data, {});
+      t.equal(tool.objOut.msg, "");
+      t.deepEqual(tool.objOut.data, {});
+      t.end();
+    });
+
+    // Test with a function
+    t.test(`${titlePrefix}: single function test`, (t) => {
+      tool.reset();
+      log[level](function () {});
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    // Test with a circular object
+    t.test(`${titlePrefix}: single circular object test`, (t) => {
+      tool.reset();
+      let circ = { key: 1 };
+      circ.inner = circ;
+      log[level](circ);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data.key, 1);
+      t.equal(tool.jsonOut.data.inner, "[Circular]");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data.key, 1);
+      t.equal(tool.objOut.data.inner, "[Circular]");
+      t.end();
+    });
+
+    // Test with a circular function
+    t.test(`${titlePrefix}: single circular function test`, (t) => {
+      tool.reset();
+      let circFun = function () {};
+      circFun.key = 2;
+      circFun.repeat = circFun;
+      log[level](circFun);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data, null);
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data, null);
+      t.end();
+    });
+
+    // Test with an object containing a Buffer
+    t.test(`${titlePrefix}: object with buffer test`, (t) => {
+      tool.reset();
+      let obj = { foo: Buffer.from("bar") };
+      log[level](obj);
+      t.equal(tool.jsonOut.msg, "");
+      t.equal(tool.jsonOut.data.foo.type, "Buffer");
+      t.equal(tool.jsonOut.data.foo.utf8, "bar");
+      t.equal(tool.objOut.msg, "");
+      t.equal(tool.objOut.data.foo.type, "Buffer");
+      t.equal(tool.objOut.data.foo.utf8, "bar");
+      t.end();
+    });
   }
-})
+  t.end();
+});

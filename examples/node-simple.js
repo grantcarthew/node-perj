@@ -6,7 +6,6 @@ A full detail console log output including formatted data.
 Platform:
 - Node.js only due to:
   - 'os' module.
-  - 'path' module.
   - 'process' object.
 
 Dependencies:
@@ -15,7 +14,7 @@ Dependencies:
 Features:
 - Logs to the console if in development.
 - Logs to 'process.stdout' if in production.
-- Logs ver, time, level, name, host, pid, file, message, and data properties.
+- Logs ver, time, level, name, host, pid, message, and data properties.
 - Stringified objects displayed on next line.
 - The 'obj' variable has been sanitized so JSON.stringify is safe.
 
@@ -24,7 +23,6 @@ Usage:
 - Import the module as 'logger', 'log', or something similar.
 - Change the value of the 'name' variable below.
 - Customize as needed.
-- Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
 - In production you will need to pipe the process stdout to another process.
 
 Suggestions:
@@ -42,32 +40,32 @@ Performance:
 
 */
 
-const Perj = require('perj')
-const isProd = process.env.NODE_ENV === 'production'
-const ver = 1
-const host = require('os').hostname()
-const pid = process.pid
-const file = require('path').basename(module.filename)
-const name = 'Your App Name' // <======= CHANGE THIS NAME
-const passThrough = !isProd
-const write = envWriter()
+import { Perj } from "../dist/perj.js";
+import { hostname } from "os";
+const isProd = process.env.NODE_ENV === "production";
+const ver = 1;
+const host = hostname();
+const pid = process.pid;
+const name = "Your App Name"; // <======= CHANGE THIS NAME
+const passThrough = !isProd;
+const write = envWriter();
 
-module.exports = new Perj({ ver, name, host, pid, file, passThrough, write })
+export const log = new Perj({ ver, name, host, pid, passThrough, write });
 
-function envWriter () {
+function envWriter() {
   if (isProd) {
-    return process.stdout.write.bind(process.stdout)
+    return process.stdout.write.bind(process.stdout);
   }
-  return writeToConsole
+  return writeToConsole;
 }
 
-function writeToConsole (json, obj) {
-  const dt = new Date(obj.time)
-  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}:${obj.file}) ${obj.msg}`
+function writeToConsole(json, obj) {
+  const dt = new Date(obj.time);
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}:${obj.pid}) ${obj.msg}`;
   if (obj.data) {
-    output += '\n' + JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
+    output += "\n" + JSON.stringify(obj.data, null, 2); // <=== Remove if you don't want data logged to the console.
   }
-  console.log(output)
+  console.log(output);
 
   // Extend by sending 'json' to your API or cloud storage.
 }
@@ -76,7 +74,7 @@ function writeToConsole (json, obj) {
 
 Example console output:
 
-[2018-05-03T02:46:54.611Z][info][app](Dev:7094:node-simple.js)
+[2018-05-03T02:46:54.611Z][info][app](Dev:7094)
 {
   "name": "TARDIS",
   "class": "Time and Relative Dimension in Space",

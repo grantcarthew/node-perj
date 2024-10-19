@@ -27,19 +27,19 @@ Performance:
 
 */
 
-const Perj = require('perj')
-const log = new Perj({ serializers: { req: reqSerializer, res: resSerializer } })
+const Perj = require("perj");
+const log = new Perj({ serializers: { req: reqSerializer, res: resSerializer } });
 
-function reqSerializer (value) {
-  const { method, url, headers, params, query, connection } = value
-  const remoteAddress = connection && connection.remoteAddress
-  const remotePort = connection && connection.remotePort
-  return { method, url, headers, params, query, remoteAddress, remotePort }
+function reqSerializer(value) {
+  const { method, url, headers, params, query, connection } = value;
+  const remoteAddress = connection && connection.remoteAddress;
+  const remotePort = connection && connection.remotePort;
+  return { method, url, headers, params, query, remoteAddress, remotePort };
 }
 
-function resSerializer (value) {
-  const { statusCode, _headerSent: headerSent } = value
-  return { statusCode, headerSent }
+function resSerializer(value) {
+  const { statusCode, _headerSent: headerSent } = value;
+  return { statusCode, headerSent };
 }
 
 /*

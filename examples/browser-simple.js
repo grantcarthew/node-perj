@@ -38,21 +38,21 @@ location.hostname = 'http://abc.net'
 
 */
 
-const Perj = require('perj')
-const ver = 1
-const name = 'Your App Name' // <======= CHANGE THIS NAME
-const host = location.hostname
-const passThrough = true
+import Perj from "https://unpkg.com/perj/dist/perj.js"
+const ver = 1;
+const name = "Your App Name"; // <======= CHANGE THIS NAME
+const host = location.hostname;
+const passThrough = true;
 
-module.exports = new Perj({ ver, name, host, passThrough, write })
+export const log = new Perj({ ver, name, host, passThrough, write });
 
-function write (json, obj) {
-  const dt = new Date(obj.time)
-  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}) ${obj.msg}`
+function write(json, obj) {
+  const dt = new Date(obj.time);
+  let output = `[${dt.toISOString()}][${obj.level}][${obj.name}](${obj.host}) ${obj.msg}`;
   if (obj.data) {
-    output += '\n' + JSON.stringify(obj.data, null, 2) // <=== Remove if you don't want data logged to the console.
+    output += "\n" + JSON.stringify(obj.data, null, 2); // <=== Remove if you don't want data logged to the console.
   }
-  console.log(output)
+  console.log(output);
 
   // Extend by sending 'json' to your API or cloud storage.
 }

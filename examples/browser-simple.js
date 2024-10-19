@@ -38,13 +38,13 @@ location.hostname = 'http://abc.net'
 
 */
 
-const Perj = require("perj");
+import Perj from "https://unpkg.com/perj/dist/perj.js"
 const ver = 1;
 const name = "Your App Name"; // <======= CHANGE THIS NAME
 const host = location.hostname;
 const passThrough = true;
 
-module.exports = new Perj({ ver, name, host, passThrough, write });
+export const log = new Perj({ ver, name, host, passThrough, write });
 
 function write(json, obj) {
   const dt = new Date(obj.time);

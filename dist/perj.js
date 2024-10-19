@@ -1,76 +1,170 @@
-import { options as defaultOptions } from "./options.js";
-import { notationCopy } from "./notation-copy.js";
+// src/notation-copy.js
+function notationCopy(target, ...sources) {
+  let convertBuffer = false;
+  if (typeof Buffer !== "undefined") {
+    convertBuffer = true;
+  }
+  const maxCalls = 2e3;
+  let calls;
+  const seen = /* @__PURE__ */ new WeakSet();
+  for (const source of sources) {
+    calls = 0;
+    notationCopyRecursive(target, source);
+    if (calls > maxCalls) {
+      console.warn(`[Perj] Maximum of ${maxCalls} recursive calls has been reached.`);
+    }
+  }
+  return target;
+  function notationCopyRecursive(tgt, src) {
+    if (calls++ > maxCalls) {
+      return;
+    }
+    if (src == null) {
+      return src;
+    }
+    const type = typeof src;
+    if (type === "string" || type === "number" || type === "boolean") {
+      return src;
+    }
+    if (type === "object") {
+      if (seen.has(src)) {
+        return "[Circular]";
+      }
+      seen.add(src);
+      if (Array.isArray(src)) {
+        const newArray = [];
+        for (let i = 0; i < src.length; i++) {
+          newArray[i] = notationCopyRecursive({}, src[i]);
+        }
+        return newArray;
+      }
+      if (src instanceof Date) {
+        return src;
+      }
+      if (src instanceof Error) {
+        for (const name of Reflect.ownKeys(src)) {
+          const result = notationCopyRecursive({}, src[name]);
+          if (result !== void 0) {
+            tgt[name] = result;
+          }
+        }
+        if (tgt.message === void 0) {
+          tgt.message = "The application has encountered an unknown error.";
+        }
+        if (tgt.name === void 0) {
+          tgt.name = "Error";
+        }
+        return tgt;
+      }
+      if (convertBuffer && src instanceof Buffer) {
+        const maxBytes = 50;
+        const result = { type: "Buffer" };
+        result.hex = src.toString("hex", 0, maxBytes);
+        result.utf8 = src.toString("utf8", 0, maxBytes);
+        result.base64 = src.toString("base64", 0, maxBytes);
+        if (src.length > maxBytes) {
+          const suffix = "...";
+          result.hex += suffix;
+          result.utf8 += suffix;
+          result.base64 += suffix;
+        }
+        return result;
+      }
+      for (const name in src) {
+        const result = notationCopyRecursive({}, src[name]);
+        if (result !== void 0) {
+          tgt[name] = result;
+        }
+      }
+      return tgt;
+    }
+    return void 0;
+  }
+}
 
-// Symbols for functions and values
-const _SplitOptions = Symbol("SplitOptions");
-const _Options = Symbol("Options");
-const _TopSnip = Symbol("TopSnip");
-const _TopValues = Symbol("TopValues");
-const _TopIsPrimitive = Symbol("TopIsPrimitive");
-const _HeaderStrings = Symbol("HeaderStrings");
-const _HeaderValues = Symbol("HeaderValues");
-const _SetLevelHeader = Symbol("SetLevelHeader");
-const _SetLevelFunction = Symbol("SetLevelFunction");
+// src/options.js
+var options = {
+  levels: {
+    fatal: 60,
+    error: 50,
+    warn: 40,
+    info: 30,
+    debug: 20,
+    trace: 10
+  },
+  level: "info",
+  levelKey: "level",
+  levelKeyEnabled: true,
+  levelNumberKey: "lvl",
+  levelNumberKeyEnabled: true,
+  dateTimeKey: "time",
+  dateTimeFunction,
+  messageKey: "msg",
+  dataKey: "data",
+  separatorString: ":",
+  serializers: false,
+  serializeErrorFunction,
+  stringifyFunction,
+  passThrough: false,
+  write: defaultWriter()
+};
+function dateTimeFunction() {
+  return Date.now();
+}
+function defaultWriter() {
+  if (typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]") {
+    return process.stdout.write.bind(process.stdout);
+  }
+  return console.log;
+}
+function stringifyFunction(obj, replacer, spacer) {
+  if (obj == null) {
+    return null;
+  }
+  const type = typeof obj;
+  if (type === "string") {
+    return JSON.stringify(obj, replacer, spacer);
+  }
+  if (type === "number" || type === "boolean") {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    let objJson = "[";
+    const last = obj.length - 1;
+    for (let i = 0; i < obj.length; i++) {
+      objJson += stringifyFunction(obj[i]);
+      if (i < last) {
+        objJson += ",";
+      }
+    }
+    return objJson + "]";
+  }
+  return JSON.stringify(notationCopy({}, obj), replacer, spacer);
+}
+function serializeErrorFunction(value) {
+  return notationCopy({}, value);
+}
 
-/*
-Code Summary:
-Following are points of interest around the perj code choices.
-- Symbols used to hide internal properties and methods.
-- Multiple Symbols due to major performance hit if using nested.
-- Deeply nested 'if' and 'for' statements due to performance benifits.
-- Some minor duplication due to performance benifits.
-
-Symbol Summary:
-_SplitOptions: <Function>
-  Used to split the user options from top level properties.
-  Helps to abstract the split function out of the constructor.
-
-_Options: <Object>
-  This holds an Object with the default or custom options.
-
-_TopSnip: <String>
-  This holds a JSON snippet of the user supplied top level properties.
-
-_TopValues: <Object>
-  This holds the user supplied top level properies.
-  It is used to build the _TopSnip string and when
-  'passThrough' is enabled.
-
-_TopIsPrimitive: <Boolean>
-  Object copy is a real pig to work with in a high
-  performance project. To avoid copying objects, this flag
-  is used to indicate if the user has assigned a top level property
-  with values that are only simple primitives (string, number, boolean).
-  If the user assigned values are all simple primitives, a 'for' loop
-  is faster to duplicate an object.
-  This flag is also set to false if the user supplies a custom
-  stringify function.
-
-_HeaderStrings: <Object>
-  The header for each log level is the same such as:
-  {"level":"error","lvl":50,"time":1525643291716
-  This caches the level headers.
-
-_HeaderValues: <Object>
-  Only used when 'passThrough' is enabled.
-  Permits rebuilding the JSON object for output.
-
-_SetLevelHeader: <Function>
-  Holds the function used to build the level header.
-
-_SetLevelFunction: <Function>
-  This function is used to generate the level functions.
-*/
-export class Perj {
-  constructor(options) {
-    if (options != null && options.constructor !== Object) {
+// src/perj.js
+var _SplitOptions = Symbol("SplitOptions");
+var _Options = Symbol("Options");
+var _TopSnip = Symbol("TopSnip");
+var _TopValues = Symbol("TopValues");
+var _TopIsPrimitive = Symbol("TopIsPrimitive");
+var _HeaderStrings = Symbol("HeaderStrings");
+var _HeaderValues = Symbol("HeaderValues");
+var _SetLevelHeader = Symbol("SetLevelHeader");
+var _SetLevelFunction = Symbol("SetLevelFunction");
+var Perj = class {
+  constructor(options2) {
+    if (options2 != null && options2.constructor !== Object) {
       throw new Error("Provide options object to create a logger.");
     }
-    this[_Options] = Object.assign({}, defaultOptions);
+    this[_Options] = Object.assign({}, options);
     this[_TopSnip] = "";
     this[_TopValues] = {};
     this[_TopIsPrimitive] = true;
-    this[_SplitOptions](options);
+    this[_SplitOptions](options2);
     this[_HeaderStrings] = {};
     this[_HeaderValues] = {};
     for (const level in this[_Options].levels) {
@@ -78,26 +172,21 @@ export class Perj {
       this[_SetLevelFunction](level);
     }
   }
-
   get level() {
     return this[_Options].level;
   }
-
   set level(level) {
     if (!Object.hasOwn(this[_Options].levels, level)) {
       throw new Error("The level option must be a valid key in the levels object.");
     }
     if (!Object.hasOwn(this, _Options)) {
-      // Attaching the options object to this instance
       this[_Options] = Object.assign({}, this[_Options]);
     }
     this[_Options].level = level;
   }
-
   get levels() {
     return this[_Options].levels;
   }
-
   addLevel(newLevels) {
     for (const level in newLevels) {
       if (this[level]) {
@@ -108,54 +197,48 @@ export class Perj {
       this[_SetLevelFunction](level);
     }
   }
-
   get write() {
     return this[_Options].write;
   }
-
-  [_SplitOptions](options) {
-    if (!options) {
+  [_SplitOptions](options2) {
+    if (!options2) {
       return;
     }
-    for (const key in options) {
-      if (Object.hasOwn(defaultOptions, key)) {
+    for (const key in options2) {
+      if (Object.hasOwn(options, key)) {
         if (key === "level") {
-          this.level = options[key];
+          this.level = options2[key];
           continue;
         }
         if (key === "stringifyFunction") {
           this[_TopIsPrimitive] = false;
         }
-        this[_Options][key] = options[key];
+        this[_Options][key] = options2[key];
       } else {
-        const type = typeof options[key];
+        const type = typeof options2[key];
         if (type === "string") {
-          this[_TopSnip] += '"' + key + '":"' + options[key] + '",';
-          this[_TopValues][key] = options[key];
+          this[_TopSnip] += '"' + key + '":"' + options2[key] + '",';
+          this[_TopValues][key] = options2[key];
         } else if (type === "number" || type === "boolean") {
-          this[_TopSnip] += '"' + key + '":' + options[key] + ",";
-          this[_TopValues][key] = options[key];
+          this[_TopSnip] += '"' + key + '":' + options2[key] + ",";
+          this[_TopValues][key] = options2[key];
         } else if (type === "undefined") {
           this[_TopSnip] += '"' + key + '":null,';
           this[_TopValues][key] = null;
         } else {
-          this[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(options[key]) + ",";
-          this[_TopValues][key] = options[key];
+          this[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(options2[key]) + ",";
+          this[_TopValues][key] = options2[key];
           this[_TopIsPrimitive] = false;
         }
       }
     }
   }
-
   [_SetLevelHeader](level) {
     this[_HeaderStrings][level] = "{";
-    this[_Options].levelKeyEnabled &&
-      (this[_HeaderStrings][level] += '"' + this[_Options].levelKey + '":"' + level + '",');
-    this[_Options].levelNumberKeyEnabled &&
-      (this[_HeaderStrings][level] += '"' + this[_Options].levelNumberKey + '":' + this[_Options].levels[level] + ",");
+    this[_Options].levelKeyEnabled && (this[_HeaderStrings][level] += '"' + this[_Options].levelKey + '":"' + level + '",');
+    this[_Options].levelNumberKeyEnabled && (this[_HeaderStrings][level] += '"' + this[_Options].levelNumberKey + '":' + this[_Options].levels[level] + ",");
     this[_TopSnip] !== "" && (this[_HeaderStrings][level] += this[_TopSnip]);
     this[_HeaderStrings][level] += '"' + this[_Options].dateTimeKey + '":';
-
     if (this[_Options].passThrough) {
       const levelObj = {};
       this[_Options].levelKeyEnabled && (levelObj[this[_Options].levelKey] = level);
@@ -163,9 +246,8 @@ export class Perj {
       this[_HeaderValues][level] = notationCopy(levelObj, this[_TopValues]);
     }
   }
-
   [_SetLevelFunction](level) {
-    this[level] = function (...items) {
+    this[level] = function(...items) {
       if (this[_Options].levels[this[_Options].level] > this[_Options].levels[level]) {
         return;
       }
@@ -174,7 +256,6 @@ export class Perj {
       let data = null;
       let dataJson = "null";
       let isError = false;
-
       const serialize = (item) => {
         if (!this[_Options].serializers) {
           return item;
@@ -188,21 +269,18 @@ export class Perj {
           if (Object.hasOwn && Object.hasOwn(item, key) && this[_Options].serializers[key]) {
             value = this[_Options].serializers[key](value);
           }
-          if (value !== undefined) {
+          if (value !== void 0) {
             graded[key] = value;
           }
         }
         return graded;
       };
-
       if (items.length === 1) {
-        // Single item processing
         const item = items[0];
         const type = typeof item;
         if (type === "string") {
           msg = item;
         } else if (item == null || type === "function") {
-          // Undefined or null, keep defaults.
         } else if (type === "number" || type === "boolean") {
           data = item;
           dataJson = "" + item;
@@ -216,7 +294,6 @@ export class Perj {
           dataJson = this[_Options].stringifyFunction(data);
         }
       } else if (items.length > 1) {
-        // Multiple item processing
         data = [];
         for (const item of items) {
           const type = typeof item;
@@ -240,37 +317,23 @@ export class Perj {
             }
             continue;
           }
-
           data.push(serialize(item));
         }
-
         if (data.length === 1) {
           data = data[0];
         }
         dataJson = this[_Options].stringifyFunction(data);
       }
-
-      let json =
-        this[_HeaderStrings][level] +
-        time +
-        ',"' +
-        this[_Options].messageKey +
-        '":"' +
-        msg +
-        '","' +
-        this[_Options].dataKey +
-        '":' +
-        dataJson;
+      let json = this[_HeaderStrings][level] + time + ',"' + this[_Options].messageKey + '":"' + msg + '","' + this[_Options].dataKey + '":' + dataJson;
       if (isError) {
         json += ',"error":true';
       }
       json += "}\n";
-
       if (this[_Options].passThrough) {
         const obj = notationCopy({}, this[_HeaderValues][level], {
           [this[_Options].dateTimeKey]: time,
           [this[_Options].messageKey]: msg,
-          [this[_Options].dataKey]: data,
+          [this[_Options].dataKey]: data
         });
         if (isError) {
           obj.error = true;
@@ -281,45 +344,32 @@ export class Perj {
       }
     };
   }
-
   child(tops) {
     if (tops == null || tops.constructor !== Object) {
       throw new Error("Provide top level arguments object to create a child logger.");
     }
     const newChild = Object.create(this);
     if (this[_TopIsPrimitive]) {
-      // Avoiding Object.assign which is not needed
       newChild[_TopValues] = {};
       newChild[_TopIsPrimitive] = true;
       for (const key in this[_TopValues]) {
         newChild[_TopValues][key] = this[_TopValues][key];
       }
     } else {
-      // Top value is an object. Take the object copy hit like a man.
       newChild[_TopValues] = notationCopy({}, this[_TopValues]);
       newChild[_TopIsPrimitive] = false;
     }
     for (const key in tops) {
-      // Options and key names are not valid, skipping.
-      if (
-        Object.hasOwn(defaultOptions, key) ||
-        this[_Options].levelKey === key ||
-        this[_Options].levelNumberKey === key ||
-        this[_Options].dateTimeKey === key ||
-        this[_Options].messageKey === key ||
-        this[_Options].dataKey === key
-      ) {
+      if (Object.hasOwn(options, key) || this[_Options].levelKey === key || this[_Options].levelNumberKey === key || this[_Options].dateTimeKey === key || this[_Options].messageKey === key || this[_Options].dataKey === key) {
         continue;
       }
       const type = typeof tops[key];
       if (type === "string" && Object.hasOwn(this[_TopValues], key) && typeof this[_TopValues][key] === "string") {
-        // New top key is the same as parent and is a string. Appending separator string and new value.
         newChild[_TopValues][key] = this[_TopValues][key] + this[_Options].separatorString + tops[key];
       } else if (type === "undefined") {
         newChild[_TopValues][key] = null;
       } else {
         newChild[_TopValues][key] = tops[key];
-        // Not using && so we can exit early
         if (!(type === "string" || type === "number" || type === "boolean")) {
           this[_TopIsPrimitive] = false;
         }
@@ -328,7 +378,6 @@ export class Perj {
     newChild[_TopSnip] = "";
     for (const key in newChild[_TopValues]) {
       if (newChild[_TopIsPrimitive]) {
-        // Privitive JSON.stringify. Cheap.
         const type = typeof newChild[_TopValues][key];
         if (type === "string") {
           newChild[_TopSnip] += '"' + key + '":"' + newChild[_TopValues][key] + '",';
@@ -347,14 +396,15 @@ export class Perj {
     }
     return newChild;
   }
-
   stringify(obj, replacer, spacer) {
     return this[_Options].stringifyFunction(obj, replacer, spacer);
   }
-
   json(data) {
     console.log(this[_Options].stringifyFunction(data, null, 2));
   }
-}
-
-export default Perj;
+};
+var perj_default = Perj;
+export {
+  Perj,
+  perj_default as default
+};

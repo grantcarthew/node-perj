@@ -1,5 +1,5 @@
 package-lock.json
-pnpm-lock.ymal
+pnpm-lock.yaml
 node_modules
 coverage
 codeclimate.sh

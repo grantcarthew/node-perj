@@ -8,7 +8,7 @@ const tool = new Tool();
 const write = tool.write.bind(tool);
 const passThrough = true;
 
-test.only("top level properties tests", (t) => {
+test("top level properties tests", (t) => {
   t.test(`${t.name}: parent top level properties`, (t) => {
     tool.reset();
     let log = new Perj({ write, passThrough, foo: "bar", bop: 22, bee: true, baz: undefined, boo: null });

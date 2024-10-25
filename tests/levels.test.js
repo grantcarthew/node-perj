@@ -160,6 +160,9 @@ test("log level tests", (t) => {
     t.equal(tool.jsonOut.level, "batman", "batman level logged correctly");
     t.equal(tool.jsonOut.lvl, 500, "batman level value correct");
     t.equal(tool.jsonOut.msg, "batman", "batman message logged correctly");
+    t.throws(() => {
+      log.level = "not-a-level";
+    }, "An invalid level should throw");
     t.end();
   });
 

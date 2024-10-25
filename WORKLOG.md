@@ -1,4 +1,4 @@
-# Worklog
+# WORKLOG
 
 ## Publishing
 
@@ -7,7 +7,9 @@
 3. Run `pnpm audit --fix`
 4. Run `pnpm lint`
 5. Run the tests `pnpm test`
-6. Build the package `pnpm build`
-7. Commit any changes
-8. Login to npm `pnpm login`
-9. Publish the package `pnpm publish`
+6. Run test coverage `pnpm coverage`
+7. Review the coverage in `./coverage`
+8. Build the package `pnpm build`
+9. Commit any changes
+10. Login to npm `pnpm login`
+11. Publish the package `pnpm publish`

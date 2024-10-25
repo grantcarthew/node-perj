@@ -75,7 +75,7 @@ const ver = 1;
 const name = 'QuickStart';
 const host = os.hostname();
 const pid = process.pid;
-const file = path.basename(import.meta.url, '.mjs');
+const file = path.basename(import.meta.url, '.js');
 
 const log = new Perj({ ver, name, host, pid, file });
 
@@ -96,7 +96,7 @@ The following string is sent to standard out:
 The following example adds `ver`, `name`, and `host` top level property to the log entries:
 
 ```js
-import Perj from "perj";
+import Perj from "https://unpkg.com/perj/dist/perj.js"
 
 // Customize the variables below as needed. They are not required.
 const ver = 1;
@@ -122,13 +122,13 @@ For full documentation see the [Wiki][perj-wiki].
 
 ## About the Owner
 
-I, Grant Carthew, am a technologist, trainer, and Dad from Queensland, Australia. I work on code in a number of personal projects and when the need arises I build my own packages.
+I'm Grant Carthew, a technologist from Queensland, Australia, with a passion for coding. I delve into personal projects and develop custom solutions when the existing tools fall short.
 
-This project exists because I was not happy with other logging packages.
+This repository hosts my custom logging solution, created because I couldn't find a logging package that met my needs.
 
-Everything I do in open source is done in my own time and as a contribution to the open source community.
+All my open-source work is crafted in my own time, as a contribution to the community that has supported me.
 
-If you are using my projects and would like to thank me or support me, please click the Patreon link below.
+If my projects have been useful to you and you'd like to express your appreciation or support, please consider joining me on Patreon. Your support helps sustain and grow these initiatives!
 
 [![Patreon Donation][patreon-image]][patreon-url]
 

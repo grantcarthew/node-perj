@@ -40,7 +40,7 @@ Performance:
 
 */
 
-import { Perj } from "../dist/perj.js";
+import Perj from "../dist/perj.js";
 import { hostname } from "os";
 const isProd = process.env.NODE_ENV === "production";
 const ver = 1;
@@ -50,7 +50,7 @@ const name = "Your App Name"; // <======= CHANGE THIS NAME
 const passThrough = !isProd;
 const write = envWriter();
 
-export const log = new Perj({ ver, name, host, pid, passThrough, write });
+export default new Perj({ ver, name, host, pid, passThrough, write });
 
 function envWriter() {
   if (isProd) {

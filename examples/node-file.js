@@ -25,7 +25,7 @@ Features:
 Usage:
 - Copy and paste the code into your application to a 'logger.js' file.
 - Import the module as 'logger', 'log', or something similar.
-- Change the names of the environmet variables below if you are not happy with the existing names.
+- Change the names of the environment variables below if you are not happy with the existing names.
 - Change the value of the 'name' variable below.
 - Customize as needed.
 - Replace 'module.exports' with 'exports default' to switch to ES2015 module syntax.
@@ -42,29 +42,34 @@ Performance:
   - Logging is 'in process' which will effect application performance.
   - Using 'toISOString' will have a medium effect on performance.
   - Using 'passThrough' will have a small effect on performance.
-- Production Environemnt:
+- Production Environment:
   - File logging is 'in process' which will effect application performance.
 
 */
 
-const Perj = require("perj");
-const rfs = require("rotating-file-stream");
+import Perj from "perj";
+import { createStream } from "rotating-file-stream";
+import os from "os";
+import path from "path";
+import { fileURLToPath } from "url";
+
 const isProd = process.env.NODE_ENV === "production";
-const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
-const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
+// const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
+// const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
+const logFileRootPath = ".";
+const logFilePrimaryName = "perj-node-file-example.log";
 const ver = 1;
-const host = require("os").hostname();
+const host = os.hostname();
 const pid = process.pid;
-const file = require("path").basename(module.filename);
+const file = path.basename(fileURLToPath(import.meta.url));
 const name = "Your App Name"; // <======= CHANGE THIS NAME
 const passThrough = !isProd;
 const write = envWriter();
 
 // Rotate file every day or > 1MB.
-const stream = rfs(fileNameGenerator, {
+const stream = createStream(fileNameGenerator, {
   size: "1M",
   interval: "1d",
-  rotationTime: true,
   path: logFileRootPath,
 });
 stream.on("error", (err) => console.error(err));
@@ -87,7 +92,7 @@ function fileNameGenerator(time, index) {
   return `${ym}/${ym}-${d}-${h}-${m}-${index}-${fileId}`;
 }
 
-module.exports = new Perj({ ver, name, host, pid, file, passThrough, write });
+export default new Perj({ ver, name, host, pid, file, passThrough, write });
 
 function envWriter() {
   if (isProd) {

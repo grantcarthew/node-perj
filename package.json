@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A fast, flexible JSON logger.",
   "type": "module",
   "main": "dist/perj.min.js",
@@ -46,12 +46,12 @@
     "endOfLine": "lf"
   },
   "devDependencies": {
-    "@eslint/js": "^9.12.0",
+    "@eslint/js": "^9.13.0",
     "benchmark": "^2.1.4",
     "chalk": "^5.3.0",
     "console-probe": "^3.3.2",
     "esbuild": "^0.24.0",
-    "eslint": "^9.12.0",
+    "eslint": "^9.13.0",
     "fast-safe-stringify": "^2.1.1",
     "globals": "^15.11.0",
     "pino": "^9.5.0",
@@ -61,6 +61,10 @@
     "tape": "^5.9.0",
     "test-constructs": "^1.0.0"
   },
-  "dependencies": {
+  "pnpm": {
+    "overrides": {
+      "yargs-parser@>=6.0.0 <13.1.2": ">=13.1.2",
+      "trim@<0.0.3": ">=0.0.3"
+    }
   }
 }

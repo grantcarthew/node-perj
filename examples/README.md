@@ -12,46 +12,46 @@ Find examples here that can get you started using the [perj](https://github.com/
 
 ## File List
 
-### [app Directory](/examples/app/README.md)
+[app](/examples/app/README.md)
 
 This example shows how you could integrate `perj` into a simple web application running on [express.js](https://expressjs.com/).
 
-### [browser-simple.js](/examples/browser-console-full.js)
+[browser-simple](/examples/browser-simple/README.md)
 
 A great starting place for client side console logging.
 
-### [node-colourful.js](/examples/node-colourful.js)
+[node-colourful.js](/examples/node-colourful.js)
 
 A full detail console log output including colourful properties and formatted data.
 
-### [node-file.js](/examples/node-file.js)
+[node-file.js](/examples/node-file.js)
 
 A full detail console log output including formatted data. Raw JSON log data is sent to file.
 
-### [node-simple.js](/examples/node-simple.js)
+[node-simple.js](/examples/node-simple.js)
 
 A full detail console log output including formatted data.
 
-### [node-stdin-aws.js](/examples/node-stdin-aws.js)
+[node-stdin-aws.js](/examples/node-stdin-aws.js)
 
 Sends `standard input` to an AWS CloudWatch Logs store.
 
-### [node-stdin-azure.js](/examples/node-stdin-azure.js)
+[node-stdin-azure.js](/examples/node-stdin-azure.js)
 
 Sends `standard input` to an Azure Storage Account Table.
 
-### [node-stdin-file.js](/examples/node-stdin-file.js)
+[node-stdin-file.js](/examples/node-stdin-file.js)
 
 Saves `standard input` to a rotating log file.
 
-### [node-stdin-gcp.js](/examples/node-stdin-gcp.js)
+[node-stdin-gcp.js](/examples/node-stdin-gcp.js)
 
 Saves `standard input` to a rotating log file and uploads the completed file to a Google Cloud Platform Cloud Storage bucket.
 
-### [serializers.js](/examples/serializers.js)
+[serializers.js](/examples/serializers.js)
 
 A simple example to show how serializers work.
 
-### [util-log-generator.js](/examples/util-log-generator.js)
+[util-log-generator.js](/examples/util-log-generator.js)
 
 This is a utility module to generate log data.

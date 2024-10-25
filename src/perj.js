@@ -61,7 +61,7 @@ _SetLevelHeader: <Function>
 _SetLevelFunction: <Function>
   This function is used to generate the level functions.
 */
-export class Perj {
+class Perj {
   constructor(options) {
     if (options != null && options.constructor !== Object) {
       throw new Error("Provide options object to create a logger.");

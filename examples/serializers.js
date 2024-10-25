@@ -27,9 +27,13 @@ Performance:
 
 */
 
-const Perj = require("perj");
-const log = new Perj({ serializers: { req: reqSerializer, res: resSerializer } });
+import Perj from 'perj';
 
+/**
+ * Serializes a request object.
+ * @param {Object} value - The request object to serialize.
+ * @returns {Object} The serialized request data.
+ */
 function reqSerializer(value) {
   const { method, url, headers, params, query, connection } = value;
   const remoteAddress = connection && connection.remoteAddress;
@@ -37,10 +41,18 @@ function reqSerializer(value) {
   return { method, url, headers, params, query, remoteAddress, remotePort };
 }
 
+/**
+ * Serializes a response object.
+ * @param {Object} value - The response object to serialize.
+ * @returns {Object} The serialized response data.
+ */
 function resSerializer(value) {
   const { statusCode, _headerSent: headerSent } = value;
   return { statusCode, headerSent };
 }
+
+const log = new Perj({ serializers: { req: reqSerializer, res: resSerializer } });
+
 
 /*
 In your application server code:

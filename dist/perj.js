@@ -146,20 +146,22 @@ function serializeErrorFunction(value) {
 }
 
 // src/perj.js
-var _SplitOptions = Symbol("SplitOptions");
-var _Options = Symbol("Options");
-var _TopSnip = Symbol("TopSnip");
-var _TopValues = Symbol("TopValues");
-var _TopIsPrimitive = Symbol("TopIsPrimitive");
 var _HeaderStrings = Symbol("HeaderStrings");
 var _HeaderValues = Symbol("HeaderValues");
-var _SetLevelHeader = Symbol("SetLevelHeader");
+var _Options = Symbol("Options");
+var _Parent = Symbol("Parent");
 var _SetLevelFunction = Symbol("SetLevelFunction");
+var _SetLevelHeader = Symbol("SetLevelHeader");
+var _SplitOptions = Symbol("SplitOptions");
+var _TopIsPrimitive = Symbol("TopIsPrimitive");
+var _TopSnip = Symbol("TopSnip");
+var _TopValues = Symbol("TopValues");
 var Perj = class {
   constructor(options2) {
     if (options2 != null && options2.constructor !== Object) {
       throw new Error("Provide options object to create a logger.");
     }
+    this[_Parent] = null;
     this[_Options] = Object.assign({}, options);
     this[_TopSnip] = "";
     this[_TopValues] = {};
@@ -196,6 +198,9 @@ var Perj = class {
       this[_SetLevelHeader](level);
       this[_SetLevelFunction](level);
     }
+  }
+  get parent() {
+    return this[_Parent];
   }
   get write() {
     return this[_Options].write;
@@ -388,7 +393,7 @@ var Perj = class {
       }
       newChild[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(newChild[_TopValues][key]) + ",";
     }
-    newChild.parent = this;
+    newChild[_Parent] = this;
     newChild[_HeaderStrings] = {};
     newChild[_HeaderValues] = {};
     for (const level in this[_Options].levels) {
@@ -405,6 +410,5 @@ var Perj = class {
 };
 var perj_default = Perj;
 export {
-  Perj,
   perj_default as default
 };

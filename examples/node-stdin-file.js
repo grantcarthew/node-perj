@@ -34,15 +34,16 @@ Performance:
 
 */
 
-const rfs = require("rotating-file-stream");
-const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
-const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
+import { createStream } from "rotating-file-stream";
+const logFileRootPath = ".";
+const logFilePrimaryName = "perj-node-stdin-file-example.log";
+// const logFileRootPath = process.env.LOGFILEROOTPATH; // <======= CHANGE THIS ENV NAME
+// const logFilePrimaryName = process.env.LOGFILEPRIMARYNAME; // <======= CHANGE THIS ENV NAME
 
 // Rotate file every day or > 1MB.
-const stream = rfs(fileNameGenerator, {
+const stream = createStream(fileNameGenerator, {
   size: "1M",
   interval: "1d",
-  rotationTime: true,
   path: logFileRootPath,
 });
 stream.on("error", (err) => console.error(err));

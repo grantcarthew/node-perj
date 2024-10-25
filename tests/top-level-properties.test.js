@@ -1,5 +1,5 @@
 import test from "tape";
-import { Perj } from "../src/perj.js";
+import Perj from "../src/perj.js";
 import { Tool } from "./tool.js";
 import { data } from "../data/index.js";
 import { assertObjectSubsetMatch } from "./asserts.js";
@@ -34,6 +34,10 @@ test("top level properties tests", (t) => {
     assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
     assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
     assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.notOk(log.parent, "Top level parent property should be null");
+    t.throws(() => {
+      log.parent = {};
+    }, "Top level parent property should be read-only");
     t.end();
   });
   t.test(`${t.name}: child top level properties`, (t) => {
@@ -62,6 +66,10 @@ test("top level properties tests", (t) => {
     assertObjectSubsetMatch(t, data.tardis, tool.jsonOut.data);
     assertObjectSubsetMatch(t, tool.objOut.data, data.tardis);
     assertObjectSubsetMatch(t, data.tardis, tool.objOut.data);
+    t.equal(log, child.parent, "Child level parent property should be the parent object");
+    t.throws(() => {
+      child.parent = {};
+    }, "Child level parent property should be read-only");
     t.end();
   });
   t.end();

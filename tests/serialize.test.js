@@ -1,5 +1,5 @@
 import test from "tape";
-import { Perj } from "../src/perj.js";
+import Perj from "../src/perj.js";
 import { Tool } from "./tool.js";
 import { data } from "../data/index.js";
 

@@ -4,7 +4,7 @@ Find examples here that can get you started using the [perj](https://github.com/
 
 ## Important Notes
 
-- These are not best practise. Use them as suggestions on how to get started.
+- These are not best practices. Use them as suggestions on how to get started.
 - Documentation for each example is in the header of the `js` files.
 - Files titled `stdin` do not use `perj` and expect you to pipe logs into the process.
 - The `app` directory expects you to pipe `stdout` into a `stdin` module.
@@ -12,46 +12,21 @@ Find examples here that can get you started using the [perj](https://github.com/
 
 ## File List
 
-### [app Directory](/examples/app/README.md)
-
-This example shows how you could integrate `perj` into a simple web application running on [express.js](https://expressjs.com/).
-
-### [browser-simple.js](/examples/browser-console-full.js)
-
-A great starting place for client side console logging.
-
-### [node-colourful.js](/examples/node-colourful.js)
-
-A full detail console log output including colourful properties and formatted data.
-
-### [node-file.js](/examples/node-file.js)
-
-A full detail console log output including formatted data. Raw JSON log data is sent to file.
-
-### [node-simple.js](/examples/node-simple.js)
-
-A full detail console log output including formatted data.
-
-### [node-stdin-aws.js](/examples/node-stdin-aws.js)
-
-Sends `standard input` to an AWS CloudWatch Logs store.
-
-### [node-stdin-azure.js](/examples/node-stdin-azure.js)
-
-Sends `standard input` to an Azure Storage Account Table.
-
-### [node-stdin-file.js](/examples/node-stdin-file.js)
-
-Saves `standard input` to a rotating log file.
-
-### [node-stdin-gcp.js](/examples/node-stdin-gcp.js)
-
-Saves `standard input` to a rotating log file and uploads the completed file to a Google Cloud Platform Cloud Storage bucket.
-
-### [serializers.js](/examples/serializers.js)
-
-A simple example to show how serializers work.
-
-### [util-log-generator.js](/examples/util-log-generator.js)
-
-This is a utility module to generate log data.
+- [app](/examples/app/README.md):
+  - This example shows how you could integrate `perj` into a simple web application running on [express.js](https://expressjs.com/).
+- [browser-simple](/examples/browser-simple/README.md):
+  - A great starting place for client side console logging.
+- [node-colourful.js](/examples/node-colourful.js):
+  - A full detail console log output including colourful properties and formatted data.
+- [node-example-runner.js](/examples/node-example-runner.js):
+  - Runs the node colourful, file, and simple examples.
+- [node-file.js](/examples/node-file.js):
+  - A full detail console log output including formatted data. Raw JSON log data is sent to file.
+- [node-simple.js](/examples/node-simple.js):
+  - A full detail console log output including formatted data.
+- [node-stdin-file.js](/examples/node-stdin-file.js):
+  - Saves `standard input` to a rotating log file.
+- [serializers.js](/examples/serializers.js):
+  - A simple example to show how serializers work.
+- [util-log-generator.js](/examples/util-log-generator.js):
+  - This is a utility module to generate log data.

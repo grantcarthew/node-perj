@@ -1,6 +1,6 @@
 {
   "name": "perj",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "A fast, flexible JSON logger.",
   "type": "module",
   "main": "dist/perj.min.js",
@@ -17,6 +17,7 @@
     "test": "tape ./tests/*.test.js | tap-spec",
     "test:dot": "pnpm run time && tape ./tests/*.test.js | tap-dot",
     "test:watch": "fd | entr pnpm run test:dot",
+    "coverage": "c8 pnpm test",
     "benchmark": "pnpm run build && node benchmarks/benchmark-compare.js",
     "benchmark-perj": "node benchmarks/benchmark-perj.js",
     "benchmark-child": "node benchmarks/benchmark-child.js",
@@ -45,9 +46,21 @@
     "printWidth": 120,
     "endOfLine": "lf"
   },
+  "c8": {
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "exclude": [
+      "data/*",
+      "tests/*"
+    ],
+    "reports-dir": "coverage"
+  },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "benchmark": "^2.1.4",
+    "c8": "^10.1.2",
     "chalk": "^5.3.0",
     "console-probe": "^3.3.2",
     "esbuild": "^0.24.0",

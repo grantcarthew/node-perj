@@ -2,15 +2,16 @@ import { options as defaultOptions } from "./options.js";
 import { notationCopy } from "./notation-copy.js";
 
 // Symbols for functions and values
-const _SplitOptions = Symbol("SplitOptions");
-const _Options = Symbol("Options");
-const _TopSnip = Symbol("TopSnip");
-const _TopValues = Symbol("TopValues");
-const _TopIsPrimitive = Symbol("TopIsPrimitive");
 const _HeaderStrings = Symbol("HeaderStrings");
 const _HeaderValues = Symbol("HeaderValues");
-const _SetLevelHeader = Symbol("SetLevelHeader");
+const _Options = Symbol("Options");
+const _Parent = Symbol("Parent");
 const _SetLevelFunction = Symbol("SetLevelFunction");
+const _SetLevelHeader = Symbol("SetLevelHeader");
+const _SplitOptions = Symbol("SplitOptions");
+const _TopIsPrimitive = Symbol("TopIsPrimitive");
+const _TopSnip = Symbol("TopSnip");
+const _TopValues = Symbol("TopValues");
 
 /*
 Code Summary:
@@ -66,6 +67,7 @@ class Perj {
     if (options != null && options.constructor !== Object) {
       throw new Error("Provide options object to create a logger.");
     }
+    this[_Parent] = null;
     this[_Options] = Object.assign({}, defaultOptions);
     this[_TopSnip] = "";
     this[_TopValues] = {};
@@ -107,6 +109,10 @@ class Perj {
       this[_SetLevelHeader](level);
       this[_SetLevelFunction](level);
     }
+  }
+
+  get parent() {
+    return this[_Parent];
   }
 
   get write() {
@@ -339,7 +345,7 @@ class Perj {
       }
       newChild[_TopSnip] += '"' + key + '":' + this[_Options].stringifyFunction(newChild[_TopValues][key]) + ",";
     }
-    newChild.parent = this;
+    newChild[_Parent] = this;
     newChild[_HeaderStrings] = {};
     newChild[_HeaderValues] = {};
     for (const level in this[_Options].levels) {
